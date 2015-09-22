@@ -8,6 +8,7 @@ Begin VB.Form frmProduct
    ClientLeft      =   1830
    ClientTop       =   1785
    ClientWidth     =   14940
+   Icon            =   "frmProduct.frx":0000
    LinkTopic       =   "Form2"
    ScaleHeight     =   10515
    ScaleWidth      =   14940
@@ -64,7 +65,7 @@ Begin VB.Form frmProduct
       ColWidthMin     =   0
       ColWidthMax     =   0
       ExtendLastCol   =   -1  'True
-      FormatString    =   $"frmProduct.frx":0000
+      FormatString    =   $"frmProduct.frx":8ACE
       ScrollTrack     =   0   'False
       ScrollBars      =   3
       ScrollTips      =   0   'False
@@ -237,7 +238,7 @@ Begin VB.Form frmProduct
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   91226115
+         Format          =   91160579
          CurrentDate     =   37058
       End
       Begin VB.Label lblEntry 

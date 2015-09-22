@@ -7,6 +7,7 @@ Begin VB.Form frmPrice
    ClientLeft      =   120
    ClientTop       =   465
    ClientWidth     =   14895
+   Icon            =   "frmPrice.frx":0000
    LinkTopic       =   "Form2"
    ScaleHeight     =   10560
    ScaleWidth      =   14895
@@ -80,7 +81,7 @@ Begin VB.Form frmPrice
       ColWidthMin     =   0
       ColWidthMax     =   0
       ExtendLastCol   =   -1  'True
-      FormatString    =   $"frmPrice.frx":0000
+      FormatString    =   $"frmPrice.frx":8ACE
       ScrollTrack     =   0   'False
       ScrollBars      =   3
       ScrollTips      =   0   'False
