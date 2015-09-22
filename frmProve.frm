@@ -13,6 +13,14 @@ Begin VB.Form frmProve
    ScaleHeight     =   9120
    ScaleWidth      =   6765
    StartUpPosition =   2  '螢幕中央
+   Begin VB.CommandButton cmdProduct 
+      Caption         =   "產品資料"
+      Height          =   615
+      Left            =   4200
+      TabIndex        =   28
+      Top             =   4800
+      Width           =   1215
+   End
    Begin VB.CommandButton cmdFourKDayAccount 
       Caption         =   "4K日總帳"
       Height          =   615
@@ -144,7 +152,7 @@ Begin VB.Form frmProve
    Begin VB.CommandButton cmdCustom 
       Caption         =   "客戶資料"
       Height          =   615
-      Left            =   2760
+      Left            =   1320
       TabIndex        =   11
       Top             =   4800
       Width           =   1215
@@ -388,6 +396,11 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Private Sub cmdCustom_Click()
     frmCustom.Show
+    Me.Hide
+End Sub
+
+Private Sub cmdProduct_Click()
+    frmProduct.Show
     Me.Hide
 End Sub
 

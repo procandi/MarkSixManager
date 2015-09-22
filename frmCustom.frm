@@ -1,64 +1,16 @@
 VERSION 5.00
-Object = "{D76D7128-4A96-11D3-BD95-D296DC2DD072}#1.0#0"; "Vsflex7.ocx"
-Object = "{0BA686C6-F7D3-101A-993E-0000C0EF6F5E}#1.0#0"; "THREED32.OCX"
+Object = "{D76D7128-4A96-11D3-BD95-D296DC2DD072}#1.0#0"; "vsflex7.ocx"
+Object = "{0BA686C6-F7D3-101A-993E-0000C0EF6F5E}#1.0#0"; "threed32.ocx"
 Object = "{86CF1D34-0C5F-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCT2.OCX"
 Begin VB.Form frmCustom 
    Caption         =   "客戶資料表"
    ClientHeight    =   10665
    ClientLeft      =   1830
    ClientTop       =   1785
-   ClientWidth     =   15090
+   ClientWidth     =   14985
    LinkTopic       =   "Form2"
    ScaleHeight     =   10665
-   ScaleWidth      =   15090
-   Begin VB.TextBox txtID 
-      BeginProperty Font 
-         Name            =   "新細明體"
-         Size            =   12
-         Charset         =   136
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   360
-      Left            =   1200
-      TabIndex        =   29
-      Top             =   600
-      Width           =   1815
-   End
-   Begin VB.TextBox txtBonusTarget 
-      BeginProperty Font 
-         Name            =   "新細明體"
-         Size            =   12
-         Charset         =   136
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   360
-      Left            =   13320
-      TabIndex        =   28
-      Top             =   600
-      Width           =   1575
-   End
-   Begin VB.TextBox txtAccount 
-      BeginProperty Font 
-         Name            =   "新細明體"
-         Size            =   12
-         Charset         =   136
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   360
-      Left            =   10320
-      TabIndex        =   27
-      Top             =   600
-      Width           =   1815
-   End
+   ScaleWidth      =   14985
    Begin VSFlex7Ctl.VSFlexGrid dbgOnline 
       Height          =   8775
       Left            =   0
@@ -135,7 +87,7 @@ Begin VB.Form frmCustom
       TabBehavior     =   0
       OwnerDraw       =   0
       Editable        =   0
-      ShowComboButton =   -1  'True
+      ShowComboButton =   1
       WordWrap        =   -1  'True
       TextStyle       =   0
       TextStyleFixed  =   0
@@ -175,6 +127,54 @@ Begin VB.Form frmCustom
       EndProperty
       BorderWidth     =   1
       Outline         =   -1  'True
+      Begin VB.TextBox txtBonusTarget 
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Left            =   13320
+         TabIndex        =   28
+         Top             =   600
+         Width           =   1575
+      End
+      Begin VB.TextBox txtAccount 
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Left            =   10320
+         TabIndex        =   27
+         Top             =   600
+         Width           =   1815
+      End
+      Begin VB.TextBox txtID 
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Left            =   1200
+         TabIndex        =   26
+         Top             =   600
+         Width           =   1815
+      End
       Begin VB.CommandButton cmdBought 
          BackColor       =   &H00FFC0C0&
          Caption         =   "客戶購買明細表"
@@ -191,7 +191,7 @@ Begin VB.Form frmCustom
          Height          =   375
          Left            =   7320
          Style           =   1  '圖片外觀
-         TabIndex        =   30
+         TabIndex        =   25
          Top             =   120
          Width           =   2295
       End
@@ -207,7 +207,7 @@ Begin VB.Form frmCustom
          EndProperty
          Height          =   360
          Left            =   10320
-         TabIndex        =   26
+         TabIndex        =   24
          Top             =   1080
          Width           =   1815
       End
@@ -223,7 +223,7 @@ Begin VB.Form frmCustom
          EndProperty
          Height          =   360
          Left            =   7320
-         TabIndex        =   24
+         TabIndex        =   22
          Top             =   600
          Width           =   1815
       End
@@ -243,7 +243,7 @@ Begin VB.Form frmCustom
          Height          =   375
          Left            =   9720
          Style           =   1  '圖片外觀
-         TabIndex        =   23
+         TabIndex        =   21
          Top             =   120
          Width           =   2295
       End
@@ -263,7 +263,7 @@ Begin VB.Form frmCustom
          Height          =   375
          Left            =   120
          Style           =   1  '圖片外觀
-         TabIndex        =   13
+         TabIndex        =   12
          Top             =   120
          Width           =   2295
       End
@@ -279,7 +279,7 @@ Begin VB.Form frmCustom
          EndProperty
          Height          =   360
          Left            =   4200
-         TabIndex        =   11
+         TabIndex        =   10
          Top             =   1080
          Width           =   1935
       End
@@ -298,7 +298,7 @@ Begin VB.Form frmCustom
          Height          =   375
          Left            =   2520
          Style           =   1  '圖片外觀
-         TabIndex        =   10
+         TabIndex        =   9
          Top             =   120
          Width           =   2295
       End
@@ -317,7 +317,7 @@ Begin VB.Form frmCustom
          Height          =   375
          Left            =   13560
          Style           =   1  '圖片外觀
-         TabIndex        =   9
+         TabIndex        =   8
          Top             =   120
          Width           =   1335
       End
@@ -333,7 +333,7 @@ Begin VB.Form frmCustom
          EndProperty
          Height          =   360
          Left            =   7320
-         TabIndex        =   8
+         TabIndex        =   7
          Top             =   1080
          Width           =   1815
       End
@@ -352,25 +352,9 @@ Begin VB.Form frmCustom
          Height          =   375
          Left            =   12240
          Style           =   1  '圖片外觀
-         TabIndex        =   7
+         TabIndex        =   6
          Top             =   1080
          Width           =   1215
-      End
-      Begin VB.TextBox txtAccessionNo 
-         BeginProperty Font 
-            Name            =   "新細明體"
-            Size            =   12
-            Charset         =   136
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   360
-         Left            =   1200
-         TabIndex        =   6
-         Top             =   1680
-         Width           =   1815
       End
       Begin VB.CommandButton cmdDelete 
          BackColor       =   &H00FFC0C0&
@@ -448,7 +432,7 @@ Begin VB.Form frmCustom
       Begin MSComCtl2.DTPicker dtpDateSort 
          Height          =   360
          Left            =   4200
-         TabIndex        =   12
+         TabIndex        =   11
          Top             =   600
          Width           =   1935
          _ExtentX        =   3413
@@ -464,7 +448,7 @@ Begin VB.Form frmCustom
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   106430467
+         Format          =   91226115
          CurrentDate     =   37058
       End
       Begin VB.Label lblEntry 
@@ -483,7 +467,7 @@ Begin VB.Form frmCustom
          Height          =   360
          Index           =   2
          Left            =   9240
-         TabIndex        =   25
+         TabIndex        =   23
          Top             =   1080
          Width           =   1095
       End
@@ -503,7 +487,7 @@ Begin VB.Form frmCustom
          Height          =   360
          Index           =   7
          Left            =   120
-         TabIndex        =   22
+         TabIndex        =   20
          Top             =   600
          Width           =   1095
       End
@@ -523,7 +507,7 @@ Begin VB.Form frmCustom
          Height          =   360
          Index           =   0
          Left            =   9240
-         TabIndex        =   21
+         TabIndex        =   19
          Top             =   600
          Width           =   1095
       End
@@ -543,7 +527,7 @@ Begin VB.Form frmCustom
          Height          =   360
          Index           =   9
          Left            =   3120
-         TabIndex        =   20
+         TabIndex        =   18
          Top             =   1080
          Width           =   1095
       End
@@ -563,28 +547,8 @@ Begin VB.Form frmCustom
          Height          =   360
          Index           =   18
          Left            =   6240
-         TabIndex        =   19
+         TabIndex        =   17
          Top             =   600
-         Width           =   1095
-      End
-      Begin VB.Label lblEntry 
-         Alignment       =   1  '靠右對齊
-         BorderStyle     =   1  '單線固定
-         Caption         =   "檢查編號"
-         BeginProperty Font 
-            Name            =   "新細明體"
-            Size            =   12
-            Charset         =   136
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   360
-         Index           =   19
-         Left            =   120
-         TabIndex        =   18
-         Top             =   1680
          Width           =   1095
       End
       Begin VB.Label lblEntry 
@@ -603,7 +567,7 @@ Begin VB.Form frmCustom
          Height          =   360
          Index           =   20
          Left            =   6240
-         TabIndex        =   17
+         TabIndex        =   16
          Top             =   1080
          Width           =   1095
       End
@@ -623,7 +587,7 @@ Begin VB.Form frmCustom
          Height          =   360
          Index           =   21
          Left            =   120
-         TabIndex        =   16
+         TabIndex        =   15
          Top             =   1080
          Width           =   1095
       End
@@ -643,7 +607,7 @@ Begin VB.Form frmCustom
          Height          =   360
          Index           =   22
          Left            =   12240
-         TabIndex        =   15
+         TabIndex        =   14
          Top             =   600
          Width           =   1095
       End
@@ -663,7 +627,7 @@ Begin VB.Form frmCustom
          Height          =   360
          Index           =   23
          Left            =   3120
-         TabIndex        =   14
+         TabIndex        =   13
          Top             =   600
          Width           =   1095
       End
@@ -688,7 +652,6 @@ Private Sub cmdPrice_Click()
     frmPrice.Show
     Me.Hide
 End Sub
-
 
 Private Sub dtpDateSort_CloseUp()
     txtDate.Text = Format(dtpDateSort.Value, "yyyy/MM/dd")

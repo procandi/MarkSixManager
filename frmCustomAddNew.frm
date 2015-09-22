@@ -1,12 +1,12 @@
 VERSION 5.00
-Object = "{0BA686C6-F7D3-101A-993E-0000C0EF6F5E}#1.0#0"; "THREED32.OCX"
+Object = "{0BA686C6-F7D3-101A-993E-0000C0EF6F5E}#1.0#0"; "threed32.ocx"
 Object = "{86CF1D34-0C5F-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCT2.OCX"
 Object = "{67397AA1-7FB1-11D0-B148-00A0C922E820}#6.0#0"; "MSADODC.OCX"
 Begin VB.Form frmCustomAddNew 
    BackColor       =   &H00808080&
    BorderStyle     =   1  '單線固定
    Caption         =   "客戶資料明細"
-   ClientHeight    =   6330
+   ClientHeight    =   6270
    ClientLeft      =   2160
    ClientTop       =   3660
    ClientWidth     =   8775
@@ -14,7 +14,7 @@ Begin VB.Form frmCustomAddNew
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   6330
+   ScaleHeight     =   6270
    ScaleWidth      =   8775
    Begin Threed.SSPanel pnlRegist 
       Height          =   5535
@@ -320,7 +320,7 @@ Begin VB.Form frmCustomAddNew
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   106889219
+         Format          =   91422723
          CurrentDate     =   42267
       End
       Begin VB.Label lblEntry 

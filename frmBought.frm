@@ -1,6 +1,6 @@
 VERSION 5.00
-Object = "{D76D7128-4A96-11D3-BD95-D296DC2DD072}#1.0#0"; "Vsflex7.ocx"
-Object = "{0BA686C6-F7D3-101A-993E-0000C0EF6F5E}#1.0#0"; "THREED32.OCX"
+Object = "{D76D7128-4A96-11D3-BD95-D296DC2DD072}#1.0#0"; "vsflex7.ocx"
+Object = "{0BA686C6-F7D3-101A-993E-0000C0EF6F5E}#1.0#0"; "threed32.ocx"
 Begin VB.Form frmBought 
    Caption         =   "產品購買明細"
    ClientHeight    =   10560
@@ -12,13 +12,13 @@ Begin VB.Form frmBought
    ScaleWidth      =   14895
    StartUpPosition =   3  '系統預設值
    Begin VSFlex7Ctl.VSFlexGrid dbgOnline 
-      Height          =   9255
+      Height          =   9735
       Left            =   0
       TabIndex        =   0
       Top             =   1320
       Width           =   14895
       _cx             =   26273
-      _cy             =   16325
+      _cy             =   17171
       _ConvInfo       =   1
       Appearance      =   0
       BorderStyle     =   0
@@ -87,7 +87,7 @@ Begin VB.Form frmBought
       TabBehavior     =   0
       OwnerDraw       =   0
       Editable        =   0
-      ShowComboButton =   -1  'True
+      ShowComboButton =   1
       WordWrap        =   -1  'True
       TextStyle       =   0
       TextStyleFixed  =   0
@@ -139,7 +139,7 @@ Begin VB.Form frmBought
          EndProperty
          Height          =   360
          Left            =   1200
-         TabIndex        =   11
+         TabIndex        =   9
          Top             =   600
          Width           =   1815
       End
@@ -155,7 +155,7 @@ Begin VB.Form frmBought
          EndProperty
          Height          =   360
          Left            =   4200
-         TabIndex        =   10
+         TabIndex        =   8
          Top             =   600
          Width           =   1935
       End
@@ -174,25 +174,9 @@ Begin VB.Form frmBought
          Height          =   375
          Left            =   13560
          Style           =   1  '圖片外觀
-         TabIndex        =   6
+         TabIndex        =   5
          Top             =   600
          Width           =   1335
-      End
-      Begin VB.TextBox txtAccessionNo 
-         BeginProperty Font 
-            Name            =   "新細明體"
-            Size            =   12
-            Charset         =   136
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   360
-         Left            =   1200
-         TabIndex        =   5
-         Top             =   1680
-         Width           =   1815
       End
       Begin VB.CommandButton cmdClear 
          BackColor       =   &H00FFC0C0&
@@ -245,7 +229,7 @@ Begin VB.Form frmBought
             Strikethrough   =   0   'False
          EndProperty
          Height          =   375
-         Left            =   6120
+         Left            =   6240
          Style           =   1  '圖片外觀
          TabIndex        =   2
          Top             =   600
@@ -270,7 +254,7 @@ Begin VB.Form frmBought
          Height          =   375
          Index           =   0
          Left            =   120
-         TabIndex        =   12
+         TabIndex        =   10
          Top             =   120
          Width           =   5295
       End
@@ -290,28 +274,8 @@ Begin VB.Form frmBought
          Height          =   360
          Index           =   23
          Left            =   3120
-         TabIndex        =   9
+         TabIndex        =   7
          Top             =   600
-         Width           =   1095
-      End
-      Begin VB.Label lblEntry 
-         Alignment       =   1  '靠右對齊
-         BorderStyle     =   1  '單線固定
-         Caption         =   "檢查編號"
-         BeginProperty Font 
-            Name            =   "新細明體"
-            Size            =   12
-            Charset         =   136
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   360
-         Index           =   19
-         Left            =   120
-         TabIndex        =   8
-         Top             =   1680
          Width           =   1095
       End
       Begin VB.Label lblEntry 
@@ -330,7 +294,7 @@ Begin VB.Form frmBought
          Height          =   360
          Index           =   7
          Left            =   120
-         TabIndex        =   7
+         TabIndex        =   6
          Top             =   600
          Width           =   1095
       End
