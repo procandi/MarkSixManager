@@ -1,6 +1,6 @@
 VERSION 5.00
-Object = "{D76D7128-4A96-11D3-BD95-D296DC2DD072}#1.0#0"; "Vsflex7.ocx"
-Object = "{0BA686C6-F7D3-101A-993E-0000C0EF6F5E}#1.0#0"; "THREED32.OCX"
+Object = "{D76D7128-4A96-11D3-BD95-D296DC2DD072}#1.0#0"; "vsflex7.ocx"
+Object = "{0BA686C6-F7D3-101A-993E-0000C0EF6F5E}#1.0#0"; "threed32.ocx"
 Begin VB.Form frmPrice 
    Caption         =   "客戶產品價格表"
    ClientHeight    =   10560
@@ -11,6 +11,22 @@ Begin VB.Form frmPrice
    ScaleHeight     =   10560
    ScaleWidth      =   14895
    StartUpPosition =   3  '系統預設值
+   Begin VB.TextBox Text1 
+      BeginProperty Font 
+         Name            =   "新細明體"
+         Size            =   12
+         Charset         =   136
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   360
+      Left            =   7320
+      TabIndex        =   14
+      Top             =   600
+      Width           =   1935
+   End
    Begin VSFlex7Ctl.VSFlexGrid dbgOnline 
       Height          =   9255
       Left            =   0
@@ -86,8 +102,8 @@ Begin VB.Form frmPrice
       PictureType     =   0
       TabBehavior     =   0
       OwnerDraw       =   0
-      Editable        =   0
-      ShowComboButton =   -1  'True
+      Editable        =   2
+      ShowComboButton =   1
       WordWrap        =   -1  'True
       TextStyle       =   0
       TextStyleFixed  =   0
@@ -251,6 +267,26 @@ Begin VB.Form frmPrice
          Top             =   120
          Width           =   2295
       End
+      Begin VB.Label lblEntry 
+         Alignment       =   1  '靠右對齊
+         BorderStyle     =   1  '單線固定
+         Caption         =   "產品價格"
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Index           =   0
+         Left            =   6240
+         TabIndex        =   13
+         Top             =   600
+         Width           =   1095
+      End
       Begin VB.Label lblName 
          Alignment       =   2  '置中對齊
          BackColor       =   &H80000015&
@@ -277,7 +313,7 @@ Begin VB.Form frmPrice
       Begin VB.Label lblEntry 
          Alignment       =   1  '靠右對齊
          BorderStyle     =   1  '單線固定
-         Caption         =   "產品價格"
+         Caption         =   "中獎價格"
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12

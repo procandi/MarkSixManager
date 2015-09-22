@@ -1,11 +1,11 @@
 VERSION 5.00
-Object = "{0BA686C6-F7D3-101A-993E-0000C0EF6F5E}#1.0#0"; "THREED32.OCX"
+Object = "{0BA686C6-F7D3-101A-993E-0000C0EF6F5E}#1.0#0"; "threed32.ocx"
 Object = "{67397AA1-7FB1-11D0-B148-00A0C922E820}#6.0#0"; "MSADODC.OCX"
 Begin VB.Form frmPriceUpdate 
    BackColor       =   &H00808080&
    BorderStyle     =   1  '單線固定
    Caption         =   "產品價格變更"
-   ClientHeight    =   3735
+   ClientHeight    =   4140
    ClientLeft      =   6135
    ClientTop       =   5940
    ClientWidth     =   6495
@@ -13,7 +13,7 @@ Begin VB.Form frmPriceUpdate
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   3735
+   ScaleHeight     =   4140
    ScaleWidth      =   6495
    Begin MSAdodcLib.Adodc datOnline 
       Height          =   375
@@ -63,14 +63,14 @@ Begin VB.Form frmPriceUpdate
       _Version        =   393216
    End
    Begin Threed.SSPanel pnlBasic 
-      Height          =   2895
+      Height          =   3255
       Left            =   240
       TabIndex        =   0
       Top             =   720
       Width           =   5895
       _Version        =   65536
       _ExtentX        =   10398
-      _ExtentY        =   5106
+      _ExtentY        =   5741
       _StockProps     =   15
       ForeColor       =   0
       BackColor       =   12632256
@@ -87,6 +87,23 @@ Begin VB.Form frmPriceUpdate
       BevelInner      =   1
       Outline         =   -1  'True
       Alignment       =   6
+      Begin VB.TextBox txtBasic 
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   375
+         Index           =   2
+         Left            =   1560
+         TabIndex        =   14
+         Top             =   2040
+         Width           =   4095
+      End
       Begin VB.CommandButton Command2 
          BackColor       =   &H00FFC0C0&
          Caption         =   "下一筆"
@@ -105,7 +122,7 @@ Begin VB.Form frmPriceUpdate
          Style           =   1  '圖片外觀
          TabIndex        =   12
          Tag             =   "Edit"
-         Top             =   2160
+         Top             =   2520
          Width           =   1335
       End
       Begin VB.CommandButton Command1 
@@ -126,7 +143,7 @@ Begin VB.Form frmPriceUpdate
          Style           =   1  '圖片外觀
          TabIndex        =   11
          Tag             =   "Edit"
-         Top             =   2160
+         Top             =   2520
          Width           =   1335
       End
       Begin VB.TextBox txtBasic 
@@ -162,7 +179,7 @@ Begin VB.Form frmPriceUpdate
          Left            =   3000
          Style           =   1  '圖片外觀
          TabIndex        =   7
-         Top             =   2160
+         Top             =   2520
          Width           =   1215
       End
       Begin VB.CommandButton cmdUpdate 
@@ -183,7 +200,7 @@ Begin VB.Form frmPriceUpdate
          Style           =   1  '圖片外觀
          TabIndex        =   6
          Tag             =   "Edit"
-         Top             =   2160
+         Top             =   2520
          Width           =   1335
       End
       Begin VB.TextBox txtBasic 
@@ -238,10 +255,33 @@ Begin VB.Form frmPriceUpdate
          EndProperty
          ForeColor       =   &H00000000&
          Height          =   375
+         Index           =   2
+         Left            =   360
+         TabIndex        =   13
+         Top             =   2040
+         Width           =   1215
+      End
+      Begin VB.Label lblBasic 
+         Alignment       =   1  '靠右對齊
+         BackColor       =   &H80000015&
+         BackStyle       =   0  '透明
+         BorderStyle     =   1  '單線固定
+         Caption         =   "中獎價格"
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00000000&
+         Height          =   375
          Index           =   0
          Left            =   360
          TabIndex        =   10
-         Top             =   1560
+         Top             =   1080
          Width           =   1215
       End
       Begin VB.Label lblName 
@@ -287,7 +327,7 @@ Begin VB.Form frmPriceUpdate
          Index           =   1
          Left            =   360
          TabIndex        =   4
-         Top             =   1080
+         Top             =   1560
          Width           =   1215
       End
       Begin VB.Label lblBasic 

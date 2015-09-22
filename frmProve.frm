@@ -7,6 +7,7 @@ Begin VB.Form frmProve
    ClientLeft      =   2835
    ClientTop       =   3480
    ClientWidth     =   6765
+   Icon            =   "frmProve.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
@@ -189,7 +190,7 @@ Begin VB.Form frmProve
       Begin VB.Image Image1 
          Height          =   1035
          Left            =   240
-         Picture         =   "frmProve.frx":0000
+         Picture         =   "frmProve.frx":8ACE
          Stretch         =   -1  'True
          Top             =   120
          Width           =   5820
@@ -243,7 +244,7 @@ Begin VB.Form frmProve
       End
       Begin VB.Label Label2 
          BackStyle       =   0  '透明
-         Caption         =   $"frmProve.frx":2F941
+         Caption         =   $"frmProve.frx":3840F
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   9.75
@@ -318,7 +319,7 @@ Begin VB.Form frmProve
       Visible         =   0   'False
       Width           =   2325
    End
-   Begin VB.Label Label3 
+   Begin VB.Label lblVersion 
       BackColor       =   &H00808080&
       BorderStyle     =   1  '單線固定
       Caption         =   "Version 20150920"
@@ -400,8 +401,16 @@ Private Sub cmdCustom_Click()
 End Sub
 
 Private Sub cmdProduct_Click()
+    
     frmProduct.Show
     Me.Hide
+End Sub
+
+Private Sub Form_Load()
+    lblVersion.Caption = "Version " & GetVersion()
+
+    basDataBase.Connection_String = "Provider=OleSQLite.SQLiteSource.1;Data Source=main.db"
+    Call basDataBase.Connect2DataBase(basDataBase.Connection_String, basDataBase.Connection)
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)

@@ -86,7 +86,7 @@ Begin VB.Form frmBought
       PictureType     =   0
       TabBehavior     =   0
       OwnerDraw       =   0
-      Editable        =   0
+      Editable        =   1
       ShowComboButton =   1
       WordWrap        =   -1  'True
       TextStyle       =   0
