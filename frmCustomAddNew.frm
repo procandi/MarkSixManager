@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{0BA686C6-F7D3-101A-993E-0000C0EF6F5E}#1.0#0"; "threed32.ocx"
+Object = "{0BA686C6-F7D3-101A-993E-0000C0EF6F5E}#1.0#0"; "THREED32.OCX"
 Object = "{86CF1D34-0C5F-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCT2.OCX"
 Object = "{67397AA1-7FB1-11D0-B148-00A0C922E820}#6.0#0"; "MSADODC.OCX"
 Begin VB.Form frmCustomAddNew 
@@ -19,7 +19,7 @@ Begin VB.Form frmCustomAddNew
    Begin Threed.SSPanel pnlRegist 
       Height          =   5535
       Left            =   120
-      TabIndex        =   5
+      TabIndex        =   4
       Top             =   600
       Width           =   8415
       _Version        =   65536
@@ -40,7 +40,7 @@ Begin VB.Form frmCustomAddNew
       Outline         =   -1  'True
       FloodColor      =   0
       Alignment       =   6
-      Begin VB.TextBox Text8 
+      Begin VB.TextBox txtCType 
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -51,13 +51,54 @@ Begin VB.Form frmCustomAddNew
             Strikethrough   =   0   'False
          EndProperty
          Height          =   360
-         Left            =   5520
+         Left            =   1320
+         MaxLength       =   256
+         TabIndex        =   30
+         Top             =   240
+         Width           =   3015
+      End
+      Begin VB.ComboBox cmbProportion 
+         Height          =   300
+         Left            =   1320
+         TabIndex        =   29
+         Top             =   1920
+         Width           =   3015
+      End
+      Begin VB.TextBox txtOpenDate 
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Left            =   2760
+         MaxLength       =   256
+         TabIndex        =   28
+         Top             =   1200
+         Width           =   1335
+      End
+      Begin VB.TextBox txtCName 
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Left            =   1320
          MaxLength       =   256
          TabIndex        =   27
-         Top             =   2520
-         Width           =   2655
+         Top             =   720
+         Width           =   3015
       End
-      Begin VB.TextBox Text7 
+      Begin VB.TextBox txtNote 
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -67,31 +108,15 @@ Begin VB.Form frmCustomAddNew
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Height          =   360
-         Left            =   5520
+         Height          =   795
+         Left            =   240
          MaxLength       =   256
-         TabIndex        =   26
-         Top             =   2160
-         Width           =   2655
-      End
-      Begin VB.TextBox Text6 
-         BeginProperty Font 
-            Name            =   "新細明體"
-            Size            =   12
-            Charset         =   136
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   360
-         Left            =   5520
-         MaxLength       =   256
+         MultiLine       =   -1  'True
          TabIndex        =   25
-         Top             =   1800
-         Width           =   2655
+         Top             =   4080
+         Width           =   7935
       End
-      Begin VB.TextBox Text5 
+      Begin VB.TextBox txtAddress 
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -101,14 +126,15 @@ Begin VB.Form frmCustomAddNew
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Height          =   360
-         Left            =   5520
+         Height          =   435
+         Left            =   240
          MaxLength       =   256
+         MultiLine       =   -1  'True
          TabIndex        =   24
-         Top             =   1440
-         Width           =   2655
+         Top             =   3240
+         Width           =   7935
       End
-      Begin VB.TextBox Text4 
+      Begin VB.TextBox txtPhone6 
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -122,10 +148,10 @@ Begin VB.Form frmCustomAddNew
          Left            =   5520
          MaxLength       =   256
          TabIndex        =   23
-         Top             =   1080
+         Top             =   2520
          Width           =   2655
       End
-      Begin VB.TextBox Text3 
+      Begin VB.TextBox txtPhone5 
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -139,58 +165,10 @@ Begin VB.Form frmCustomAddNew
          Left            =   5520
          MaxLength       =   256
          TabIndex        =   22
-         Top             =   720
+         Top             =   2160
          Width           =   2655
       End
-      Begin VB.ComboBox Combo1 
-         Height          =   300
-         Left            =   1320
-         TabIndex        =   21
-         Top             =   1560
-         Width           =   3015
-      End
-      Begin VB.ComboBox cmbDiagnosisClassM 
-         Height          =   300
-         Left            =   1320
-         TabIndex        =   20
-         Top             =   1920
-         Width           =   3015
-      End
-      Begin VB.ListBox List1 
-         BeginProperty Font 
-            Name            =   "新細明體"
-            Size            =   12
-            Charset         =   136
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   540
-         Left            =   240
-         MultiSelect     =   1  '簡易多重選取
-         TabIndex        =   19
-         Top             =   3240
-         Width           =   7935
-      End
-      Begin VB.TextBox Text2 
-         BeginProperty Font 
-            Name            =   "新細明體"
-            Size            =   12
-            Charset         =   136
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   360
-         Left            =   1320
-         MaxLength       =   256
-         TabIndex        =   18
-         Top             =   1080
-         Width           =   3015
-      End
-      Begin VB.TextBox Text1 
+      Begin VB.TextBox txtPhone4 
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -203,7 +181,100 @@ Begin VB.Form frmCustomAddNew
          Height          =   360
          Left            =   5520
          MaxLength       =   256
+         TabIndex        =   21
+         Top             =   1800
+         Width           =   2655
+      End
+      Begin VB.TextBox txtPhone3 
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Left            =   5520
+         MaxLength       =   256
+         TabIndex        =   20
+         Top             =   1440
+         Width           =   2655
+      End
+      Begin VB.TextBox txtPhone2 
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Left            =   5520
+         MaxLength       =   256
+         TabIndex        =   19
+         Top             =   1080
+         Width           =   2655
+      End
+      Begin VB.TextBox txtPhone1 
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Left            =   5520
+         MaxLength       =   256
+         TabIndex        =   18
+         Top             =   720
+         Width           =   2655
+      End
+      Begin VB.ComboBox cmbBonusTarget 
+         Height          =   300
+         Left            =   1320
          TabIndex        =   17
+         Top             =   2280
+         Width           =   3015
+      End
+      Begin VB.TextBox txtBankID 
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Left            =   1320
+         MaxLength       =   256
+         TabIndex        =   16
+         Top             =   1560
+         Width           =   3015
+      End
+      Begin VB.TextBox txtCID 
+         Enabled         =   0   'False
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Left            =   5520
+         MaxLength       =   256
+         TabIndex        =   15
          Top             =   240
          Width           =   2655
       End
@@ -223,27 +294,10 @@ Begin VB.Form frmCustomAddNew
          Height          =   495
          Left            =   2880
          Style           =   1  '圖片外觀
-         TabIndex        =   3
+         TabIndex        =   2
          Tag             =   "Edit"
          Top             =   4920
          Width           =   2535
-      End
-      Begin VB.ListBox lstExamDetail 
-         BeginProperty Font 
-            Name            =   "新細明體"
-            Size            =   12
-            Charset         =   136
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   780
-         Left            =   240
-         MultiSelect     =   1  '簡易多重選取
-         TabIndex        =   1
-         Top             =   4080
-         Width           =   7935
       End
       Begin VB.CommandButton cmdClose 
          BackColor       =   &H00FFC0C0&
@@ -260,7 +314,7 @@ Begin VB.Form frmCustomAddNew
          Height          =   495
          Left            =   5520
          Style           =   1  '圖片外觀
-         TabIndex        =   4
+         TabIndex        =   3
          Top             =   4920
          Width           =   2655
       End
@@ -279,33 +333,16 @@ Begin VB.Form frmCustomAddNew
          Height          =   495
          Left            =   240
          Style           =   1  '圖片外觀
-         TabIndex        =   2
+         TabIndex        =   1
          Tag             =   "Insert"
          Top             =   4920
          Width           =   2535
       End
-      Begin VB.TextBox txtAccessionNo 
-         Enabled         =   0   'False
-         BeginProperty Font 
-            Name            =   "新細明體"
-            Size            =   12
-            Charset         =   136
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   375
-         Left            =   1440
-         TabIndex        =   13
-         Top             =   240
-         Width           =   2895
-      End
-      Begin MSComCtl2.DTPicker dtpOrderDate 
+      Begin MSComCtl2.DTPicker dtpOpenDate 
          Height          =   375
          Left            =   2760
          TabIndex        =   0
-         Top             =   720
+         Top             =   1200
          Width           =   1575
          _ExtentX        =   2778
          _ExtentY        =   661
@@ -320,8 +357,30 @@ Begin VB.Form frmCustomAddNew
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   91160579
+         Format          =   104988675
          CurrentDate     =   42267
+      End
+      Begin VB.Label lblEntry 
+         Alignment       =   1  '靠右對齊
+         BackColor       =   &H00808080&
+         BorderStyle     =   1  '單線固定
+         Caption         =   "客戶編號"
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00FFFFFF&
+         Height          =   360
+         Index           =   0
+         Left            =   4440
+         TabIndex        =   26
+         Top             =   240
+         Width           =   1095
       End
       Begin VB.Label lblEntry 
          Alignment       =   1  '靠右對齊
@@ -341,8 +400,8 @@ Begin VB.Form frmCustomAddNew
          Height          =   360
          Index           =   10
          Left            =   240
-         TabIndex        =   15
-         Top             =   1080
+         TabIndex        =   13
+         Top             =   1560
          Width           =   1095
       End
       Begin VB.Label lblEntry 
@@ -363,7 +422,7 @@ Begin VB.Form frmCustomAddNew
          Height          =   360
          Index           =   2
          Left            =   4440
-         TabIndex        =   6
+         TabIndex        =   5
          Top             =   720
          Width           =   1095
       End
@@ -385,9 +444,9 @@ Begin VB.Form frmCustomAddNew
          Height          =   375
          Index           =   2
          Left            =   240
-         TabIndex        =   14
+         TabIndex        =   12
          Top             =   240
-         Width           =   1215
+         Width           =   1095
       End
       Begin VB.Label lblRegist 
          Alignment       =   1  '靠右對齊
@@ -407,8 +466,8 @@ Begin VB.Form frmCustomAddNew
          Height          =   375
          Index           =   0
          Left            =   240
-         TabIndex        =   12
-         Top             =   720
+         TabIndex        =   11
+         Top             =   1200
          Width           =   2505
       End
       Begin VB.Label lblEntry 
@@ -429,9 +488,9 @@ Begin VB.Form frmCustomAddNew
          Height          =   420
          Index           =   8
          Left            =   240
-         TabIndex        =   11
+         TabIndex        =   10
          Top             =   3720
-         Width           =   1215
+         Width           =   1095
       End
       Begin VB.Label lblEntry 
          Alignment       =   1  '靠右對齊
@@ -451,8 +510,8 @@ Begin VB.Form frmCustomAddNew
          Height          =   360
          Index           =   6
          Left            =   240
-         TabIndex        =   10
-         Top             =   1560
+         TabIndex        =   9
+         Top             =   1920
          Width           =   1095
       End
       Begin VB.Label lblEntry 
@@ -472,9 +531,9 @@ Begin VB.Form frmCustomAddNew
          ForeColor       =   &H00FFFFFF&
          Height          =   360
          Index           =   5
-         Left            =   4440
-         TabIndex        =   9
-         Top             =   240
+         Left            =   240
+         TabIndex        =   8
+         Top             =   720
          Width           =   1095
       End
       Begin VB.Label lblEntry 
@@ -495,7 +554,7 @@ Begin VB.Form frmCustomAddNew
          Height          =   360
          Index           =   1
          Left            =   240
-         TabIndex        =   8
+         TabIndex        =   7
          Top             =   2880
          Width           =   1095
       End
@@ -517,27 +576,27 @@ Begin VB.Form frmCustomAddNew
          Height          =   360
          Index           =   4
          Left            =   240
-         TabIndex        =   7
-         Top             =   1920
+         TabIndex        =   6
+         Top             =   2280
          Width           =   1095
       End
    End
-   Begin MSAdodcLib.Adodc datBasic 
-      Height          =   495
+   Begin MSAdodcLib.Adodc Adodc1 
+      Height          =   330
       Left            =   120
-      Top             =   120
+      Top             =   240
       Visible         =   0   'False
-      Width           =   2055
-      _ExtentX        =   3625
-      _ExtentY        =   873
+      Width           =   2775
+      _ExtentX        =   4895
+      _ExtentY        =   582
       ConnectMode     =   0
-      CursorLocation  =   2
+      CursorLocation  =   3
       IsolationLevel  =   -1
       ConnectionTimeout=   15
       CommandTimeout  =   30
       CursorType      =   1
-      LockType        =   1
-      CommandType     =   1
+      LockType        =   3
+      CommandType     =   8
       CursorOptions   =   0
       CacheSize       =   50
       MaxRecords      =   0
@@ -552,15 +611,15 @@ Begin VB.Form frmCustomAddNew
       Connect         =   ""
       OLEDBString     =   ""
       OLEDBFile       =   ""
-      DataSourceName  =   "EndoSVR"
+      DataSourceName  =   ""
       OtherAttributes =   ""
-      UserName        =   "alantso"
-      Password        =   "5682"
+      UserName        =   ""
+      Password        =   ""
       RecordSource    =   ""
-      Caption         =   "datBasic"
+      Caption         =   "Adodc1"
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "新細明體"
-         Size            =   9.75
+         Size            =   9
          Charset         =   136
          Weight          =   400
          Underline       =   0   'False
@@ -587,7 +646,7 @@ Begin VB.Form frmCustomAddNew
       Height          =   615
       Index           =   1
       Left            =   5280
-      TabIndex        =   16
+      TabIndex        =   14
       Top             =   120
       Width           =   3375
    End
@@ -598,7 +657,95 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Private Sub cmdClose_Click()
+    Call Adodc1.Recordset.Cancel
     Call Form_Unload(0)
+End Sub
+
+Private Sub cmdOK_Click()
+    Adodc1.Recordset.Fields.Item("CID").Value = txtCID.Text
+    Adodc1.Recordset.Fields.Item("CName").Value = txtCName.Text
+    Call Adodc1.Recordset.Update
+    Call Form_Unload(0)
+End Sub
+
+Private Sub cmdUpdate_Click()
+    Call Adodc1.Recordset.Update
+    Call Form_Unload(0)
+End Sub
+
+Private Sub dtpOpenDate_CloseUp()
+    txtOpenDate.Text = Format(dtpOpenDate.Value, "yyyy/MM/dd")
+End Sub
+
+Private Sub Form_Load()
+    Adodc1.ConnectionString = basDataBase.Connection_String
+    Adodc1.CommandType = adCmdText
+    If basVariable.Action = "AddNewCustom" Then
+        Adodc1.RecordSource = "select * from custom;"
+    Else
+        Adodc1.RecordSource = "select * from custom where CID='" & basVariable.Parameter & "';"
+    End If
+    Adodc1.LockType = adLockOptimistic
+    
+    
+    Set txtCType.DataSource = Adodc1
+    Set txtCName.DataSource = Adodc1
+    Set dtpOpenDate.DataSource = Adodc1
+    Set txtBankID.DataSource = Adodc1
+    Set cmbProportion.DataSource = Adodc1
+    Set cmbBonusTarget.DataSource = Adodc1
+    Set txtCID.DataSource = Adodc1
+    Set txtPhone1.DataSource = Adodc1
+    Set txtPhone2.DataSource = Adodc1
+    Set txtPhone3.DataSource = Adodc1
+    Set txtPhone4.DataSource = Adodc1
+    Set txtPhone5.DataSource = Adodc1
+    Set txtPhone6.DataSource = Adodc1
+    Set txtAddress.DataSource = Adodc1
+    Set txtNote.DataSource = Adodc1
+    
+
+    
+    
+    
+    Dim CID As String
+    If basVariable.Action = "AddNewCustom" Then
+        'add new
+        
+        Call Adodc1.Recordset.MoveLast
+        CID = Adodc1.Recordset.Fields.Item("CID").Value
+        
+        Call Adodc1.Recordset.AddNew
+        txtCID.Text = Val(CID) + 1
+
+        cmdOK.Enabled = True
+        cmdUpdate.Enabled = False
+    Else
+        'modify
+        CID = Adodc1.Recordset.Fields.Item("CID").Value
+        
+        txtCType.DataField = "CType"
+        txtCName.DataField = "CName"
+        txtOpenDate.DataField = "OpenDate"
+        txtBankID.DataField = "BankID"
+        cmbProportion.DataField = "Proportion"
+        cmbBonusTarget.DataField = "BonusTarget"
+        txtCID.DataField = "CID"
+        txtPhone1.DataField = "Phone1"
+        txtPhone2.DataField = "Phone2"
+        txtPhone3.DataField = "Phone3"
+        txtPhone4.DataField = "Phone4"
+        txtPhone5.DataField = "Phone5"
+        txtPhone6.DataField = "Phone6"
+        txtAddress.DataField = "Address"
+        txtNote.DataField = "Note"
+        txtCID.Text = Val(CID)
+    
+        cmdOK.Enabled = False
+        cmdUpdate.Enabled = True
+    End If
+    
+
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)

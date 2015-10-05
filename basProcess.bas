@@ -103,13 +103,13 @@ Public Type EVENTMSG
         paramL As Long
         paramH As Long
         time As Long
-        hwnd As Long
+        hWnd As Long
 End Type
 '/**/
 '/*╰参︻穦ノ挡篶*/
 Public Type NOTIFYICONDATA
         cbSize As Long
-        hwnd As Long
+        hWnd As Long
         uID As Long
         uFlags As Long
         uCallbackMessage As Long
@@ -127,10 +127,10 @@ Public Declare Function CloseHandle Lib "kernel32.dll" (ByVal hObject As Long) A
 
 Public Declare Function FindWindowEx Lib "user32" Alias "FindWindowExA" (ByVal hWnd1 As Long, ByVal hWnd2 As Long, ByVal lpsz1 As String, ByVal lpsz2 As String) As Long
 Public Declare Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
-Public Declare Function PostMessage Lib "user32" Alias "PostMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
-Public Declare Function SendMessage Lib "user32" Alias "SendMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
+Public Declare Function PostMessage Lib "user32" Alias "PostMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
+Public Declare Function SendMessage Lib "user32" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
 Public Declare Sub keybd_event Lib "user32" (ByVal bVk As Byte, ByVal bScan As Byte, ByVal dwFlags As Long, ByVal dwExtraInfo As Long)
-Public Declare Function ShowWindow Lib "user32" (ByVal hwnd As Long, ByVal nCmdShow As Long) As Long
+Public Declare Function ShowWindow Lib "user32" (ByVal hWnd As Long, ByVal nCmdShow As Long) As Long
 
 Public Declare Function CallNextHookEx Lib "user32.dll" (ByVal hHook As Long, ByVal ncode As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
 Public Declare Function SetWindowsHookEx Lib "user32.dll" Alias "SetWindowsHookExA" (ByVal idHook As Long, ByVal lpfn As Long, ByVal hmod As Long, ByVal dwThreadId As Long) As Long
@@ -140,21 +140,18 @@ Public Declare Function GetAsyncKeyState Lib "user32.dll" (ByVal vKey As Long) A
 
 Public Declare Function GetDesktopWindow Lib "user32" () As Long
 Public Declare Function EnumChildWindows Lib "user32" (ByVal hWndParent As Long, ByVal lpEnumFunc As Long, ByVal lParam As Long) As Long
-Public Declare Function GetWindowText Lib "user32" Alias "GetWindowTextA" (ByVal hwnd As Long, ByVal lpString As String, ByVal cch As Long) As Long
-Public Declare Function GetWindowTextLength Lib "user32" Alias "GetWindowTextLengthA" (ByVal hwnd As Long) As Long
-Public Declare Function GetClassName Lib "user32.dll" Alias "GetClassNameA" (ByVal hwnd As Long, ByVal lpClassName As String, ByVal nMaxCount As Long) As Long
+Public Declare Function GetWindowText Lib "user32" Alias "GetWindowTextA" (ByVal hWnd As Long, ByVal lpString As String, ByVal cch As Long) As Long
+Public Declare Function GetWindowTextLength Lib "user32" Alias "GetWindowTextLengthA" (ByVal hWnd As Long) As Long
+Public Declare Function GetClassName Lib "user32.dll" Alias "GetClassNameA" (ByVal hWnd As Long, ByVal lpClassName As String, ByVal nMaxCount As Long) As Long
 
 Public Declare Function Shell_NotifyIconA Lib "shell32.dll" (ByVal dwMessage As Long, lpData As NOTIFYICONDATA) As Long
 
-Public Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
-Public Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
-Public Declare Function SetLayeredWindowAttributes Lib "user32" (ByVal hwnd As Long, ByVal crKey As Long, ByVal bAlpha As Byte, ByVal dwFlags As Long) As Long
+Public Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
+Public Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Public Declare Function SetLayeredWindowAttributes Lib "user32" (ByVal hWnd As Long, ByVal crKey As Long, ByVal bAlpha As Byte, ByVal dwFlags As Long) As Long
 '/**************************************************/
 
-Public Declare Function ShellExecute Lib "shell32.dll" Alias _
-      "ShellExecuteA" (ByVal hwnd As Long, ByVal lpszOp As _
-      String, ByVal lpszFile As String, ByVal lpszParams As String, _
-      ByVal lpszDir As String, ByVal FsShowCmd As Long) As Long
+
 
 
 '/********************蛤╰参祘矪瞶闽盽计*********************/
@@ -406,21 +403,21 @@ End Function
 
 
 '/*********************絘羭┮Τ祘*********************/
-Public Function EnumChildProcess(ByVal hwnd As Long, ByVal lParam As Long) As Boolean
+Public Function EnumChildProcess(ByVal hWnd As Long, ByVal lParam As Long) As Boolean
     Dim ProcessName As String
     Dim ProcessClass As String
     
     
-    ProcessName = Space(GetWindowTextLength(hwnd) + 1)
-    Call GetWindowText(hwnd, ProcessName, Len(ProcessName))
+    ProcessName = Space(GetWindowTextLength(hWnd) + 1)
+    Call GetWindowText(hWnd, ProcessName, Len(ProcessName))
     ProcessName = Left(ProcessName, Len(ProcessName) - 1)
     
     
     ProcessClass = Space(256)
-    Call GetClassName(hwnd, ProcessClass, 256)
+    Call GetClassName(hWnd, ProcessClass, 256)
     
     
-    All_Process(All_Process_Flag).Handle = hwnd
+    All_Process(All_Process_Flag).Handle = hWnd
     All_Process(All_Process_Flag).Class = Trim(ProcessClass)
     All_Process(All_Process_Flag).Name = ProcessName
     All_Process_Flag = All_Process_Flag + 1
@@ -434,21 +431,21 @@ End Function
 
 
 '/*********************р﹚祘╰参︻*********************/
-Public Function AddToSystemTray(ByVal hwnd As Long, ByVal vlngCallbackMessage As Long, ByVal vipdIcon As IPictureDisp, ByVal vstrTip As String) As Long
+Public Function AddToSystemTray(ByVal hWnd As Long, ByVal vlngCallbackMessage As Long, ByVal vipdIcon As IPictureDisp, ByVal vstrTip As String) As Long
     Dim nidTemp As NOTIFYICONDATA
   
   
     mlngID = mlngID + 1
   
     nidTemp.cbSize = Len(nidTemp)
-    nidTemp.hwnd = hwnd
+    nidTemp.hWnd = hWnd
     nidTemp.uID = mlngID
     nidTemp.uFlags = NIF_MESSAGE + NIF_ICON + NIF_TIP
     nidTemp.uCallbackMessage = vlngCallbackMessage
     nidTemp.hIcon = CLng(vipdIcon)
     nidTemp.szTip = vstrTip & vbNullChar
     
-    Call mcolNID.Add(hwnd, CStr(mlngID))
+    Call mcolNID.Add(hWnd, CStr(mlngID))
 
     Call Shell_NotifyIconA(NIM_ADD, nidTemp)
   
@@ -464,7 +461,7 @@ Public Sub ModifySystemTrayMessage(ByVal vlngID As Long, ByVal vlngCallbackMessa
   
 
     nidTemp.cbSize = Len(nidTemp)
-    nidTemp.hwnd = mcolNID(CStr(vlngID))
+    nidTemp.hWnd = mcolNID(CStr(vlngID))
     nidTemp.uID = vlngID
     nidTemp.uFlags = NIF_MESSAGE
     nidTemp.uCallbackMessage = vlngCallbackMessage
@@ -483,7 +480,7 @@ Public Sub ModifySystemTrayIcon(ByVal vlngID As Long, ByVal vipdIcon As IPicture
   
 
     nidTemp.cbSize = Len(nidTemp)
-    nidTemp.hwnd = mcolNID(CStr(vlngID))
+    nidTemp.hWnd = mcolNID(CStr(vlngID))
     nidTemp.uID = vlngID
     nidTemp.uFlags = NIF_ICON
     nidTemp.uCallbackMessage = 0
@@ -503,7 +500,7 @@ Public Sub ModifySystemTrayTip(ByVal vlngID As Long, ByVal vstrTip As String)
   
 
     nidTemp.cbSize = Len(nidTemp)
-    nidTemp.hwnd = mcolNID(CStr(vlngID))
+    nidTemp.hWnd = mcolNID(CStr(vlngID))
     nidTemp.uID = vlngID
     nidTemp.uFlags = NIF_TIP
     nidTemp.uCallbackMessage = 0
@@ -523,7 +520,7 @@ Public Sub DeleteFromSystemTray(ByVal vlngID As Long)
   
 
     nidTemp.cbSize = Len(nidTemp)
-    nidTemp.hwnd = mcolNID(CStr(vlngID))
+    nidTemp.hWnd = mcolNID(CStr(vlngID))
     nidTemp.uID = vlngID
     nidTemp.uFlags = NIF_MESSAGE + NIF_ICON + NIF_TIP
 

@@ -409,8 +409,10 @@ End Sub
 Private Sub Form_Load()
     lblVersion.Caption = "Version " & GetVersion()
 
-    basDataBase.Connection_String = "Provider=OleSQLite.SQLiteSource.1;Data Source=main.db"
-    Call basDataBase.Connect2DataBase(basDataBase.Connection_String, basDataBase.Connection)
+    basDataBase.Connection_String = "Driver={Microsoft Access Driver (*.mdb)};Dbq=" & IIf(Right(App.Path, 1) = "\", App.Path, App.Path & "\") & "main.mdb;"
+    'basDataBase.Connection_String = "Driver=SQLite3 ODBC Driver;Database=main.db;"
+    'Debug.Print basDataBase.Connect2DataBase(basDataBase.Connection_String, basDataBase.Connection)
+    
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)

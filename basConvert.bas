@@ -84,6 +84,113 @@ End Function
 '/***********************小華修改的(2009/04/09)***************************/
 
 
+
+
+'/*   將TIF或MDI檔轉成JPG格式的函式，傳回值為總共轉了幾張JPG檔         */
+'/*   Example Input TIF_MDI_TO_BMP("C:","doc99.tif","C:","doc*.jpg")   */
+Public Function TIF_MDI_TO_BMP(ByVal Source_FilePath As String, ByVal Source_FileName As String, ByVal Target_FilePath As String, ByVal Target_FileName As String) As Long
+    On Error GoTo errout:
+
+
+    Dim miDoc As New MODI.Document
+    Dim miImg As MODI.Image
+    
+    
+    '/*確保檔案路徑是正確的*/
+    If Right(Source_FilePath, 1) <> "\" Then
+        Source_FilePath = Source_FilePath & "\"
+    End If
+    If Right(Target_FilePath, 1) <> "\" Then
+        Target_FilePath = Target_FilePath & "\"
+    End If
+    '/**/
+    
+
+    Call miDoc.Create(Source_FilePath & Source_FileName)
+    
+    
+    Dim i As Long
+    Dim Temp_FileName As String
+    
+    For i = 0 To miDoc.Images.Count - 1
+        Set miImg = miDoc.Images(i)
+   
+        Temp_FileName = Replace(Target_FileName, "*", i)
+        Call SavePicture(miImg.Picture, Target_FilePath & Temp_FileName)
+    Next
+    
+    
+    Set miImg = Nothing
+    Call miDoc.Close(False)
+    Set miDoc = Nothing
+    
+    
+    TIF_MDI_TO_BMP = i
+    
+    If False Then
+errout:
+        Call PrintLog("TIF_MDI_TO_BMP-Not Import A Current Image File!!")
+        TIF_MDI_TO_BMP = -1
+    End If
+End Function
+'/***********************小華修改的(2009/04/29)***************************/
+
+
+
+
+'/*   將TIF或MDI檔轉成JPG格式的函式，傳回值為總共轉了幾張JPG檔               */
+'/*   Example Input TIF_MDI_TO_BMP_EX("C:","doc99.tif","C:","doc*.jpg",90)   */
+Public Function TIF_MDI_TO_BMP_EX(ByVal Source_FilePath As String, ByVal Source_FileName As String, ByVal Target_FilePath As String, ByVal Target_FileName As String, ByVal Rotate As Integer) As Long
+    On Error GoTo errout:
+
+
+    Dim miDoc As New MODI.Document
+    Dim miImg As MODI.Image
+
+    
+    '/*確保檔案路徑是正確的*/
+    If Right(Source_FilePath, 1) <> "\" Then
+        Source_FilePath = Source_FilePath & "\"
+    End If
+    If Right(Target_FilePath, 1) <> "\" Then
+        Target_FilePath = Target_FilePath & "\"
+    End If
+    '/**/
+    
+
+    Call miDoc.Create(Source_FilePath & Source_FileName)
+    
+    
+    Dim i As Long
+    Dim Temp_FileName As String
+    
+    For i = 0 To miDoc.Images.Count - 1
+        Set miImg = miDoc.Images(i)
+        Call miImg.Rotate(Rotate)
+   
+        Temp_FileName = Replace(Target_FileName, "*", i)
+        Call SavePicture(miImg.Picture, Target_FilePath & Temp_FileName)
+    Next
+    
+    
+    Set miImg = Nothing
+    Call miDoc.Close(False)
+    Set miDoc = Nothing
+    
+    
+    TIF_MDI_TO_BMP_EX = i
+    
+    If False Then
+errout:
+        Call PrintLog("TIF_MDI_TO_BMP_EX-Not Import A Current Image File!!")
+        TIF_MDI_TO_BMP_EX = -1
+    End If
+End Function
+'/***********************小華修改的(2009/04/30)***************************/
+
+
+
+
 '/*   將BMP檔轉成JPG格式的函式，傳回值為轉好的JPG檔的路徑              */
 '/*   Example Input BMP_TO_JPG("C:","doc99.bmp","C:","doc99.jpg")       */
 Public Function BMP_TO_JPG(ByVal Source_FilePath As String, ByVal Source_FileName As String, ByVal Target_FilePath As String, ByVal Target_FileName As String) As String

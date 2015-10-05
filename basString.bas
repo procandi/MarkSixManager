@@ -263,3 +263,106 @@ Public Function PointerCodeToString(ByVal Pointer As Long) As String
 End Function
 '/*20100527*/
 
+
+'/**************************找出字串Source中，字元為數字的字元分類出來回傳所有的數字(例如Str_Source輸入"挖哈哈123不等於2對嗎"，會傳回"123,2")***********************************/
+Public Function StrGetNum(ByRef Str_Source As String) As String
+    Dim i As Integer, flag As Integer
+    Dim Num_Target As String
+    
+    flag = False
+    Num_Target = ""
+    For i = 1 To Len(Str_Source)
+        If Asc(Mid(Str_Source, i, 1)) >= 48 And Asc(Mid(Str_Source, i, 1)) <= 57 Then
+            flag = True
+            Num_Target = Num_Target & Mid(Str_Source, i, 1)
+        ElseIf flag = True Then
+            flag = False
+            Num_Target = Num_Target & ","
+        End If
+    Next
+    
+    If Right(Num_Target, 1) = "," Then
+        StrGetNum = Left(Num_Target, Len(Num_Target) - 1)
+    Else
+        StrGetNum = Num_Target
+    End If
+End Function
+'/**************************小華修改的(2010/07/28)***********************************/
+
+
+'/**************************用於將字串移除的函式，Remove_Count為要移除幾位？負數代表要從Full_String的後面開始移除Remove_Count個找到的Remove_String字串，正數則從前面。(例：三個值由左至右分別是-2, "/h/aha //123,123// ab/c/", "//"，則傳回值會為"/h/aha 123,123 ab/c/")***********************************/
+Public Function Str_Remove(ByVal Remove_Count As Long, ByVal Full_String As String, ByVal Remove_String As String) As String
+    Dim i As Long
+    Dim FullLen As Long
+    Dim RemoveLen As Long
+    
+    FullLen = Len(Full_String)
+    RemoveLen = Len(Remove_String)
+
+    If Remove_Count > 0 Then
+        For i = 1 To FullLen
+            If Mid(Full_String, i, RemoveLen) = Remove_String Then
+                Full_String = Left(Full_String, i - 1) & Right(Full_String, FullLen - i)
+                i = i - 1
+                FullLen = FullLen - RemoveLen
+                Remove_Count = Remove_Count - 1
+                If Remove_Count = 0 Then
+                    Exit For
+                End If
+            End If
+        Next
+    ElseIf Remove_Count < 0 Then
+        For i = FullLen - RemoveLen + 1 To 1 Step -1
+            If Mid(Full_String, i, RemoveLen) = Remove_String Then
+                Full_String = Left(Full_String, i - 1) & Right(Full_String, FullLen - i)
+                i = i + 1
+                FullLen = FullLen - RemoveLen
+                Remove_Count = Remove_Count + 1
+                If Remove_Count = 0 Then
+                    Exit For
+                End If
+            End If
+        Next
+    End If
+    
+    Str_Remove = Full_String
+End Function
+'/**************************小華修改的(2010/09/08)***********************************/
+
+
+'/**************************用於將字串移除的函式，Remove_Count為要移除幾位？負數代表要從Full_String的後面開始移除Remove_Count個找到的Remove_Char字元，正數則從前面。(例：三個值由左至右分別是-2, "/h/aha //123,123// ab/c/", "/"，則傳回值會為"/h/aha //123,123// abc")***********************************/
+Public Function Ch_Remove(ByVal Remove_Count As Long, ByVal Full_String As String, ByVal Remove_Char As String) As String
+    Dim i As Long
+    Dim FullLen As Long
+    
+    FullLen = Len(Full_String)
+
+    If Remove_Count > 0 Then
+        For i = 1 To FullLen
+            If Mid(Full_String, i, 1) = Remove_Char Then
+                Full_String = Left(Full_String, i - 1) & Right(Full_String, FullLen - i)
+                i = i - 1
+                FullLen = FullLen - 1
+                Remove_Count = Remove_Count - 1
+                If Remove_Count = 0 Then
+                    Exit For
+                End If
+            End If
+        Next
+    ElseIf Remove_Count < 0 Then
+        For i = FullLen To 1 Step -1
+            If Mid(Full_String, i, 1) = Remove_Char Then
+                Full_String = Left(Full_String, i - 1) & Right(Full_String, FullLen - i)
+                i = i + 1
+                FullLen = FullLen - 1
+                Remove_Count = Remove_Count + 1
+                If Remove_Count = 0 Then
+                    Exit For
+                End If
+            End If
+        Next
+    End If
+    
+    Ch_Remove = Full_String
+End Function
+'/**************************小華修改的(2010/09/08)***********************************/
