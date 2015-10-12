@@ -6,8 +6,8 @@ Object = "{CDE57A40-8B86-11D0-B3C6-00A0C90AEA82}#1.0#0"; "MSDATGRD.OCX"
 Begin VB.Form frmProduct 
    Caption         =   "產品資料表"
    ClientHeight    =   10515
-   ClientLeft      =   1830
-   ClientTop       =   1785
+   ClientLeft      =   7620
+   ClientTop       =   3285
    ClientWidth     =   14940
    Icon            =   "frmProduct.frx":0000
    LinkTopic       =   "Form2"
@@ -89,7 +89,7 @@ Begin VB.Form frmProduct
          Top             =   600
          Width           =   1215
       End
-      Begin VB.CommandButton cmdAll 
+      Begin VB.CommandButton cmdRefresh 
          BackColor       =   &H00FFC0C0&
          Caption         =   "更新清單"
          BeginProperty Font 
@@ -126,7 +126,7 @@ Begin VB.Form frmProduct
          Top             =   600
          Width           =   1650
       End
-      Begin MSComCtl2.DTPicker dtpDateSort 
+      Begin MSComCtl2.DTPicker dtpDate 
          Height          =   360
          Left            =   4200
          TabIndex        =   5
@@ -145,7 +145,7 @@ Begin VB.Form frmProduct
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   105185283
+         Format          =   47382531
          CurrentDate     =   37058
       End
       Begin VB.Label lblEntry 
@@ -330,15 +330,50 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-Private Sub dtpDateSort_CloseUp()
-    txtDate.Text = Format(dtpDateSort.Value, "yyyy/MM/dd")
+Private Sub cmdRefresh_Click()
+    'If condition = "" Then
+    '    Adodc1.RecordSource = "select * from custom;"
+    'Else
+    '    Adodc1.RecordSource = "select * from custom where " & condition & ";"
+    'End If
+    'Adodc1.Refresh
+    RefreshDataGridHeader
+End Sub
+
+Private Sub Form_Paint()
+    Call cmdRefresh_Click
+End Sub
+
+Private Sub DataGrid1_RowColChange(LastRow As Variant, ByVal LastCol As Integer)
+    If Adodc1.Recordset.RecordCount > 0 Then
+        If DataGrid1.SelBookmarks.Count <> 0 Then Call DataGrid1.SelBookmarks.Remove(0)
+        Call DataGrid1.SelBookmarks.Add(DataGrid1.Bookmark)
+    End If
+End Sub
+
+Private Sub dtpDate_CloseUp()
+    txtDate.Text = Format(dtpDate.Value, "yyyy/MM/dd")
 End Sub
 
 Private Sub cmdClose_Click()
     Call Form_Unload(0)
 End Sub
 
+Private Sub Form_Load()
+    Adodc1.ConnectionString = basDataBase.Connection_String
+    Adodc1.CommandType = adCmdText
+    Adodc1.RecordSource = "select * from product;"
+    Set DataGrid1.DataSource = Adodc1
+    RefreshDataGridHeader
+End Sub
+
 Private Sub Form_Unload(Cancel As Integer)
     frmProve.Show
     Unload Me
 End Sub
+
+Sub RefreshDataGridHeader()
+    DataGrid1.Columns("PID").Caption = "產品編號"
+    DataGrid1.Columns("PName").Caption = "產品名稱"
+End Sub
+

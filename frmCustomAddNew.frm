@@ -7,8 +7,8 @@ Begin VB.Form frmCustomAddNew
    BorderStyle     =   1  '單線固定
    Caption         =   "客戶資料明細"
    ClientHeight    =   6270
-   ClientLeft      =   2160
-   ClientTop       =   3660
+   ClientLeft      =   10800
+   ClientTop       =   4425
    ClientWidth     =   8775
    Icon            =   "frmCustomAddNew.frx":0000
    LinkTopic       =   "Form1"
@@ -357,7 +357,7 @@ Begin VB.Form frmCustomAddNew
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   104988675
+         Format          =   47382531
          CurrentDate     =   42267
       End
       Begin VB.Label lblEntry 
@@ -683,7 +683,7 @@ Private Sub Form_Load()
     If basVariable.Action = "AddNewCustom" Then
         Adodc1.RecordSource = "select * from custom;"
     Else
-        Adodc1.RecordSource = "select * from custom where CID='" & basVariable.Parameter & "';"
+        Adodc1.RecordSource = "select * from custom where CID='" & basVariable.SelectCID & "';"
     End If
     Adodc1.LockType = adLockOptimistic
     

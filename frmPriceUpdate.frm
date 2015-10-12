@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{0BA686C6-F7D3-101A-993E-0000C0EF6F5E}#1.0#0"; "threed32.ocx"
+Object = "{0BA686C6-F7D3-101A-993E-0000C0EF6F5E}#1.0#0"; "THREED32.OCX"
 Object = "{67397AA1-7FB1-11D0-B148-00A0C922E820}#6.0#0"; "MSADODC.OCX"
 Begin VB.Form frmPriceUpdate 
    BackColor       =   &H00808080&
@@ -266,7 +266,7 @@ Begin VB.Form frmPriceUpdate
          BackColor       =   &H80000015&
          BackStyle       =   0  '透明
          BorderStyle     =   1  '單線固定
-         Caption         =   "中獎價格"
+         Caption         =   "中獎金額"
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -281,7 +281,7 @@ Begin VB.Form frmPriceUpdate
          Index           =   0
          Left            =   360
          TabIndex        =   10
-         Top             =   1080
+         Top             =   1560
          Width           =   1215
       End
       Begin VB.Label lblName 
@@ -327,7 +327,7 @@ Begin VB.Form frmPriceUpdate
          Index           =   1
          Left            =   360
          TabIndex        =   4
-         Top             =   1560
+         Top             =   1080
          Width           =   1215
       End
       Begin VB.Label lblBasic 

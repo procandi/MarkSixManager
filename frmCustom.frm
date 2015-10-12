@@ -6,8 +6,8 @@ Object = "{CDE57A40-8B86-11D0-B3C6-00A0C90AEA82}#1.0#0"; "MSDATGRD.OCX"
 Begin VB.Form frmCustom 
    Caption         =   "客戶資料表"
    ClientHeight    =   10665
-   ClientLeft      =   1830
-   ClientTop       =   1785
+   ClientLeft      =   8235
+   ClientTop       =   2880
    ClientWidth     =   14985
    Icon            =   "frmCustom.frx":0000
    LinkTopic       =   "Form2"
@@ -360,7 +360,7 @@ Begin VB.Form frmCustom
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   104988675
+         Format          =   47382531
          CurrentDate     =   37058
       End
       Begin VB.Label lblEntry 
@@ -693,6 +693,7 @@ Private Sub cmdAppend_Click()
 End Sub
 
 Private Sub cmdBought_Click()
+    basVariable.Action = "BoughtDetail"
     frmBought.Show
     Me.Hide
 End Sub
@@ -721,11 +722,18 @@ Private Sub cmdModify_Click()
 End Sub
 
 Private Sub cmdPrice_Click()
+    basVariable.Action = "PriceDetail"
     frmPrice.Show
     Me.Hide
 End Sub
 
 Private Sub cmdRefresh_Click()
+    cmdModify.Enabled = False
+    cmdDelete.Enabled = False
+    cmdBought.Enabled = False
+    cmdPrice.Enabled = False
+    
+
     Dim condition As String
     
     condition = ""
@@ -778,19 +786,21 @@ End Sub
 Private Sub DataGrid1_RowColChange(LastRow As Variant, ByVal LastCol As Integer)
     cmdModify.Enabled = True
     cmdDelete.Enabled = True
-    
-    basVariable.Parameter = DataGrid1.Columns("客戶編號")
-End Sub
-
-Private Sub dtpOpenDate_CloseUp()
-    txtOpenDate.Text = Format(dtpDateSort.Value, "yyyy/MM/dd")
-End Sub
-
-Private Sub Form_Load()
     cmdBought.Enabled = True
     cmdPrice.Enabled = True
     
-    
+    If Adodc1.Recordset.RecordCount > 0 Then
+        basVariable.SelectCID = DataGrid1.Columns("客戶編號")
+        If DataGrid1.SelBookmarks.Count <> 0 Then Call DataGrid1.SelBookmarks.Remove(0)
+        Call DataGrid1.SelBookmarks.Add(DataGrid1.Bookmark)
+    End If
+End Sub
+
+Private Sub dtpOpenDate_CloseUp()
+    txtOpenDate.Text = Format(dtpOpenDate.Value, "yyyy/MM/dd")
+End Sub
+
+Private Sub Form_Load()
     'Dim sql As String
     'Dim rec As New adoDB.Recordset
     
@@ -807,6 +817,7 @@ Private Sub Form_Load()
     Adodc1.CommandType = adCmdText
     Adodc1.RecordSource = "select * from custom;"
     Set DataGrid1.DataSource = Adodc1
+    
 End Sub
 
 Private Sub cmdClose_Click()
@@ -821,7 +832,6 @@ Private Sub Form_Unload(Cancel As Integer)
     frmProve.Show
     Unload Me
 End Sub
-
 
 Sub RefreshDataGridHeader()
     DataGrid1.Columns("CID").Caption = "客戶編號"

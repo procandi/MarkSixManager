@@ -396,12 +396,13 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Private Sub cmdCustom_Click()
+    basVariable.Action = "CustomDetail"
     frmCustom.Show
     Me.Hide
 End Sub
 
 Private Sub cmdProduct_Click()
-    
+    basVariable.Action = "ProductDetail"
     frmProduct.Show
     Me.Hide
 End Sub

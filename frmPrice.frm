@@ -5,14 +5,13 @@ Object = "{CDE57A40-8B86-11D0-B3C6-00A0C90AEA82}#1.0#0"; "MSDATGRD.OCX"
 Begin VB.Form frmPrice 
    Caption         =   "客戶產品價格表"
    ClientHeight    =   10560
-   ClientLeft      =   120
-   ClientTop       =   465
+   ClientLeft      =   7425
+   ClientTop       =   3285
    ClientWidth     =   14895
    Icon            =   "frmPrice.frx":0000
    LinkTopic       =   "Form2"
    ScaleHeight     =   10560
    ScaleWidth      =   14895
-   StartUpPosition =   3  '系統預設值
    Begin Threed.SSPanel pnlFilter 
       Height          =   1095
       Left            =   0
@@ -83,7 +82,7 @@ Begin VB.Form frmPrice
          Top             =   600
          Width           =   1935
       End
-      Begin VB.CommandButton cmdAll 
+      Begin VB.CommandButton cmdRefresh 
          BackColor       =   &H00FFC0C0&
          Caption         =   "更新清單"
          BeginProperty Font 
@@ -169,7 +168,7 @@ Begin VB.Form frmPrice
             Strikethrough   =   0   'False
          EndProperty
          Height          =   375
-         Left            =   5520
+         Left            =   5640
          Style           =   1  '圖片外觀
          TabIndex        =   1
          Top             =   120
@@ -420,6 +419,14 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Private Sub cmdRefresh_Click()
+    RefreshDataGridHeader
+End Sub
+
+Private Sub Form_Paint()
+    Call cmdRefresh_Click
+End Sub
+
 Private Sub cmdModify_Click()
     frmPriceUpdate.Show
     Me.Hide
@@ -430,8 +437,32 @@ Private Sub cmdClose_Click()
     Call Form_Unload(0)
 End Sub
 
+Private Sub DataGrid1_RowColChange(LastRow As Variant, ByVal LastCol As Integer)
+    If Adodc1.Recordset.RecordCount > 0 Then
+        If DataGrid1.SelBookmarks.Count <> 0 Then Call DataGrid1.SelBookmarks.Remove(0)
+        Call DataGrid1.SelBookmarks.Add(DataGrid1.Bookmark)
+    End If
+End Sub
+
+Private Sub Form_Load()
+    Adodc1.ConnectionString = basDataBase.Connection_String
+    Adodc1.CommandType = adCmdText
+    Adodc1.RecordSource = "select * from price where CID='" & basVariable.SelectCID & "';"
+    Set DataGrid1.DataSource = Adodc1
+    RefreshDataGridHeader
+End Sub
+
 Private Sub Form_Unload(Cancel As Integer)
     frmCustom.Show
     Unload Me
 End Sub
 
+Sub RefreshDataGridHeader()
+    DataGrid1.Columns("SwiftCode").Caption = "交易流水號"
+    DataGrid1.Columns("CID").Caption = "客戶編號"
+    DataGrid1.Columns("PID").Caption = "產品編號"
+    DataGrid1.Columns("CurrentDate").Caption = "交易日期"
+    DataGrid1.Columns("CurrentPrice").Caption = "產品價格"
+    DataGrid1.Columns("WinningPrice").Caption = "中獎金額"
+    DataGrid1.Columns("Upset").Caption = "價格底線"
+End Sub
