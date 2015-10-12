@@ -471,9 +471,12 @@ End Sub
 'get something system needed when user click datagrid row
 Private Sub DataGrid1_RowColChange(LastRow As Variant, ByVal LastCol As Integer)
     If Adodc1.Recordset.RecordCount > 0 Then
-        If DataGrid1.Columns("交易流水號") <> "" Then cmdModifyPrice.Enabled = True
-    
-        basVariable.SelectPID = DataGrid1.Columns("產品編號")
+        If DataGrid1.Columns("交易流水號") <> "" Then
+            cmdModifyPrice.Enabled = True
+            basVariable.CurrentSwiftCode = DataGrid1.Columns("交易流水號")
+            basVariable.SelectPID = DataGrid1.Columns("產品編號")
+        End If
+        
         If DataGrid1.SelBookmarks.Count <> 0 Then Call DataGrid1.SelBookmarks.Remove(0)
         Call DataGrid1.SelBookmarks.Add(DataGrid1.Bookmark)
     End If

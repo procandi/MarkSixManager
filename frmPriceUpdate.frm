@@ -136,7 +136,6 @@ Begin VB.Form frmPriceUpdate
       Begin VB.CommandButton cmdUpdate 
          BackColor       =   &H00FFC0C0&
          Caption         =   "&U 確定修改"
-         Enabled         =   0   'False
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -378,6 +377,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Dim CurrentSwiftCode As Integer
 Dim selectFields As String
 
 Private Sub cmdClose_Click()
@@ -394,7 +394,7 @@ Private Sub Form_Load()
     
     Adodc1.ConnectionString = basDataBase.Connection_String
     Adodc1.CommandType = adCmdText
-    Adodc1.RecordSource = "select * from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "';"
+    Adodc1.RecordSource = "select * from price,product where price.PID=product.PID and CID='" & basVariable.SelectPID & "';"
     Adodc1.LockType = adLockOptimistic
     
     
@@ -411,7 +411,8 @@ Private Sub Form_Load()
     txtWinningPrice.DataField = "WinningPrice"
     txtUpset.DataField = "Upset"
     
-
+    ''''5a1sfae
+    If CurrentSwiftCode Then Adodc1.Recordset.RecordCount
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)

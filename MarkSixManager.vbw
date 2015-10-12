@@ -1,5 +1,5 @@
 frmCustomAddNew = 130, 130, 788, 661, , 200, 200, 1496, 862, C
-frmPriceUpdate = 100, 100, 1353, 762, , 125, 125, 1421, 787, C
+frmPriceUpdate = 215, 31, 1468, 693, , 125, 125, 1421, 787, C
 frmProve = 16, 293, 1312, 893, C, 100, 100, 836, 762, C
 frmConfirm = 175, 175, 1485, 837, C, 250, 250, 1546, 912, C
 basDataBase = -145, 161, 1134, 742, C
@@ -11,7 +11,7 @@ basObject = 26, 26, 466, 620, C
 basProcess = 125, 125, 1404, 771, C
 basSort = 175, 175, 1454, 821, C
 basString = 104, 104, 544, 698, C
-basVariable = 130, 130, 570, 724, C
+basVariable = 130, 130, 570, 724, 
 basWindowsAPI = 182, 182, 622, 776, C
 basGraphics = 286, 286, 726, 880, C
 basDecoding = 208, 208, 648, 802, C
