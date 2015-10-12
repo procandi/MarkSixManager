@@ -374,6 +374,7 @@ Private Sub cmdRefresh_Click()
     RefreshDataGridHeader
 End Sub
 
+'do refresh database and datagrid when form paint
 Private Sub Form_Paint()
     Call cmdRefresh_Click
 End Sub
@@ -382,6 +383,7 @@ Private Sub cmdClose_Click()
     Call Form_Unload(0)
 End Sub
 
+'get something system needed when user click datagrid row
 Private Sub DataGrid1_RowColChange(LastRow As Variant, ByVal LastCol As Integer)
     If Adodc1.Recordset.RecordCount > 0 Then
         If DataGrid1.SelBookmarks.Count <> 0 Then Call DataGrid1.SelBookmarks.Remove(0)
@@ -389,6 +391,7 @@ Private Sub DataGrid1_RowColChange(LastRow As Variant, ByVal LastCol As Integer)
     End If
 End Sub
 
+'import database and export to datagrid when form load
 Private Sub Form_Load()
     Adodc1.ConnectionString = basDataBase.Connection_String
     Adodc1.CommandType = adCmdText
@@ -401,6 +404,7 @@ Private Sub Form_Unload(Cancel As Integer)
     Unload Me
 End Sub
 
+'a function to batch rename datagrid header
 Sub RefreshDataGridHeader()
     DataGrid1.Columns("CID").Caption = "客戶編號"
     DataGrid1.Columns("PID").Caption = "產品編號"

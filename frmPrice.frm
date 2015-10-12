@@ -421,13 +421,14 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Dim selectFields As String
 
-
+'clear all object on form
 Private Sub cmdClear_Click()
     txtPName.Text = ""
     txtCurrentPrice.Text = ""
     txtWinningPrice.Text = ""
 End Sub
 
+'add function to refresh database and datagrid
 Private Sub cmdRefresh_Click()
     Dim condition As String
     
@@ -452,6 +453,7 @@ Private Sub cmdRefresh_Click()
     RefreshDataGridHeader
 End Sub
 
+'do refresh database and datagrid when form paint
 Private Sub Form_Paint()
     Call cmdRefresh_Click
 End Sub
@@ -461,11 +463,11 @@ Private Sub cmdModify_Click()
     Me.Hide
 End Sub
 
-
 Private Sub cmdClose_Click()
     Call Form_Unload(0)
 End Sub
 
+'get something system needed when user click datagrid row
 Private Sub DataGrid1_RowColChange(LastRow As Variant, ByVal LastCol As Integer)
     If Adodc1.Recordset.RecordCount > 0 Then
         If DataGrid1.SelBookmarks.Count <> 0 Then Call DataGrid1.SelBookmarks.Remove(0)
@@ -473,6 +475,7 @@ Private Sub DataGrid1_RowColChange(LastRow As Variant, ByVal LastCol As Integer)
     End If
 End Sub
 
+'import database and export to datagrid when form load
 Private Sub Form_Load()
     lblName(0).Caption = basVariable.SelectCName
     selectFields = "SwiftCode,CID,price.PID,PName,CurrentDate,CurrentPrice,WinningPrice,Upset"
@@ -489,6 +492,7 @@ Private Sub Form_Unload(Cancel As Integer)
     Unload Me
 End Sub
 
+'a function to batch rename datagrid header
 Sub RefreshDataGridHeader()
     DataGrid1.Columns("SwiftCode").Caption = "交易流水號"
     DataGrid1.Columns("CID").Caption = "客戶編號"

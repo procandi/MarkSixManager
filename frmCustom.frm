@@ -360,7 +360,7 @@ Begin VB.Form frmCustom
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   93650947
+         Format          =   92930051
          CurrentDate     =   37058
       End
       Begin VB.Label lblEntry 
@@ -783,6 +783,7 @@ Private Sub cmdRefresh_Click()
     RefreshDataGridHeader
 End Sub
 
+'get something system needed when user click datagrid row
 Private Sub DataGrid1_RowColChange(LastRow As Variant, ByVal LastCol As Integer)
     cmdModify.Enabled = True
     cmdDelete.Enabled = True
@@ -801,30 +802,19 @@ Private Sub dtpOpenDate_CloseUp()
     txtOpenDate.Text = Format(dtpOpenDate.Value, "yyyy/MM/dd")
 End Sub
 
+'import database and export to datagrid when form load
 Private Sub Form_Load()
-    'Dim sql As String
-    'Dim rec As New adoDB.Recordset
-    
-    'sql = "select * from custom"
-    'Debug.Print basDataBase.OpenRecordset(sql, basDataBase.Connection, rec)
-    
-    'Set DataGrid1.DataSource = rec
-    
-    'select * from custom,[order] where custom.CID=[order].CID
-    'select * from custom inner join [order] on custom.CID=[order].CID
- 
-    
     Adodc1.ConnectionString = basDataBase.Connection_String
     Adodc1.CommandType = adCmdText
     Adodc1.RecordSource = "select * from custom;"
     Set DataGrid1.DataSource = Adodc1
-    
 End Sub
 
 Private Sub cmdClose_Click()
     Call Form_Unload(0)
 End Sub
 
+'do refresh database and datagrid when form paint
 Private Sub Form_Paint()
     Call cmdRefresh_Click
 End Sub
@@ -834,6 +824,7 @@ Private Sub Form_Unload(Cancel As Integer)
     Unload Me
 End Sub
 
+'a function to batch rename datagrid header
 Sub RefreshDataGridHeader()
     DataGrid1.Columns("CID").Caption = "«È¤á½s¸¹"
     DataGrid1.Columns("CName").Caption = "©m¦W"
