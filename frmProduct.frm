@@ -34,7 +34,7 @@ Begin VB.Form frmProduct
       EndProperty
       BorderWidth     =   1
       Outline         =   -1  'True
-      Begin VB.TextBox txtPID 
+      Begin VB.TextBox txtPName 
          BeginProperty Font 
             Name            =   "·s²Ó©úÅé"
             Size            =   12
@@ -273,12 +273,22 @@ Private Sub cmdClear_Click()
     txtPID.Text = ""
 End Sub
 
+'add function to refresh database and datagrid
 Private Sub cmdRefresh_Click()
-    'If condition = "" Then
-    '    Adodc1.RecordSource = "select * from custom;"
-    'Else
-    '    Adodc1.RecordSource = "select * from custom where " & condition & ";"
-    'End If
+    Dim condition As String
+    
+    condition = ""
+
+    If txtPName.Text <> "" Then
+        condition = condition & IIf(condition = "", "", "and ") & "PName='" & txtPName.Text & "' "
+    End If
+    
+    If condition = "" Then
+        Adodc1.RecordSource = "select * from product;"
+    Else
+        Adodc1.RecordSource = "select * from product where " & condition & ";"
+    End If
+    
     Adodc1.Refresh
     RefreshDataGridHeader
 End Sub
@@ -306,6 +316,9 @@ End Sub
 
 'import database and export to datagrid when form load
 Private Sub Form_Load()
+    DataGrid1.AllowAddNew = True
+    DataGrid1.AllowUpdate = True
+
     Adodc1.ConnectionString = basDataBase.Connection_String
     Adodc1.CommandType = adCmdText
     Adodc1.RecordSource = "select * from product;"

@@ -421,7 +421,6 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Dim selectFields As String
 
-'clear all object on form
 Private Sub cmdClear_Click()
     txtPName.Text = ""
     txtCurrentPrice.Text = ""
@@ -477,6 +476,9 @@ End Sub
 
 'import database and export to datagrid when form load
 Private Sub Form_Load()
+    DataGrid1.AllowAddNew = True
+    DataGrid1.AllowUpdate = True
+    
     lblName(0).Caption = basVariable.SelectCName
     selectFields = "SwiftCode,CID,price.PID,PName,CurrentDate,CurrentPrice,WinningPrice,Upset"
 

@@ -34,6 +34,22 @@ Begin VB.Form frmOrder
       EndProperty
       BorderWidth     =   1
       Outline         =   -1  'True
+      Begin VB.TextBox txtWinningCount 
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Left            =   7320
+         TabIndex        =   11
+         Top             =   600
+         Width           =   1935
+      End
       Begin VB.TextBox txtPName 
          BeginProperty Font 
             Name            =   "新細明體"
@@ -46,7 +62,7 @@ Begin VB.Form frmOrder
          EndProperty
          Height          =   360
          Left            =   1200
-         TabIndex        =   8
+         TabIndex        =   7
          Top             =   600
          Width           =   1815
       End
@@ -62,7 +78,7 @@ Begin VB.Form frmOrder
          EndProperty
          Height          =   360
          Left            =   4200
-         TabIndex        =   7
+         TabIndex        =   6
          Top             =   600
          Width           =   1935
       End
@@ -81,7 +97,7 @@ Begin VB.Form frmOrder
          Height          =   375
          Left            =   13560
          Style           =   1  '圖片外觀
-         TabIndex        =   4
+         TabIndex        =   3
          Top             =   600
          Width           =   1335
       End
@@ -100,7 +116,7 @@ Begin VB.Form frmOrder
          Height          =   375
          Left            =   12240
          Style           =   1  '圖片外觀
-         TabIndex        =   3
+         TabIndex        =   2
          Top             =   600
          Width           =   1215
       End
@@ -119,13 +135,14 @@ Begin VB.Form frmOrder
          Height          =   375
          Left            =   12960
          Style           =   1  '圖片外觀
-         TabIndex        =   2
+         TabIndex        =   1
          Top             =   120
          Width           =   1935
       End
-      Begin VB.CommandButton cmdOrderMore 
-         BackColor       =   &H00FFC0C0&
-         Caption         =   "加購"
+      Begin VB.Label lblEntry 
+         Alignment       =   1  '靠右對齊
+         BorderStyle     =   1  '單線固定
+         Caption         =   "中獎數量"
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -135,12 +152,12 @@ Begin VB.Form frmOrder
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Height          =   375
+         Height          =   360
+         Index           =   1
          Left            =   6240
-         Style           =   1  '圖片外觀
-         TabIndex        =   1
+         TabIndex        =   12
          Top             =   600
-         Width           =   2295
+         Width           =   1095
       End
       Begin VB.Label lblName 
          Alignment       =   2  '置中對齊
@@ -161,14 +178,14 @@ Begin VB.Form frmOrder
          Height          =   375
          Index           =   0
          Left            =   120
-         TabIndex        =   9
+         TabIndex        =   8
          Top             =   120
          Width           =   5295
       End
       Begin VB.Label lblEntry 
          Alignment       =   1  '靠右對齊
          BorderStyle     =   1  '單線固定
-         Caption         =   "數量"
+         Caption         =   "購買數量"
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -181,7 +198,7 @@ Begin VB.Form frmOrder
          Height          =   360
          Index           =   23
          Left            =   3120
-         TabIndex        =   6
+         TabIndex        =   5
          Top             =   600
          Width           =   1095
       End
@@ -201,7 +218,7 @@ Begin VB.Form frmOrder
          Height          =   360
          Index           =   7
          Left            =   120
-         TabIndex        =   5
+         TabIndex        =   4
          Top             =   600
          Width           =   1095
       End
@@ -209,7 +226,7 @@ Begin VB.Form frmOrder
    Begin Threed.SSPanel SSPanel1 
       Height          =   9255
       Left            =   0
-      TabIndex        =   10
+      TabIndex        =   9
       Top             =   1320
       Width           =   15015
       _Version        =   65536
@@ -231,7 +248,7 @@ Begin VB.Form frmOrder
       Begin MSDataGridLib.DataGrid DataGrid1 
          Height          =   9015
          Left            =   120
-         TabIndex        =   11
+         TabIndex        =   10
          Top             =   120
          Width           =   14775
          _ExtentX        =   26061
@@ -347,28 +364,33 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Dim selectFields As String
+
 Private Sub cmdClear_Click()
     txtPName.Text = ""
     txtCurrentCount.Text = ""
 End Sub
 
+'add function to refresh database and datagrid
 Private Sub cmdRefresh_Click()
     Dim condition As String
     
     condition = ""
 
-    'If txtCName.Text <> "" Then
-    '    condition = condition & IIf(condition = "", "", "and ") & "CName='" & txtCName.Text & "' "
-    'End If
-    'If txtOpenDate.Text <> "" Then
-    '    condition = condition & IIf(condition = "", "", "and ") & "OpenDate='" & txtOpenDate.Text & "' "
-    'End If
-
+    If txtPName.Text <> "" Then
+        condition = condition & IIf(condition = "", "", "and ") & "PName='" & txtPName.Text & "' "
+    End If
+    If txtCurrentCount.Text <> "" Then
+        condition = condition & IIf(condition = "", "", "and ") & "CurrentCount='" & txtCurrentCount.Text & "' "
+    End If
+    If txtWinningCount.Text <> "" Then
+        condition = condition & IIf(condition = "", "", "and ") & "WinningCount='" & txtWinningCount.Text & "' "
+    End If
 
     If condition = "" Then
-        Adodc1.RecordSource = "select * from [order];"
+        Adodc1.RecordSource = "select " & selectFields & " from [order],product where [order].PID=product.PID and [order].CID='" & basVariable.SelectCID & "';"
     Else
-        Adodc1.RecordSource = "select * from [order] where " & condition & ";"
+        Adodc1.RecordSource = "select " & selectFields & " from [order],product where [order].PID=product.PID and [order].CID='" & basVariable.SelectCID & "' and " & condition & ";"
     End If
     Adodc1.Refresh
     RefreshDataGridHeader
@@ -393,9 +415,15 @@ End Sub
 
 'import database and export to datagrid when form load
 Private Sub Form_Load()
+    DataGrid1.AllowAddNew = True
+    DataGrid1.AllowUpdate = True
+    
+    lblName(0).Caption = basVariable.SelectCName
+    selectFields = "SwiftCode,CID,[order].PID,PName,CurrentDate,CurrentCount,WinningCount"
+    
     Adodc1.ConnectionString = basDataBase.Connection_String
     Adodc1.CommandType = adCmdText
-    Adodc1.RecordSource = "select * from [order];"
+    Adodc1.RecordSource = "select " & selectFields & " from [order],product where [order].PID=product.PID and [order].CID='" & basVariable.SelectCID & "';"
     Set DataGrid1.DataSource = Adodc1
 End Sub
 
@@ -406,8 +434,10 @@ End Sub
 
 'a function to batch rename datagrid header
 Sub RefreshDataGridHeader()
+    DataGrid1.Columns("SwiftCode").Caption = "交易流水號"
     DataGrid1.Columns("CID").Caption = "客戶編號"
     DataGrid1.Columns("PID").Caption = "產品編號"
+    DataGrid1.Columns("PName").Caption = "產品名稱"
     DataGrid1.Columns("CurrentDate").Caption = "交易日期"
     DataGrid1.Columns("CurrentCount").Caption = "購買數量"
     DataGrid1.Columns("WinningCount").Caption = "中獎數量"

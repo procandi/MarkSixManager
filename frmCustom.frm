@@ -87,7 +87,7 @@ Begin VB.Form frmCustom
          Top             =   1080
          Width           =   1815
       End
-      Begin VB.CommandButton cmdBought 
+      Begin VB.CommandButton cmdOrder 
          BackColor       =   &H00FFC0C0&
          Caption         =   "客戶購買明細表"
          Enabled         =   0   'False
@@ -360,7 +360,7 @@ Begin VB.Form frmCustom
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   92930051
+         Format          =   94240771
          CurrentDate     =   37058
       End
       Begin VB.Label lblEntry 
@@ -692,7 +692,7 @@ Private Sub cmdAppend_Click()
     Me.Hide
 End Sub
 
-Private Sub cmdBought_Click()
+Private Sub cmdOrder_Click()
     basVariable.Action = "BoughtDetail"
     frmOrder.Show
     Me.Hide
@@ -727,10 +727,11 @@ Private Sub cmdPrice_Click()
     Me.Hide
 End Sub
 
+'add function to refresh database and datagrid
 Private Sub cmdRefresh_Click()
     cmdModify.Enabled = False
     cmdDelete.Enabled = False
-    cmdBought.Enabled = False
+    cmdOrder.Enabled = False
     cmdPrice.Enabled = False
     
 
@@ -787,7 +788,7 @@ End Sub
 Private Sub DataGrid1_RowColChange(LastRow As Variant, ByVal LastCol As Integer)
     cmdModify.Enabled = True
     cmdDelete.Enabled = True
-    cmdBought.Enabled = True
+    cmdOrder.Enabled = True
     cmdPrice.Enabled = True
     
     If Adodc1.Recordset.RecordCount > 0 Then
@@ -804,6 +805,9 @@ End Sub
 
 'import database and export to datagrid when form load
 Private Sub Form_Load()
+    DataGrid1.AllowAddNew = False
+    DataGrid1.AllowUpdate = False
+    
     Adodc1.ConnectionString = basDataBase.Connection_String
     Adodc1.CommandType = adCmdText
     Adodc1.RecordSource = "select * from custom;"
