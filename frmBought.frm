@@ -348,7 +348,13 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Private Sub cmdRefresh_Click()
-    'RefreshDataGridHeader
+    'If condition = "" Then
+    '    Adodc1.RecordSource = "select * from custom;"
+    'Else
+    '    Adodc1.RecordSource = "select * from custom where " & condition & ";"
+    'End If
+    Adodc1.Refresh
+    RefreshDataGridHeader
 End Sub
 
 Private Sub Form_Paint()
@@ -369,7 +375,7 @@ End Sub
 Private Sub Form_Load()
     Adodc1.ConnectionString = basDataBase.Connection_String
     Adodc1.CommandType = adCmdText
-    Adodc1.RecordSource = "select * from bought;"
+    Adodc1.RecordSource = "select * from order;"
     Set DataGrid1.DataSource = Adodc1
 End Sub
 
@@ -380,19 +386,9 @@ End Sub
 
 Sub RefreshDataGridHeader()
     DataGrid1.Columns("CID").Caption = "客戶編號"
-    DataGrid1.Columns("CName").Caption = "姓名"
-    DataGrid1.Columns("CType").Caption = "客別註記"
-    DataGrid1.Columns("Address").Caption = "地址"
-    DataGrid1.Columns("OpenDate").Caption = "開戶日期"
-    DataGrid1.Columns("BankID").Caption = "銀行帳號"
-    DataGrid1.Columns("Proportion").Caption = "成數"
-    DataGrid1.Columns("BonusTarget").Caption = "退水"
-    DataGrid1.Columns("Phone1").Caption = "電話1"
-    DataGrid1.Columns("Phone2").Caption = "電話2"
-    DataGrid1.Columns("Phone3").Caption = "電話3"
-    DataGrid1.Columns("Phone4").Caption = "電話4"
-    DataGrid1.Columns("Phone5").Caption = "電話5"
-    DataGrid1.Columns("Phone6").Caption = "電話6"
-    DataGrid1.Columns("Note").Caption = "備註"
+    DataGrid1.Columns("PID").Caption = "產品編號"
+    DataGrid1.Columns("CurrentDate").Caption = "交易日期"
+    DataGrid1.Columns("CurrentCount").Caption = "購買數量"
+    DataGrid1.Columns("WinningCount").Caption = "中獎數量"
 End Sub
 
