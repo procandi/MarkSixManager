@@ -34,7 +34,7 @@ Begin VB.Form frmPrice
       EndProperty
       BorderWidth     =   1
       Outline         =   -1  'True
-      Begin VB.TextBox Text1 
+      Begin VB.TextBox txtWinningPrice 
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -50,7 +50,7 @@ Begin VB.Form frmPrice
          Top             =   600
          Width           =   1935
       End
-      Begin VB.TextBox txtName 
+      Begin VB.TextBox txtPName 
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -66,7 +66,7 @@ Begin VB.Form frmPrice
          Top             =   600
          Width           =   1815
       End
-      Begin VB.TextBox txtPrice 
+      Begin VB.TextBox txtCurrentPrice 
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -168,7 +168,7 @@ Begin VB.Form frmPrice
             Strikethrough   =   0   'False
          EndProperty
          Height          =   375
-         Left            =   5640
+         Left            =   5520
          Style           =   1  '圖片外觀
          TabIndex        =   1
          Top             =   120
@@ -177,7 +177,7 @@ Begin VB.Form frmPrice
       Begin VB.Label lblEntry 
          Alignment       =   1  '靠右對齊
          BorderStyle     =   1  '單線固定
-         Caption         =   "產品價格"
+         Caption         =   "購買價格"
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -189,7 +189,7 @@ Begin VB.Form frmPrice
          EndProperty
          Height          =   360
          Index           =   0
-         Left            =   6240
+         Left            =   3120
          TabIndex        =   14
          Top             =   600
          Width           =   1095
@@ -212,7 +212,7 @@ Begin VB.Form frmPrice
          ForeColor       =   &H00000000&
          Height          =   375
          Index           =   0
-         Left            =   240
+         Left            =   120
          TabIndex        =   11
          Top             =   120
          Width           =   5295
@@ -220,7 +220,7 @@ Begin VB.Form frmPrice
       Begin VB.Label lblEntry 
          Alignment       =   1  '靠右對齊
          BorderStyle     =   1  '單線固定
-         Caption         =   "中獎價格"
+         Caption         =   "中獎金額"
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -232,7 +232,7 @@ Begin VB.Form frmPrice
          EndProperty
          Height          =   360
          Index           =   23
-         Left            =   3120
+         Left            =   6240
          TabIndex        =   8
          Top             =   600
          Width           =   1095
@@ -419,7 +419,36 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Dim selectFields As String
+
+
+Private Sub cmdClear_Click()
+    txtPName.Text = ""
+    txtCurrentPrice.Text = ""
+    txtWinningPrice.Text = ""
+End Sub
+
 Private Sub cmdRefresh_Click()
+    Dim condition As String
+    
+    condition = ""
+
+    If txtPName.Text <> "" Then
+        condition = condition & IIf(condition = "", "", "and ") & "PName='" & txtPName.Text & "' "
+    End If
+    If txtCurrentPrice.Text <> "" Then
+        condition = condition & IIf(condition = "", "", "and ") & "CurrentPrice='" & txtCurrentPrice.Text & "' "
+    End If
+    If txtWinningPrice.Text <> "" Then
+        condition = condition & IIf(condition = "", "", "and ") & "WinningPrice='" & txtWinningPrice.Text & "' "
+    End If
+
+    If condition = "" Then
+        Adodc1.RecordSource = "select " & selectFields & " from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "';"
+    Else
+        Adodc1.RecordSource = "select " & selectFields & " from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "' and " & condition & ";"
+    End If
+    Adodc1.Refresh
     RefreshDataGridHeader
 End Sub
 
@@ -445,9 +474,12 @@ Private Sub DataGrid1_RowColChange(LastRow As Variant, ByVal LastCol As Integer)
 End Sub
 
 Private Sub Form_Load()
+    lblName(0).Caption = basVariable.SelectCName
+    selectFields = "SwiftCode,CID,price.PID,PName,CurrentDate,CurrentPrice,WinningPrice,Upset"
+
     Adodc1.ConnectionString = basDataBase.Connection_String
     Adodc1.CommandType = adCmdText
-    Adodc1.RecordSource = "select * from price where CID='" & basVariable.SelectCID & "';"
+    Adodc1.RecordSource = "select " & selectFields & " from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "';"
     Set DataGrid1.DataSource = Adodc1
     RefreshDataGridHeader
 End Sub
@@ -462,7 +494,9 @@ Sub RefreshDataGridHeader()
     DataGrid1.Columns("CID").Caption = "客戶編號"
     DataGrid1.Columns("PID").Caption = "產品編號"
     DataGrid1.Columns("CurrentDate").Caption = "交易日期"
-    DataGrid1.Columns("CurrentPrice").Caption = "產品價格"
+    DataGrid1.Columns("CurrentPrice").Caption = "購買價格"
     DataGrid1.Columns("WinningPrice").Caption = "中獎金額"
     DataGrid1.Columns("Upset").Caption = "價格底線"
+    
+    DataGrid1.Columns("PName").Caption = "產品名稱"
 End Sub

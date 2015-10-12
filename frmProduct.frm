@@ -1,6 +1,5 @@
 VERSION 5.00
 Object = "{0BA686C6-F7D3-101A-993E-0000C0EF6F5E}#1.0#0"; "THREED32.OCX"
-Object = "{86CF1D34-0C5F-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCT2.OCX"
 Object = "{67397AA1-7FB1-11D0-B148-00A0C922E820}#6.0#0"; "MSADODC.OCX"
 Object = "{CDE57A40-8B86-11D0-B3C6-00A0C90AEA82}#1.0#0"; "MSDATGRD.OCX"
 Begin VB.Form frmProduct 
@@ -35,7 +34,7 @@ Begin VB.Form frmProduct
       EndProperty
       BorderWidth     =   1
       Outline         =   -1  'True
-      Begin VB.TextBox txtID 
+      Begin VB.TextBox txtPID 
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -47,7 +46,7 @@ Begin VB.Form frmProduct
          EndProperty
          Height          =   360
          Left            =   1200
-         TabIndex        =   8
+         TabIndex        =   5
          Top             =   600
          Width           =   1815
       End
@@ -66,7 +65,7 @@ Begin VB.Form frmProduct
          Height          =   375
          Left            =   13560
          Style           =   1  '圖片外觀
-         TabIndex        =   4
+         TabIndex        =   3
          Top             =   120
          Width           =   1335
       End
@@ -85,7 +84,7 @@ Begin VB.Form frmProduct
          Height          =   375
          Left            =   12240
          Style           =   1  '圖片外觀
-         TabIndex        =   3
+         TabIndex        =   2
          Top             =   600
          Width           =   1215
       End
@@ -104,49 +103,9 @@ Begin VB.Form frmProduct
          Height          =   375
          Left            =   13560
          Style           =   1  '圖片外觀
-         TabIndex        =   2
-         Top             =   600
-         Width           =   1335
-      End
-      Begin VB.TextBox txtDate 
-         Enabled         =   0   'False
-         BeginProperty Font 
-            Name            =   "新細明體"
-            Size            =   12
-            Charset         =   136
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   360
-         Left            =   4200
-         MaxLength       =   10
          TabIndex        =   1
          Top             =   600
-         Width           =   1650
-      End
-      Begin MSComCtl2.DTPicker dtpDate 
-         Height          =   360
-         Left            =   4200
-         TabIndex        =   5
-         Top             =   600
-         Width           =   1935
-         _ExtentX        =   3413
-         _ExtentY        =   635
-         _Version        =   393216
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "新細明體"
-            Size            =   12
-            Charset         =   136
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         CustomFormat    =   "yyyy/MM/dd"
-         Format          =   47382531
-         CurrentDate     =   37058
+         Width           =   1335
       End
       Begin VB.Label lblEntry 
          Alignment       =   1  '靠右對齊
@@ -164,27 +123,7 @@ Begin VB.Form frmProduct
          Height          =   360
          Index           =   7
          Left            =   120
-         TabIndex        =   7
-         Top             =   600
-         Width           =   1095
-      End
-      Begin VB.Label lblEntry 
-         Alignment       =   1  '靠右對齊
-         BorderStyle     =   1  '單線固定
-         Caption         =   "日期"
-         BeginProperty Font 
-            Name            =   "新細明體"
-            Size            =   12
-            Charset         =   136
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   360
-         Index           =   23
-         Left            =   3120
-         TabIndex        =   6
+         TabIndex        =   4
          Top             =   600
          Width           =   1095
       End
@@ -192,7 +131,7 @@ Begin VB.Form frmProduct
    Begin Threed.SSPanel SSPanel1 
       Height          =   9255
       Left            =   0
-      TabIndex        =   9
+      TabIndex        =   6
       Top             =   1320
       Width           =   15015
       _Version        =   65536
@@ -214,7 +153,7 @@ Begin VB.Form frmProduct
       Begin MSDataGridLib.DataGrid DataGrid1 
          Height          =   9015
          Left            =   120
-         TabIndex        =   10
+         TabIndex        =   7
          Top             =   120
          Width           =   14775
          _ExtentX        =   26061
@@ -330,13 +269,17 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Private Sub cmdClear_Click()
+    txtPID.Text = ""
+End Sub
+
 Private Sub cmdRefresh_Click()
     'If condition = "" Then
     '    Adodc1.RecordSource = "select * from custom;"
     'Else
     '    Adodc1.RecordSource = "select * from custom where " & condition & ";"
     'End If
-    'Adodc1.Refresh
+    Adodc1.Refresh
     RefreshDataGridHeader
 End Sub
 
@@ -364,7 +307,6 @@ Private Sub Form_Load()
     Adodc1.CommandType = adCmdText
     Adodc1.RecordSource = "select * from product;"
     Set DataGrid1.DataSource = Adodc1
-    RefreshDataGridHeader
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)

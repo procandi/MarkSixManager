@@ -2,13 +2,13 @@ VERSION 5.00
 Object = "{0BA686C6-F7D3-101A-993E-0000C0EF6F5E}#1.0#0"; "THREED32.OCX"
 Object = "{67397AA1-7FB1-11D0-B148-00A0C922E820}#6.0#0"; "MSADODC.OCX"
 Object = "{CDE57A40-8B86-11D0-B3C6-00A0C90AEA82}#1.0#0"; "MSDATGRD.OCX"
-Begin VB.Form frmBought 
+Begin VB.Form frmOrder 
    Caption         =   "產品購買明細"
    ClientHeight    =   10560
    ClientLeft      =   7425
    ClientTop       =   3090
    ClientWidth     =   14895
-   Icon            =   "frmBought.frx":0000
+   Icon            =   "frmOrder.frx":0000
    LinkTopic       =   "Form2"
    ScaleHeight     =   10560
    ScaleWidth      =   14895
@@ -34,7 +34,7 @@ Begin VB.Form frmBought
       EndProperty
       BorderWidth     =   1
       Outline         =   -1  'True
-      Begin VB.TextBox txtName 
+      Begin VB.TextBox txtPName 
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -50,7 +50,7 @@ Begin VB.Form frmBought
          Top             =   600
          Width           =   1815
       End
-      Begin VB.TextBox txtPrice 
+      Begin VB.TextBox txtCurrentCount 
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -123,7 +123,7 @@ Begin VB.Form frmBought
          Top             =   120
          Width           =   1935
       End
-      Begin VB.CommandButton cmdModify 
+      Begin VB.CommandButton cmdOrderMore 
          BackColor       =   &H00FFC0C0&
          Caption         =   "加購"
          BeginProperty Font 
@@ -342,17 +342,34 @@ Begin VB.Form frmBought
       _Version        =   393216
    End
 End
-Attribute VB_Name = "frmBought"
+Attribute VB_Name = "frmOrder"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Private Sub cmdClear_Click()
+    txtPName.Text = ""
+    txtCurrentCount.Text = ""
+End Sub
+
 Private Sub cmdRefresh_Click()
-    'If condition = "" Then
-    '    Adodc1.RecordSource = "select * from custom;"
-    'Else
-    '    Adodc1.RecordSource = "select * from custom where " & condition & ";"
+    Dim condition As String
+    
+    condition = ""
+
+    'If txtCName.Text <> "" Then
+    '    condition = condition & IIf(condition = "", "", "and ") & "CName='" & txtCName.Text & "' "
     'End If
+    'If txtOpenDate.Text <> "" Then
+    '    condition = condition & IIf(condition = "", "", "and ") & "OpenDate='" & txtOpenDate.Text & "' "
+    'End If
+
+
+    If condition = "" Then
+        Adodc1.RecordSource = "select * from [order];"
+    Else
+        Adodc1.RecordSource = "select * from [order] where " & condition & ";"
+    End If
     Adodc1.Refresh
     RefreshDataGridHeader
 End Sub
@@ -375,7 +392,7 @@ End Sub
 Private Sub Form_Load()
     Adodc1.ConnectionString = basDataBase.Connection_String
     Adodc1.CommandType = adCmdText
-    Adodc1.RecordSource = "select * from order;"
+    Adodc1.RecordSource = "select * from [order];"
     Set DataGrid1.DataSource = Adodc1
 End Sub
 

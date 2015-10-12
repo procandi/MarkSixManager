@@ -41,5 +41,6 @@ Public FreeFilePort As Integer '用於記錄目前還空閒可以開的port的代號
 Public Action As String
 Public Parameter As String
 Public SelectCID As String
+Public SelectCName As String
 Public SelectPID As String
 '/**************************小華修改的(2015/10/05)***********************************/

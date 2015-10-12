@@ -312,7 +312,7 @@ Begin VB.Form frmPriceUpdate
          BackColor       =   &H80000015&
          BackStyle       =   0  '透明
          BorderStyle     =   1  '單線固定
-         Caption         =   "產品價格"
+         Caption         =   "購買價格"
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12

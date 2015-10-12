@@ -360,7 +360,7 @@ Begin VB.Form frmCustom
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   47382531
+         Format          =   93650947
          CurrentDate     =   37058
       End
       Begin VB.Label lblEntry 
@@ -694,7 +694,7 @@ End Sub
 
 Private Sub cmdBought_Click()
     basVariable.Action = "BoughtDetail"
-    frmBought.Show
+    frmOrder.Show
     Me.Hide
 End Sub
 
@@ -791,6 +791,7 @@ Private Sub DataGrid1_RowColChange(LastRow As Variant, ByVal LastCol As Integer)
     
     If Adodc1.Recordset.RecordCount > 0 Then
         basVariable.SelectCID = DataGrid1.Columns("«È¤á½s¸¹")
+        basVariable.SelectCName = DataGrid1.Columns("©m¦W")
         If DataGrid1.SelBookmarks.Count <> 0 Then Call DataGrid1.SelBookmarks.Remove(0)
         Call DataGrid1.SelBookmarks.Add(DataGrid1.Bookmark)
     End If
