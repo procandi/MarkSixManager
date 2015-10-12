@@ -360,7 +360,7 @@ Begin VB.Form frmCustom
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   94240771
+         Format          =   94502915
          CurrentDate     =   37058
       End
       Begin VB.Label lblEntry 
@@ -693,7 +693,7 @@ Private Sub cmdAppend_Click()
 End Sub
 
 Private Sub cmdOrder_Click()
-    basVariable.Action = "BoughtDetail"
+    basVariable.Action = "OrderDetail"
     frmOrder.Show
     Me.Hide
 End Sub
@@ -786,12 +786,12 @@ End Sub
 
 'get something system needed when user click datagrid row
 Private Sub DataGrid1_RowColChange(LastRow As Variant, ByVal LastCol As Integer)
-    cmdModify.Enabled = True
-    cmdDelete.Enabled = True
-    cmdOrder.Enabled = True
-    cmdPrice.Enabled = True
-    
     If Adodc1.Recordset.RecordCount > 0 Then
+        cmdModify.Enabled = True
+        cmdDelete.Enabled = True
+        cmdOrder.Enabled = True
+        cmdPrice.Enabled = True
+    
         basVariable.SelectCID = DataGrid1.Columns("«È¤á½s¸¹")
         basVariable.SelectCName = DataGrid1.Columns("©m¦W")
         If DataGrid1.SelBookmarks.Count <> 0 Then Call DataGrid1.SelBookmarks.Remove(0)

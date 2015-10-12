@@ -155,9 +155,10 @@ Begin VB.Form frmPrice
          Top             =   120
          Width           =   1935
       End
-      Begin VB.CommandButton cmdModify 
+      Begin VB.CommandButton cmdModifyPrice 
          BackColor       =   &H00FFC0C0&
          Caption         =   "修改客戶產品價格"
+         Enabled         =   0   'False
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -457,7 +458,8 @@ Private Sub Form_Paint()
     Call cmdRefresh_Click
 End Sub
 
-Private Sub cmdModify_Click()
+Private Sub cmdModifyPrice_Click()
+    basVariable.Action = "ModifyPrice"
     frmPriceUpdate.Show
     Me.Hide
 End Sub
@@ -469,6 +471,9 @@ End Sub
 'get something system needed when user click datagrid row
 Private Sub DataGrid1_RowColChange(LastRow As Variant, ByVal LastCol As Integer)
     If Adodc1.Recordset.RecordCount > 0 Then
+        If DataGrid1.Columns("交易流水號") <> "" Then cmdModifyPrice.Enabled = True
+    
+        basVariable.SelectPID = DataGrid1.Columns("產品編號")
         If DataGrid1.SelBookmarks.Count <> 0 Then Call DataGrid1.SelBookmarks.Remove(0)
         Call DataGrid1.SelBookmarks.Add(DataGrid1.Bookmark)
     End If

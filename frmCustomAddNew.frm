@@ -357,7 +357,7 @@ Begin VB.Form frmCustomAddNew
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   47382531
+         Format          =   94371843
          CurrentDate     =   42267
       End
       Begin VB.Label lblEntry 
@@ -708,7 +708,6 @@ Private Sub Form_Load()
     
     
     
-    Dim CID As String
     If basVariable.Action = "AddNewCustom" Then
         'add new
         
@@ -722,7 +721,6 @@ Private Sub Form_Load()
         cmdUpdate.Enabled = False
     Else
         'modify
-        CID = Adodc1.Recordset.Fields.Item("CID").Value
         
         txtCType.DataField = "CType"
         txtCName.DataField = "CName"
@@ -739,7 +737,7 @@ Private Sub Form_Load()
         txtPhone6.DataField = "Phone6"
         txtAddress.DataField = "Address"
         txtNote.DataField = "Note"
-        txtCID.Text = Val(CID)
+        txtCID.Text = basVariable.SelectCID
     
         cmdOK.Enabled = False
         cmdUpdate.Enabled = True
@@ -752,4 +750,3 @@ Private Sub Form_Unload(Cancel As Integer)
     frmCustom.Show
     Unload Me
 End Sub
-

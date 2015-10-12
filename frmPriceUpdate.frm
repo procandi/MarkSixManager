@@ -15,53 +15,6 @@ Begin VB.Form frmPriceUpdate
    MinButton       =   0   'False
    ScaleHeight     =   4140
    ScaleWidth      =   6495
-   Begin MSAdodcLib.Adodc datOnline 
-      Height          =   375
-      Left            =   120
-      Top             =   240
-      Visible         =   0   'False
-      Width           =   2175
-      _ExtentX        =   3836
-      _ExtentY        =   661
-      ConnectMode     =   1
-      CursorLocation  =   3
-      IsolationLevel  =   -1
-      ConnectionTimeout=   15
-      CommandTimeout  =   30
-      CursorType      =   3
-      LockType        =   3
-      CommandType     =   8
-      CursorOptions   =   0
-      CacheSize       =   50
-      MaxRecords      =   0
-      BOFAction       =   0
-      EOFAction       =   0
-      ConnectStringType=   1
-      Appearance      =   1
-      BackColor       =   -2147483643
-      ForeColor       =   -2147483640
-      Orientation     =   0
-      Enabled         =   -1
-      Connect         =   ""
-      OLEDBString     =   ""
-      OLEDBFile       =   ""
-      DataSourceName  =   ""
-      OtherAttributes =   ""
-      UserName        =   ""
-      Password        =   ""
-      RecordSource    =   ""
-      Caption         =   "datOnline"
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "新細明體"
-         Size            =   9
-         Charset         =   136
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      _Version        =   393216
-   End
    Begin Threed.SSPanel pnlBasic 
       Height          =   3255
       Left            =   240
@@ -87,7 +40,7 @@ Begin VB.Form frmPriceUpdate
       BevelInner      =   1
       Outline         =   -1  'True
       Alignment       =   6
-      Begin VB.TextBox txtBasic 
+      Begin VB.TextBox txtUpset 
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -98,13 +51,12 @@ Begin VB.Form frmPriceUpdate
             Strikethrough   =   0   'False
          EndProperty
          Height          =   375
-         Index           =   2
          Left            =   1560
          TabIndex        =   14
          Top             =   2040
          Width           =   4095
       End
-      Begin VB.CommandButton Command2 
+      Begin VB.CommandButton cmdNext 
          BackColor       =   &H00FFC0C0&
          Caption         =   "下一筆"
          Enabled         =   0   'False
@@ -125,7 +77,7 @@ Begin VB.Form frmPriceUpdate
          Top             =   2520
          Width           =   1335
       End
-      Begin VB.CommandButton Command1 
+      Begin VB.CommandButton cmdPrev 
          BackColor       =   &H00FFC0C0&
          Caption         =   "上一筆"
          Enabled         =   0   'False
@@ -146,7 +98,7 @@ Begin VB.Form frmPriceUpdate
          Top             =   2520
          Width           =   1335
       End
-      Begin VB.TextBox txtBasic 
+      Begin VB.TextBox txtWinningPrice 
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -157,7 +109,6 @@ Begin VB.Form frmPriceUpdate
             Strikethrough   =   0   'False
          EndProperty
          Height          =   375
-         Index           =   0
          Left            =   1560
          TabIndex        =   9
          Top             =   1560
@@ -203,7 +154,7 @@ Begin VB.Form frmPriceUpdate
          Top             =   2520
          Width           =   1335
       End
-      Begin VB.TextBox txtBasic 
+      Begin VB.TextBox txtCurrentPrice 
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -214,13 +165,12 @@ Begin VB.Form frmPriceUpdate
             Strikethrough   =   0   'False
          EndProperty
          Height          =   375
-         Index           =   1
          Left            =   1560
          TabIndex        =   5
          Top             =   1080
          Width           =   4095
       End
-      Begin VB.TextBox txtBasic 
+      Begin VB.TextBox txtPName 
          Enabled         =   0   'False
          BeginProperty Font 
             Name            =   "新細明體"
@@ -232,7 +182,6 @@ Begin VB.Form frmPriceUpdate
             Strikethrough   =   0   'False
          EndProperty
          Height          =   375
-         Index           =   7
          Left            =   1560
          TabIndex        =   2
          Top             =   600
@@ -354,6 +303,53 @@ Begin VB.Form frmPriceUpdate
          Width           =   1215
       End
    End
+   Begin MSAdodcLib.Adodc Adodc1 
+      Height          =   330
+      Left            =   240
+      Top             =   360
+      Visible         =   0   'False
+      Width           =   2775
+      _ExtentX        =   4895
+      _ExtentY        =   582
+      ConnectMode     =   0
+      CursorLocation  =   3
+      IsolationLevel  =   -1
+      ConnectionTimeout=   15
+      CommandTimeout  =   30
+      CursorType      =   1
+      LockType        =   3
+      CommandType     =   8
+      CursorOptions   =   0
+      CacheSize       =   50
+      MaxRecords      =   0
+      BOFAction       =   0
+      EOFAction       =   0
+      ConnectStringType=   1
+      Appearance      =   1
+      BackColor       =   -2147483643
+      ForeColor       =   -2147483640
+      Orientation     =   0
+      Enabled         =   -1
+      Connect         =   ""
+      OLEDBString     =   ""
+      OLEDBFile       =   ""
+      DataSourceName  =   ""
+      OtherAttributes =   ""
+      UserName        =   ""
+      Password        =   ""
+      RecordSource    =   ""
+      Caption         =   "Adodc1"
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "新細明體"
+         Size            =   9
+         Charset         =   136
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      _Version        =   393216
+   End
    Begin VB.Label Label1 
       Appearance      =   0  '平面
       BackColor       =   &H80000005&
@@ -382,8 +378,40 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Dim selectFields As String
+
 Private Sub cmdClose_Click()
     Call Form_Unload(0)
+End Sub
+
+Private Sub cmdUpdate_Click()
+    Call Form_Unload(0)
+End Sub
+
+Private Sub Form_Load()
+    lblName(0).Caption = basVariable.SelectCName
+    selectFields = "SwiftCode,CID,price.PID,PName,CurrentDate,CurrentPrice,WinningPrice,Upset"
+    
+    Adodc1.ConnectionString = basDataBase.Connection_String
+    Adodc1.CommandType = adCmdText
+    Adodc1.RecordSource = "select * from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "';"
+    Adodc1.LockType = adLockOptimistic
+    
+    
+    Set txtPName.DataSource = Adodc1
+    Set txtCurrentPrice.DataSource = Adodc1
+    Set txtWinningPrice.DataSource = Adodc1
+    Set txtUpset.DataSource = Adodc1
+ 
+
+    'modify
+    
+    txtPName.DataField = "PName"
+    txtCurrentPrice.DataField = "CurrentPrice"
+    txtWinningPrice.DataField = "WinningPrice"
+    txtUpset.DataField = "Upset"
+    
+
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
