@@ -445,9 +445,9 @@ Private Sub cmdRefresh_Click()
     End If
 
     If condition = "" Then
-        Adodc1.RecordSource = "select " & selectFields & " from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "';"
+        Adodc1.RecordSource = "select " & selectFields & " from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "' order by price.PID,CurrentDate desc;"
     Else
-        Adodc1.RecordSource = "select " & selectFields & " from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "' and " & condition & ";"
+        Adodc1.RecordSource = "select " & selectFields & " from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "' and " & condition & " order by price.PID,CurrentDate desc;"
     End If
     Adodc1.Refresh
     RefreshDataGridHeader
@@ -473,6 +473,7 @@ Private Sub DataGrid1_RowColChange(LastRow As Variant, ByVal LastCol As Integer)
     If Adodc1.Recordset.RecordCount > 0 Then
         If DataGrid1.Columns("交易流水號") <> "" Then
             cmdModifyPrice.Enabled = True
+            basVariable.Parameter = DataGrid1.Row
             basVariable.CurrentSwiftCode = DataGrid1.Columns("交易流水號")
             basVariable.SelectPID = DataGrid1.Columns("產品編號")
         End If
@@ -492,7 +493,7 @@ Private Sub Form_Load()
 
     Adodc1.ConnectionString = basDataBase.Connection_String
     Adodc1.CommandType = adCmdText
-    Adodc1.RecordSource = "select " & selectFields & " from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "';"
+    Adodc1.RecordSource = "select " & selectFields & " from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "' order by price.PID,CurrentDate desc;"
     Set DataGrid1.DataSource = Adodc1
     RefreshDataGridHeader
 End Sub

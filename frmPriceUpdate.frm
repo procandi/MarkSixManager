@@ -384,17 +384,57 @@ Private Sub cmdClose_Click()
     Call Form_Unload(0)
 End Sub
 
+Private Sub cmdNext_Click()
+    If Val(basVariable.Parameter) < Adodc1.Recordset.RecordCount Then
+        basVariable.Parameter = Val(basVariable.Parameter) + 1
+        Call Adodc1.Recordset.MoveNext
+     End If
+    
+    
+    If Val(basVariable.Parameter) > 0 Then
+        cmdPrev.Enabled = True
+    Else
+        cmdPrev.Enabled = False
+    End If
+    If Val(basVariable.Parameter) < Adodc1.Recordset.RecordCount - 1 Then
+        cmdNext.Enabled = True
+    Else
+        cmdNext.Enabled = False
+    End If
+End Sub
+
+Private Sub cmdPrev_Click()
+    If Val(basVariable.Parameter) > 0 Then
+        basVariable.Parameter = Val(basVariable.Parameter) - 1
+        Call Adodc1.Recordset.MovePrevious
+    End If
+    
+    
+    If Val(basVariable.Parameter) > 0 Then
+        cmdPrev.Enabled = True
+    Else
+        cmdPrev.Enabled = False
+    End If
+    If Val(basVariable.Parameter) < Adodc1.Recordset.RecordCount - 1 Then
+        cmdNext.Enabled = True
+    Else
+        cmdNext.Enabled = False
+    End If
+End Sub
+
 Private Sub cmdUpdate_Click()
+    Call Adodc1.Recordset.Update
     Call Form_Unload(0)
 End Sub
 
+'import database and export to datagrid when form load
 Private Sub Form_Load()
     lblName(0).Caption = basVariable.SelectCName
     selectFields = "SwiftCode,CID,price.PID,PName,CurrentDate,CurrentPrice,WinningPrice,Upset"
     
     Adodc1.ConnectionString = basDataBase.Connection_String
     Adodc1.CommandType = adCmdText
-    Adodc1.RecordSource = "select * from price,product where price.PID=product.PID and CID='" & basVariable.SelectPID & "';"
+    Adodc1.RecordSource = "select * from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "' order by price.PID,CurrentDate desc;"
     Adodc1.LockType = adLockOptimistic
     
     
@@ -411,8 +451,19 @@ Private Sub Form_Load()
     txtWinningPrice.DataField = "WinningPrice"
     txtUpset.DataField = "Upset"
     
-    ''''5a1sfae
-    If CurrentSwiftCode Then Adodc1.Recordset.RecordCount
+    
+    Call Adodc1.Recordset.Move(basVariable.Parameter)
+    If Val(basVariable.Parameter) > 0 Then
+        cmdPrev.Enabled = True
+    Else
+        cmdPrev.Enabled = False
+    End If
+    If Val(basVariable.Parameter) < Adodc1.Recordset.RecordCount - 1 Then
+        cmdNext.Enabled = True
+    Else
+        cmdNext.Enabled = False
+    End If
+    
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)

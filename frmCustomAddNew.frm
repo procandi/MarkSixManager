@@ -357,7 +357,7 @@ Begin VB.Form frmCustomAddNew
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   94371843
+         Format          =   50462723
          CurrentDate     =   42267
       End
       Begin VB.Label lblEntry 
@@ -677,6 +677,7 @@ Private Sub dtpOpenDate_CloseUp()
     txtOpenDate.Text = Format(dtpOpenDate.Value, "yyyy/MM/dd")
 End Sub
 
+'import database and export to datagrid when form load
 Private Sub Form_Load()
     Adodc1.ConnectionString = basDataBase.Connection_String
     Adodc1.CommandType = adCmdText
