@@ -223,7 +223,7 @@ Begin VB.Form frmPriceUpdate
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   88670211
+         Format          =   88604675
          CurrentDate     =   42267
       End
       Begin VB.Label lblBasic 
@@ -495,6 +495,10 @@ End Sub
 
 'import database and export to datagrid when form load
 Private Sub Form_Load()
+    txtCurrentDate.Enabled = False
+    dtpCurrentDate.Enabled = False
+    
+
     lblName(0).Caption = basVariable.SelectCName
     selectFields = "SwiftCode,CID,price.PID,PName,CurrentDate,CurrentPrice,WinningPrice,Upset"
     
@@ -532,6 +536,8 @@ Private Sub Form_Load()
         cmdNext.Enabled = False
     End If
     
+    
+    txtCurrentDate.Text = Format(DateTime.Now, "yyyy/MM/dd")
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)

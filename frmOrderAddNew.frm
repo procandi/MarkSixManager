@@ -155,6 +155,7 @@ Begin VB.Form frmOrderAddNew
          _ExtentX        =   7223
          _ExtentY        =   661
          _Version        =   393216
+         Enabled         =   0   'False
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "·s²Ó©úÅé"
             Size            =   12
@@ -165,7 +166,7 @@ Begin VB.Form frmOrderAddNew
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   88670211
+         Format          =   88604675
          CurrentDate     =   42267
       End
       Begin VB.Label lblBasic 
@@ -381,7 +382,7 @@ Private Sub cmdUpdate_Click()
     product_rec.Close
     
     
-    Adodc1.Recordset.Fields.Item("SwiftCode").Value = LastSwiftCode
+    Adodc1.Recordset.Fields.Item("SwiftCode").Value = Val(LastSwiftCode) + 1
     Adodc1.Recordset.Fields.Item("PID").Value = PID
     'Adodc1.Recordset.Fields.Item("PName").Value = txtPName.Text
     Adodc1.Recordset.Fields.Item("CID").Value = basVariable.SelectCID
@@ -424,6 +425,6 @@ Private Sub Form_Load()
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
-    frmPrice.Show
+    frmOrder.Show
     Unload Me
 End Sub

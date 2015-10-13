@@ -401,6 +401,24 @@ Private Sub cmdCustom_Click()
     Me.Hide
 End Sub
 
+Private Sub cmdDayReport_Click()
+    Dim TargetPath As String
+    
+    TargetPath = App.Path
+    If Right(TargetPath, 1) <> "\" Then
+        TargetPath = TargetPath & "\report\"
+    Else
+        TargetPath = TargetPath & "report\"
+    End If
+    Call CreatePath(TargetPath)
+    TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "¤é³øªí.xls"
+    
+    
+    Open TargetPath For Output As #1
+        Write #1, "123"
+    Close #1
+End Sub
+
 Private Sub cmdProduct_Click()
     basVariable.Action = "ProductDetail"
     frmProduct.Show

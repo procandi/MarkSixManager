@@ -196,7 +196,7 @@ Begin VB.Form frmOrder
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   88932355
+         Format          =   88604675
          CurrentDate     =   37058
       End
       Begin VB.Label lblEntry 
@@ -448,7 +448,7 @@ Dim selectFields As String
 
 Private Sub cmdAppend_Click()
     frmOrderAddNew.Show
-    Me.Hide
+    'Me.Hide
 End Sub
 
 Private Sub cmdClear_Click()
