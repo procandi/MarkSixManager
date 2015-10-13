@@ -40,6 +40,7 @@ Form=frmProduct.frm
 Module=basVersion; basVersion.bas
 Module=basConvert; basConvert.bas
 Module=basFile; basFile.bas
+Form=frmProductSale.frm
 IconForm="frmProve"
 Startup="frmProve"
 HelpFile=""

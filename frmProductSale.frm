@@ -2,13 +2,13 @@ VERSION 5.00
 Object = "{0BA686C6-F7D3-101A-993E-0000C0EF6F5E}#1.0#0"; "THREED32.OCX"
 Object = "{67397AA1-7FB1-11D0-B148-00A0C922E820}#6.0#0"; "MSADODC.OCX"
 Object = "{CDE57A40-8B86-11D0-B3C6-00A0C90AEA82}#1.0#0"; "MSDATGRD.OCX"
-Begin VB.Form frmProduct 
+Begin VB.Form frmProductSale 
    Caption         =   "產品資料表"
    ClientHeight    =   10515
    ClientLeft      =   7620
    ClientTop       =   3285
    ClientWidth     =   14940
-   Icon            =   "frmProduct.frx":0000
+   Icon            =   "frmProductSale.frx":0000
    LinkTopic       =   "Form2"
    ScaleHeight     =   10515
    ScaleWidth      =   14940
@@ -34,9 +34,7 @@ Begin VB.Form frmProduct
       EndProperty
       BorderWidth     =   1
       Outline         =   -1  'True
-      Begin VB.CommandButton cmdProductSale 
-         BackColor       =   &H00FFC0C0&
-         Caption         =   "所有產品銷售狀況"
+      Begin VB.TextBox txtCurrentCount 
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -46,12 +44,27 @@ Begin VB.Form frmProduct
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Height          =   375
-         Left            =   120
-         Style           =   1  '圖片外觀
+         Height          =   360
+         Left            =   4200
+         TabIndex        =   9
+         Top             =   600
+         Width           =   1935
+      End
+      Begin VB.TextBox txtWinningCount 
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Left            =   7320
          TabIndex        =   8
-         Top             =   120
-         Width           =   2295
+         Top             =   600
+         Width           =   1935
       End
       Begin VB.TextBox txtPName 
          BeginProperty Font 
@@ -125,6 +138,46 @@ Begin VB.Form frmProduct
          TabIndex        =   1
          Top             =   600
          Width           =   1335
+      End
+      Begin VB.Label lblEntry 
+         Alignment       =   1  '靠右對齊
+         BorderStyle     =   1  '單線固定
+         Caption         =   "購買數量"
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Index           =   23
+         Left            =   3120
+         TabIndex        =   11
+         Top             =   600
+         Width           =   1095
+      End
+      Begin VB.Label lblEntry 
+         Alignment       =   1  '靠右對齊
+         BorderStyle     =   1  '單線固定
+         Caption         =   "中獎數量"
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Index           =   1
+         Left            =   6240
+         TabIndex        =   10
+         Top             =   600
+         Width           =   1095
       End
       Begin VB.Label lblEntry 
          Alignment       =   1  '靠右對齊
@@ -283,18 +336,17 @@ Begin VB.Form frmProduct
       _Version        =   393216
    End
 End
-Attribute VB_Name = "frmProduct"
+Attribute VB_Name = "frmProductSale"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Dim selectFields As String
+
 Private Sub cmdClear_Click()
     txtPName.Text = ""
-End Sub
-
-Private Sub cmdProductSale_Click()
-    frmProductSale.Show
-    Me.Hide
+    txtCurrentCount.Text = ""
+    txtWinningCount.Text = ""
 End Sub
 
 'add function to refresh database and datagrid
@@ -306,11 +358,17 @@ Private Sub cmdRefresh_Click()
     If txtPName.Text <> "" Then
         condition = condition & IIf(condition = "", "", "and ") & "PName='" & txtPName.Text & "' "
     End If
-    
+    If txtCurrentCount.Text <> "" Then
+        condition = condition & IIf(condition = "", "", "and ") & "CurrentCount='" & txtCurrentCount.Text & "' "
+    End If
+    If txtWinningCount.Text <> "" Then
+        condition = condition & IIf(condition = "", "", "and ") & "WinningCount='" & txtWinningCount.Text & "' "
+    End If
+
     If condition = "" Then
-        Adodc1.RecordSource = "select * from product;"
+        Adodc1.RecordSource = "select " & selectFields & " from product,[order] where product.PID=[order].PID;"
     Else
-        Adodc1.RecordSource = "select * from product where " & condition & ";"
+        Adodc1.RecordSource = "select " & selectFields & " from product,[order] where product.PID=[order].PID and " & condition & ";"
     End If
     
     Adodc1.Refresh
@@ -343,22 +401,27 @@ Private Sub Form_Load()
     DataGrid1.AllowAddNew = True
     DataGrid1.AllowUpdate = True
     
-    cmdProductSale.Enabled = True
+    selectFields = "SwiftCode,CID,product.PID,PName,CurrentDate,CurrentCount,WinningCount"
 
     Adodc1.ConnectionString = basDataBase.Connection_String
     Adodc1.CommandType = adCmdText
-    Adodc1.RecordSource = "select * from product;"
+    Adodc1.RecordSource = "select " & selectFields & " from product,[order] where product.PID=[order].PID order by product.PID,CurrentDate desc;"
     Set DataGrid1.DataSource = Adodc1
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
-    frmProve.Show
+    frmProduct.Show
     Unload Me
 End Sub
 
 'a function to batch rename datagrid header
 Sub RefreshDataGridHeader()
+    DataGrid1.Columns("SwiftCode").Caption = "交易流水號"
+    DataGrid1.Columns("CID").Caption = "客戶編號"
     DataGrid1.Columns("PID").Caption = "產品編號"
     DataGrid1.Columns("PName").Caption = "產品名稱"
+    DataGrid1.Columns("CurrentDate").Caption = "交易日期"
+    DataGrid1.Columns("CurrentCount").Caption = "購買數量"
+    DataGrid1.Columns("WinningCount").Caption = "中獎數量"
 End Sub
 
