@@ -2,7 +2,7 @@ VERSION 5.00
 Object = "{0BA686C6-F7D3-101A-993E-0000C0EF6F5E}#1.0#0"; "THREED32.OCX"
 Object = "{86CF1D34-0C5F-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCT2.OCX"
 Object = "{67397AA1-7FB1-11D0-B148-00A0C922E820}#6.0#0"; "MSADODC.OCX"
-Begin VB.Form frmPriceUpdate 
+Begin VB.Form frmOrderAddNew 
    BackColor       =   &H00808080&
    BorderStyle     =   1  '單線固定
    Caption         =   "產品價格變更"
@@ -10,7 +10,7 @@ Begin VB.Form frmPriceUpdate
    ClientLeft      =   6135
    ClientTop       =   5940
    ClientWidth     =   6495
-   Icon            =   "frmPriceUpdate.frx":0000
+   Icon            =   "frmOrderAddNew.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
@@ -231,7 +231,7 @@ Begin VB.Form frmPriceUpdate
          BackColor       =   &H80000015&
          BackStyle       =   0  '透明
          BorderStyle     =   1  '單線固定
-         Caption         =   "交易日期"
+         Caption         =   "購買日期"
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -435,7 +435,7 @@ Begin VB.Form frmPriceUpdate
       Width           =   3015
    End
 End
-Attribute VB_Name = "frmPriceUpdate"
+Attribute VB_Name = "frmOrderAddNew"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True

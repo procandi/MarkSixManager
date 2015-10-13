@@ -1,5 +1,6 @@
 VERSION 5.00
 Object = "{0BA686C6-F7D3-101A-993E-0000C0EF6F5E}#1.0#0"; "THREED32.OCX"
+Object = "{86CF1D34-0C5F-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCT2.OCX"
 Object = "{67397AA1-7FB1-11D0-B148-00A0C922E820}#6.0#0"; "MSADODC.OCX"
 Object = "{CDE57A40-8B86-11D0-B3C6-00A0C90AEA82}#1.0#0"; "MSDATGRD.OCX"
 Begin VB.Form frmOrder 
@@ -34,6 +35,43 @@ Begin VB.Form frmOrder
       EndProperty
       BorderWidth     =   1
       Outline         =   -1  'True
+      Begin VB.TextBox txtCurrentDate 
+         Enabled         =   0   'False
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Left            =   7320
+         MaxLength       =   10
+         TabIndex        =   14
+         Top             =   120
+         Width           =   1650
+      End
+      Begin VB.CommandButton cmdAppend 
+         BackColor       =   &H00FFC0C0&
+         Caption         =   "加購"
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   375
+         Left            =   10920
+         Style           =   1  '圖片外觀
+         TabIndex        =   13
+         Top             =   600
+         Width           =   1215
+      End
       Begin VB.TextBox txtWinningCount 
          BeginProperty Font 
             Name            =   "新細明體"
@@ -138,6 +176,48 @@ Begin VB.Form frmOrder
          TabIndex        =   1
          Top             =   120
          Width           =   1935
+      End
+      Begin MSComCtl2.DTPicker dtpCurrentDate 
+         Height          =   360
+         Left            =   7320
+         TabIndex        =   15
+         Top             =   120
+         Width           =   1935
+         _ExtentX        =   3413
+         _ExtentY        =   635
+         _Version        =   393216
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         CustomFormat    =   "yyyy/MM/dd"
+         Format          =   88932355
+         CurrentDate     =   37058
+      End
+      Begin VB.Label lblEntry 
+         Alignment       =   1  '靠右對齊
+         BorderStyle     =   1  '單線固定
+         Caption         =   "交易日期"
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   360
+         Index           =   0
+         Left            =   6240
+         TabIndex        =   16
+         Top             =   120
+         Width           =   1095
       End
       Begin VB.Label lblEntry 
          Alignment       =   1  '靠右對齊
@@ -366,9 +446,16 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Dim selectFields As String
 
+Private Sub cmdAppend_Click()
+    frmOrderAddNew.Show
+    Me.Hide
+End Sub
+
 Private Sub cmdClear_Click()
     txtPName.Text = ""
+    txtCurrentDate.Text = ""
     txtCurrentCount.Text = ""
+    txtWinningCount.Text = ""
 End Sub
 
 'add function to refresh database and datagrid
@@ -379,6 +466,9 @@ Private Sub cmdRefresh_Click()
 
     If txtPName.Text <> "" Then
         condition = condition & IIf(condition = "", "", "and ") & "PName='" & txtPName.Text & "' "
+    End If
+    If txtCurrentDate.Text <> "" Then
+        condition = condition & IIf(condition = "", "", "and ") & "CurrentDate='" & txtCurrentDate.Text & "' "
     End If
     If txtCurrentCount.Text <> "" Then
         condition = condition & IIf(condition = "", "", "and ") & "CurrentCount='" & txtCurrentCount.Text & "' "
@@ -394,6 +484,10 @@ Private Sub cmdRefresh_Click()
     End If
     Adodc1.Refresh
     RefreshDataGridHeader
+End Sub
+
+Private Sub dtpCurrentDate_CloseUp()
+    txtCurrentDate.Text = Format(dtpCurrentDate.Value, "yyyy/MM/dd")
 End Sub
 
 'do refresh database and datagrid when form paint
