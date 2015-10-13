@@ -223,7 +223,7 @@ Begin VB.Form frmPriceUpdate
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   88932355
+         Format          =   88735747
          CurrentDate     =   42267
       End
       Begin VB.Label lblBasic 
@@ -440,7 +440,6 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-Dim CurrentSwiftCode As Integer
 Dim selectFields As String
 
 Private Sub cmdClose_Click()

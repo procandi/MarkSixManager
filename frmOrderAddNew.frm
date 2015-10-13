@@ -42,6 +42,7 @@ Begin VB.Form frmOrderAddNew
       Outline         =   -1  'True
       Alignment       =   6
       Begin VB.TextBox txtCurrentDate 
+         Enabled         =   0   'False
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -54,69 +55,11 @@ Begin VB.Form frmOrderAddNew
          Height          =   360
          Left            =   1560
          MaxLength       =   256
-         TabIndex        =   16
+         TabIndex        =   12
          Top             =   1200
          Width           =   3855
       End
-      Begin VB.TextBox txtUpset 
-         BeginProperty Font 
-            Name            =   "新細明體"
-            Size            =   12
-            Charset         =   136
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   375
-         Left            =   1560
-         TabIndex        =   14
-         Top             =   2640
-         Width           =   4095
-      End
-      Begin VB.CommandButton cmdNext 
-         BackColor       =   &H00FFC0C0&
-         Caption         =   "下一筆"
-         Enabled         =   0   'False
-         BeginProperty Font 
-            Name            =   "新細明體"
-            Size            =   12
-            Charset         =   136
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   495
-         Left            =   4320
-         Style           =   1  '圖片外觀
-         TabIndex        =   12
-         Tag             =   "Edit"
-         Top             =   3120
-         Width           =   1335
-      End
-      Begin VB.CommandButton cmdPrev 
-         BackColor       =   &H00FFC0C0&
-         Caption         =   "上一筆"
-         Enabled         =   0   'False
-         BeginProperty Font 
-            Name            =   "新細明體"
-            Size            =   12
-            Charset         =   136
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   495
-         Left            =   120
-         Style           =   1  '圖片外觀
-         TabIndex        =   11
-         Tag             =   "Edit"
-         Top             =   3120
-         Width           =   1335
-      End
-      Begin VB.TextBox txtWinningPrice 
+      Begin VB.TextBox txtWinningCount 
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -153,7 +96,7 @@ Begin VB.Form frmOrderAddNew
       End
       Begin VB.CommandButton cmdUpdate 
          BackColor       =   &H00FFC0C0&
-         Caption         =   "&U 確定修改"
+         Caption         =   "&U 確定加購"
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -171,7 +114,7 @@ Begin VB.Form frmOrderAddNew
          Top             =   3120
          Width           =   1335
       End
-      Begin VB.TextBox txtCurrentPrice 
+      Begin VB.TextBox txtCurrentCount 
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -188,7 +131,6 @@ Begin VB.Form frmOrderAddNew
          Width           =   4095
       End
       Begin VB.TextBox txtPName 
-         Enabled         =   0   'False
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -207,7 +149,7 @@ Begin VB.Form frmOrderAddNew
       Begin MSComCtl2.DTPicker dtpCurrentDate 
          Height          =   375
          Left            =   1560
-         TabIndex        =   17
+         TabIndex        =   13
          Top             =   1200
          Width           =   4095
          _ExtentX        =   7223
@@ -223,7 +165,7 @@ Begin VB.Form frmOrderAddNew
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   88932355
+         Format          =   88735747
          CurrentDate     =   42267
       End
       Begin VB.Label lblBasic 
@@ -231,7 +173,7 @@ Begin VB.Form frmOrderAddNew
          BackColor       =   &H80000015&
          BackStyle       =   0  '透明
          BorderStyle     =   1  '單線固定
-         Caption         =   "購買日期"
+         Caption         =   "交易日期"
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -245,7 +187,7 @@ Begin VB.Form frmOrderAddNew
          Height          =   375
          Index           =   3
          Left            =   360
-         TabIndex        =   15
+         TabIndex        =   11
          Top             =   1200
          Width           =   1215
       End
@@ -254,30 +196,7 @@ Begin VB.Form frmOrderAddNew
          BackColor       =   &H80000015&
          BackStyle       =   0  '透明
          BorderStyle     =   1  '單線固定
-         Caption         =   "價格底線"
-         BeginProperty Font 
-            Name            =   "新細明體"
-            Size            =   12
-            Charset         =   136
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         ForeColor       =   &H00000000&
-         Height          =   375
-         Index           =   2
-         Left            =   360
-         TabIndex        =   13
-         Top             =   2640
-         Width           =   1215
-      End
-      Begin VB.Label lblBasic 
-         Alignment       =   1  '靠右對齊
-         BackColor       =   &H80000015&
-         BackStyle       =   0  '透明
-         BorderStyle     =   1  '單線固定
-         Caption         =   "中獎金額"
+         Caption         =   "中獎數量"
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -323,7 +242,7 @@ Begin VB.Form frmOrderAddNew
          BackColor       =   &H80000015&
          BackStyle       =   0  '透明
          BorderStyle     =   1  '單線固定
-         Caption         =   "購買價格"
+         Caption         =   "購買數量"
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -440,52 +359,35 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-Dim CurrentSwiftCode As Integer
 Dim selectFields As String
 
 Private Sub cmdClose_Click()
     Call Form_Unload(0)
 End Sub
 
-Private Sub cmdNext_Click()
-    If Val(basVariable.Parameter) < Adodc1.Recordset.RecordCount Then
-        basVariable.Parameter = Val(basVariable.Parameter) + 1
-        Call Adodc1.Recordset.MoveNext
-     End If
-    
-    
-    If Val(basVariable.Parameter) > 0 Then
-        cmdPrev.Enabled = True
-    Else
-        cmdPrev.Enabled = False
-    End If
-    If Val(basVariable.Parameter) < Adodc1.Recordset.RecordCount - 1 Then
-        cmdNext.Enabled = True
-    Else
-        cmdNext.Enabled = False
-    End If
-End Sub
-
-Private Sub cmdPrev_Click()
-    If Val(basVariable.Parameter) > 0 Then
-        basVariable.Parameter = Val(basVariable.Parameter) - 1
-        Call Adodc1.Recordset.MovePrevious
-    End If
-    
-    
-    If Val(basVariable.Parameter) > 0 Then
-        cmdPrev.Enabled = True
-    Else
-        cmdPrev.Enabled = False
-    End If
-    If Val(basVariable.Parameter) < Adodc1.Recordset.RecordCount - 1 Then
-        cmdNext.Enabled = True
-    Else
-        cmdNext.Enabled = False
-    End If
-End Sub
-
 Private Sub cmdUpdate_Click()
+    Dim PID As String, LastSwiftCode As String
+    Dim SQL As String
+    Dim product_rec As New ADODB.Recordset, order_rec As New ADODB.Recordset
+    
+    SQL = "select * from [order] order by SwiftCode desc;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
+    LastSwiftCode = order_rec("SwiftCode")
+    order_rec.Close
+    
+    SQL = "select * from product where PName='" & txtPName.Text & "';"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
+    PID = product_rec("PID")
+    product_rec.Close
+    
+    
+    Adodc1.Recordset.Fields.Item("SwiftCode").Value = LastSwiftCode
+    Adodc1.Recordset.Fields.Item("PID").Value = PID
+    'Adodc1.Recordset.Fields.Item("PName").Value = txtPName.Text
+    Adodc1.Recordset.Fields.Item("CID").Value = basVariable.SelectCID
+    Adodc1.Recordset.Fields.Item("CurrentDate").Value = txtCurrentDate.Text
+    Adodc1.Recordset.Fields.Item("CurrentCount").Value = txtCurrentCount.Text
+    Adodc1.Recordset.Fields.Item("WinningCount").Value = txtWinningCount.Text
     Call Adodc1.Recordset.Update
     Call Form_Unload(0)
 End Sub
@@ -497,42 +399,28 @@ End Sub
 'import database and export to datagrid when form load
 Private Sub Form_Load()
     lblName(0).Caption = basVariable.SelectCName
-    selectFields = "SwiftCode,CID,price.PID,PName,CurrentDate,CurrentPrice,WinningPrice,Upset"
+    selectFields = "SwiftCode,CID,[order].PID,PName,CurrentDate,CurrentCount,WinningCount"
     
     Adodc1.ConnectionString = basDataBase.Connection_String
     Adodc1.CommandType = adCmdText
-    Adodc1.RecordSource = "select * from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "' order by price.PID,CurrentDate desc;"
+    'Adodc1.RecordSource = "select " & selectFields & " from [order] where [order].CID='" & basVariable.SelectCID & "';"
+    Adodc1.RecordSource = "select * from [order] where [order].CID='" & basVariable.SelectCID & "';"
     Adodc1.LockType = adLockOptimistic
     
     
-    Set txtPName.DataSource = Adodc1
+    'Set txtPName.DataSource = Adodc1
     Set txtCurrentDate.DataSource = Adodc1
-    Set txtCurrentPrice.DataSource = Adodc1
-    Set txtWinningPrice.DataSource = Adodc1
-    Set txtUpset.DataSource = Adodc1
- 
+    Set txtCurrentCount.DataSource = Adodc1
+    Set txtWinningCount.DataSource = Adodc1
 
-    'modify
+
+    'add new
     
-    txtPName.DataField = "PName"
-    txtCurrentDate.DataField = "CurrentDate"
-    txtCurrentPrice.DataField = "CurrentPrice"
-    txtWinningPrice.DataField = "WinningPrice"
-    txtUpset.DataField = "Upset"
+    Call Adodc1.Recordset.AddNew
     
     
-    Call Adodc1.Recordset.Move(basVariable.Parameter)
-    If Val(basVariable.Parameter) > 0 Then
-        cmdPrev.Enabled = True
-    Else
-        cmdPrev.Enabled = False
-    End If
-    If Val(basVariable.Parameter) < Adodc1.Recordset.RecordCount - 1 Then
-        cmdNext.Enabled = True
-    Else
-        cmdNext.Enabled = False
-    End If
     
+    txtCurrentDate.Text = Format(DateTime.Now, "yyyy/MM/dd")
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)

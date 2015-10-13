@@ -412,8 +412,8 @@ Private Sub Form_Load()
 
     basDataBase.Connection_String = "Driver={Microsoft Access Driver (*.mdb)};Dbq=" & IIf(Right(App.Path, 1) = "\", App.Path, App.Path & "\") & "main.mdb;"
     'basDataBase.Connection_String = "Driver=SQLite3 ODBC Driver;Database=main.db;"
-    'Debug.Print basDataBase.Connect2DataBase(basDataBase.Connection_String, basDataBase.Connection)
     
+    Call basDataBase.Connect2DataBase(basDataBase.Connection_String, basDataBase.Connection)
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)

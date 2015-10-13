@@ -229,7 +229,7 @@ Begin VB.Form frmPrice
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   3866627
+         Format          =   49741827
          CurrentDate     =   37058
       End
       Begin VB.Label lblEntry 
@@ -550,9 +550,9 @@ Private Sub cmdRefresh_Click()
     End If
 
     If condition = "" Then
-        Adodc1.RecordSource = "select " & selectFields & " from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "' order by price.PID,CurrentDate desc;"
+        Adodc1.RecordSource = "select " & selectFields & " from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "' order by CurrentDate desc,price.PID;"
     Else
-        Adodc1.RecordSource = "select " & selectFields & " from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "' and " & condition & " order by price.PID,CurrentDate desc;"
+        Adodc1.RecordSource = "select " & selectFields & " from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "' and " & condition & " order by CurrentDate desc,price.PID;"
     End If
     Adodc1.Refresh
     RefreshDataGridHeader
@@ -592,8 +592,88 @@ Private Sub DataGrid1_RowColChange(LastRow As Variant, ByVal LastCol As Integer)
     End If
 End Sub
 
-'import database and export to datagrid when form load
 Private Sub Form_Load()
+    'fill price from 2015/10/10 to today.
+    Dim LastSwiftCode As String, LastCurrentPrice As String, LastWinningPrice As String, LastUpset As String
+    Dim SQL As String
+    Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset
+    
+    SQL = "select * from product;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
+    SQL = "select * from price where CID='" & basVariable.SelectCID & "' and CurrentDate='" & Format(DateTime.Now, "yyyy/MM/dd") & "';"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
+    
+    If product_rec.RecordCount <> price_rec.RecordCount Then
+        'get lastest swift code
+        Call price_rec.Close
+        SQL = "select * from price order by SwiftCode desc;"
+        Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
+        LastSwiftCode = Val(price_rec.Fields.Item("SwiftCode")) + 1
+        
+        
+        Call price_rec.Close
+        Do Until product_rec.EOF
+            'check the product exist in current date or not
+            SQL = "select * from price where CID='" & basVariable.SelectCID & "' and PID='" & product_rec.Fields.Item("PID") & "' and CurrentDate='" & Format(DateTime.Now, "yyyy/MM/dd") & "' order by CurrentDate desc;"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
+            
+            If price_rec.RecordCount = 0 Then
+                'get the product lastest one price
+                Call price_rec.Close
+                SQL = "select * from price where CID='" & basVariable.SelectCID & "' and PID='" & product_rec.Fields.Item("PID") & "' order by CurrentDate desc;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
+                
+                
+                If price_rec.RecordCount = 0 Then
+                    'if never exist
+                    SQL = "insert into price(SwiftCode,CID,PID,CurrentDate,CurrentPrice,WinningPrice,Upset) values("
+                    SQL = SQL & "'" & LastSwiftCode & "',"
+                    SQL = SQL & "'" & basVariable.SelectCID & "',"
+                    SQL = SQL & "'" & product_rec.Fields.Item("PID") & "',"
+                    SQL = SQL & "'" & Format(DateTime.Now, "yyyy/MM/dd") & "',"
+                    SQL = SQL & "'0',"
+                    SQL = SQL & "'0',"
+                    SQL = SQL & "'0'"
+                    SQL = SQL & ")"
+                    Call basDataBase.Connection.Execute(SQL)
+                Else
+                    'if has one or more, get the lastest one
+                    Call price_rec.Close
+                    SQL = "select * from price where CID='" & basVariable.SelectCID & "' and PID='" & product_rec.Fields.Item("PID") & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
+                    LastCurrentPrice = price_rec.Fields.Item("CurrentPrice")
+                    LastWinningPrice = price_rec.Fields.Item("WinningPrice")
+                    LastUpset = price_rec.Fields.Item("Upset")
+                    
+                    SQL = "insert into price(SwiftCode,CID,PID,CurrentDate,CurrentPrice,WinningPrice,Upset) values("
+                    SQL = SQL & "'" & LastSwiftCode & "',"
+                    SQL = SQL & "'" & basVariable.SelectCID & "',"
+                    SQL = SQL & "'" & product_rec.Fields.Item("PID") & "',"
+                    SQL = SQL & "'" & Format(DateTime.Now, "yyyy/MM/dd") & "',"
+                    SQL = SQL & "'" & LastCurrentPrice & "',"
+                    SQL = SQL & "'" & LastWinningPrice & "',"
+                    SQL = SQL & "'" & LastUpset & "'"
+                    SQL = SQL & ")"
+                    Call basDataBase.Connection.Execute(SQL)
+                End If
+                
+                LastSwiftCode = Val(LastSwiftCode) + 1
+                Call price_rec.Close
+            Else
+                Call price_rec.Close
+            End If
+            
+            product_rec.MoveNext
+        Loop
+        Call product_rec.Close
+    Else
+        Call product_rec.Close
+        Call price_rec.Close
+    End If
+    DoEvents
+
+
+    'import database and export to datagrid when form load
     DataGrid1.AllowAddNew = False
     DataGrid1.AllowUpdate = False
     
@@ -602,7 +682,7 @@ Private Sub Form_Load()
 
     Adodc1.ConnectionString = basDataBase.Connection_String
     Adodc1.CommandType = adCmdText
-    Adodc1.RecordSource = "select " & selectFields & " from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "' order by price.PID,CurrentDate desc;"
+    Adodc1.RecordSource = "select " & selectFields & " from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "' order by CurrentDate desc,price.PID;"
     Set DataGrid1.DataSource = Adodc1
     RefreshDataGridHeader
 End Sub
