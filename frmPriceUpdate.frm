@@ -70,7 +70,7 @@ Begin VB.Form frmPriceUpdate
          EndProperty
          Height          =   375
          Left            =   1560
-         TabIndex        =   14
+         TabIndex        =   6
          Top             =   2640
          Width           =   4095
       End
@@ -90,7 +90,7 @@ Begin VB.Form frmPriceUpdate
          Height          =   495
          Left            =   4320
          Style           =   1  '圖片外觀
-         TabIndex        =   12
+         TabIndex        =   10
          Tag             =   "Edit"
          Top             =   3120
          Width           =   1335
@@ -111,7 +111,7 @@ Begin VB.Form frmPriceUpdate
          Height          =   495
          Left            =   120
          Style           =   1  '圖片外觀
-         TabIndex        =   11
+         TabIndex        =   9
          Tag             =   "Edit"
          Top             =   3120
          Width           =   1335
@@ -128,7 +128,7 @@ Begin VB.Form frmPriceUpdate
          EndProperty
          Height          =   375
          Left            =   1560
-         TabIndex        =   9
+         TabIndex        =   5
          Top             =   2160
          Width           =   4095
       End
@@ -147,7 +147,7 @@ Begin VB.Form frmPriceUpdate
          Height          =   495
          Left            =   3000
          Style           =   1  '圖片外觀
-         TabIndex        =   7
+         TabIndex        =   8
          Top             =   3120
          Width           =   1215
       End
@@ -166,7 +166,7 @@ Begin VB.Form frmPriceUpdate
          Height          =   495
          Left            =   1560
          Style           =   1  '圖片外觀
-         TabIndex        =   6
+         TabIndex        =   7
          Tag             =   "Edit"
          Top             =   3120
          Width           =   1335
@@ -183,7 +183,7 @@ Begin VB.Form frmPriceUpdate
          EndProperty
          Height          =   375
          Left            =   1560
-         TabIndex        =   5
+         TabIndex        =   4
          Top             =   1680
          Width           =   4095
       End
@@ -223,7 +223,7 @@ Begin VB.Form frmPriceUpdate
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   88735747
+         Format          =   88670211
          CurrentDate     =   42267
       End
       Begin VB.Label lblBasic 
@@ -268,7 +268,7 @@ Begin VB.Form frmPriceUpdate
          Height          =   375
          Index           =   2
          Left            =   360
-         TabIndex        =   13
+         TabIndex        =   14
          Top             =   2640
          Width           =   1215
       End
@@ -291,7 +291,7 @@ Begin VB.Form frmPriceUpdate
          Height          =   375
          Index           =   0
          Left            =   360
-         TabIndex        =   10
+         TabIndex        =   13
          Top             =   2160
          Width           =   1215
       End
@@ -314,7 +314,7 @@ Begin VB.Form frmPriceUpdate
          Height          =   375
          Index           =   0
          Left            =   360
-         TabIndex        =   8
+         TabIndex        =   12
          Top             =   120
          Width           =   5295
       End
@@ -337,7 +337,7 @@ Begin VB.Form frmPriceUpdate
          Height          =   375
          Index           =   1
          Left            =   360
-         TabIndex        =   4
+         TabIndex        =   11
          Top             =   1680
          Width           =   1215
       End

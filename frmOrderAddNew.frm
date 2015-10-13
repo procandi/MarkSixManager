@@ -71,7 +71,7 @@ Begin VB.Form frmOrderAddNew
          EndProperty
          Height          =   375
          Left            =   1560
-         TabIndex        =   9
+         TabIndex        =   5
          Top             =   2160
          Width           =   4095
       End
@@ -126,7 +126,7 @@ Begin VB.Form frmOrderAddNew
          EndProperty
          Height          =   375
          Left            =   1560
-         TabIndex        =   5
+         TabIndex        =   4
          Top             =   1680
          Width           =   4095
       End
@@ -165,7 +165,7 @@ Begin VB.Form frmOrderAddNew
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   88735747
+         Format          =   88670211
          CurrentDate     =   42267
       End
       Begin VB.Label lblBasic 
@@ -233,7 +233,7 @@ Begin VB.Form frmOrderAddNew
          Height          =   375
          Index           =   0
          Left            =   360
-         TabIndex        =   8
+         TabIndex        =   9
          Top             =   120
          Width           =   5295
       End
@@ -256,7 +256,7 @@ Begin VB.Form frmOrderAddNew
          Height          =   375
          Index           =   1
          Left            =   360
-         TabIndex        =   4
+         TabIndex        =   8
          Top             =   1680
          Width           =   1215
       End
@@ -368,7 +368,7 @@ End Sub
 Private Sub cmdUpdate_Click()
     Dim PID As String, LastSwiftCode As String
     Dim SQL As String
-    Dim product_rec As New ADODB.Recordset, order_rec As New ADODB.Recordset
+    Dim product_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     
     SQL = "select * from [order] order by SwiftCode desc;"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)

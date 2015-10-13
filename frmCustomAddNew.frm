@@ -19,7 +19,7 @@ Begin VB.Form frmCustomAddNew
    Begin Threed.SSPanel pnlRegist 
       Height          =   5535
       Left            =   120
-      TabIndex        =   4
+      TabIndex        =   18
       Top             =   600
       Width           =   8415
       _Version        =   65536
@@ -53,14 +53,14 @@ Begin VB.Form frmCustomAddNew
          Height          =   360
          Left            =   1320
          MaxLength       =   256
-         TabIndex        =   30
+         TabIndex        =   0
          Top             =   240
          Width           =   3015
       End
       Begin VB.ComboBox cmbProportion 
          Height          =   300
          Left            =   1320
-         TabIndex        =   29
+         TabIndex        =   5
          Top             =   1920
          Width           =   3015
       End
@@ -77,7 +77,7 @@ Begin VB.Form frmCustomAddNew
          Height          =   360
          Left            =   2760
          MaxLength       =   256
-         TabIndex        =   28
+         TabIndex        =   30
          Top             =   1200
          Width           =   1335
       End
@@ -94,7 +94,7 @@ Begin VB.Form frmCustomAddNew
          Height          =   360
          Left            =   1320
          MaxLength       =   256
-         TabIndex        =   27
+         TabIndex        =   2
          Top             =   720
          Width           =   3015
       End
@@ -112,7 +112,7 @@ Begin VB.Form frmCustomAddNew
          Left            =   240
          MaxLength       =   256
          MultiLine       =   -1  'True
-         TabIndex        =   25
+         TabIndex        =   14
          Top             =   4080
          Width           =   7935
       End
@@ -130,7 +130,7 @@ Begin VB.Form frmCustomAddNew
          Left            =   240
          MaxLength       =   256
          MultiLine       =   -1  'True
-         TabIndex        =   24
+         TabIndex        =   13
          Top             =   3240
          Width           =   7935
       End
@@ -147,7 +147,7 @@ Begin VB.Form frmCustomAddNew
          Height          =   360
          Left            =   5520
          MaxLength       =   256
-         TabIndex        =   23
+         TabIndex        =   12
          Top             =   2520
          Width           =   2655
       End
@@ -164,7 +164,7 @@ Begin VB.Form frmCustomAddNew
          Height          =   360
          Left            =   5520
          MaxLength       =   256
-         TabIndex        =   22
+         TabIndex        =   11
          Top             =   2160
          Width           =   2655
       End
@@ -181,7 +181,7 @@ Begin VB.Form frmCustomAddNew
          Height          =   360
          Left            =   5520
          MaxLength       =   256
-         TabIndex        =   21
+         TabIndex        =   10
          Top             =   1800
          Width           =   2655
       End
@@ -198,7 +198,7 @@ Begin VB.Form frmCustomAddNew
          Height          =   360
          Left            =   5520
          MaxLength       =   256
-         TabIndex        =   20
+         TabIndex        =   9
          Top             =   1440
          Width           =   2655
       End
@@ -215,7 +215,7 @@ Begin VB.Form frmCustomAddNew
          Height          =   360
          Left            =   5520
          MaxLength       =   256
-         TabIndex        =   19
+         TabIndex        =   8
          Top             =   1080
          Width           =   2655
       End
@@ -232,14 +232,14 @@ Begin VB.Form frmCustomAddNew
          Height          =   360
          Left            =   5520
          MaxLength       =   256
-         TabIndex        =   18
+         TabIndex        =   7
          Top             =   720
          Width           =   2655
       End
       Begin VB.ComboBox cmbBonusTarget 
          Height          =   300
          Left            =   1320
-         TabIndex        =   17
+         TabIndex        =   6
          Top             =   2280
          Width           =   3015
       End
@@ -256,7 +256,7 @@ Begin VB.Form frmCustomAddNew
          Height          =   360
          Left            =   1320
          MaxLength       =   256
-         TabIndex        =   16
+         TabIndex        =   4
          Top             =   1560
          Width           =   3015
       End
@@ -274,7 +274,7 @@ Begin VB.Form frmCustomAddNew
          Height          =   360
          Left            =   5520
          MaxLength       =   256
-         TabIndex        =   15
+         TabIndex        =   1
          Top             =   240
          Width           =   2655
       End
@@ -294,7 +294,7 @@ Begin VB.Form frmCustomAddNew
          Height          =   495
          Left            =   2880
          Style           =   1  '圖片外觀
-         TabIndex        =   2
+         TabIndex        =   16
          Tag             =   "Edit"
          Top             =   4920
          Width           =   2535
@@ -314,7 +314,7 @@ Begin VB.Form frmCustomAddNew
          Height          =   495
          Left            =   5520
          Style           =   1  '圖片外觀
-         TabIndex        =   3
+         TabIndex        =   17
          Top             =   4920
          Width           =   2655
       End
@@ -333,7 +333,7 @@ Begin VB.Form frmCustomAddNew
          Height          =   495
          Left            =   240
          Style           =   1  '圖片外觀
-         TabIndex        =   1
+         TabIndex        =   15
          Tag             =   "Insert"
          Top             =   4920
          Width           =   2535
@@ -341,7 +341,7 @@ Begin VB.Form frmCustomAddNew
       Begin MSComCtl2.DTPicker dtpOpenDate 
          Height          =   375
          Left            =   2760
-         TabIndex        =   0
+         TabIndex        =   3
          Top             =   1200
          Width           =   1575
          _ExtentX        =   2778
@@ -357,7 +357,7 @@ Begin VB.Form frmCustomAddNew
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   88735747
+         Format          =   88670211
          CurrentDate     =   42267
       End
       Begin VB.Label lblEntry 
@@ -378,7 +378,7 @@ Begin VB.Form frmCustomAddNew
          Height          =   360
          Index           =   0
          Left            =   4440
-         TabIndex        =   26
+         TabIndex        =   29
          Top             =   240
          Width           =   1095
       End
@@ -400,7 +400,7 @@ Begin VB.Form frmCustomAddNew
          Height          =   360
          Index           =   10
          Left            =   240
-         TabIndex        =   13
+         TabIndex        =   27
          Top             =   1560
          Width           =   1095
       End
@@ -422,7 +422,7 @@ Begin VB.Form frmCustomAddNew
          Height          =   360
          Index           =   2
          Left            =   4440
-         TabIndex        =   5
+         TabIndex        =   19
          Top             =   720
          Width           =   1095
       End
@@ -444,7 +444,7 @@ Begin VB.Form frmCustomAddNew
          Height          =   375
          Index           =   2
          Left            =   240
-         TabIndex        =   12
+         TabIndex        =   26
          Top             =   240
          Width           =   1095
       End
@@ -466,7 +466,7 @@ Begin VB.Form frmCustomAddNew
          Height          =   375
          Index           =   0
          Left            =   240
-         TabIndex        =   11
+         TabIndex        =   25
          Top             =   1200
          Width           =   2505
       End
@@ -488,7 +488,7 @@ Begin VB.Form frmCustomAddNew
          Height          =   420
          Index           =   8
          Left            =   240
-         TabIndex        =   10
+         TabIndex        =   24
          Top             =   3720
          Width           =   1095
       End
@@ -510,7 +510,7 @@ Begin VB.Form frmCustomAddNew
          Height          =   360
          Index           =   6
          Left            =   240
-         TabIndex        =   9
+         TabIndex        =   23
          Top             =   1920
          Width           =   1095
       End
@@ -532,7 +532,7 @@ Begin VB.Form frmCustomAddNew
          Height          =   360
          Index           =   5
          Left            =   240
-         TabIndex        =   8
+         TabIndex        =   22
          Top             =   720
          Width           =   1095
       End
@@ -554,7 +554,7 @@ Begin VB.Form frmCustomAddNew
          Height          =   360
          Index           =   1
          Left            =   240
-         TabIndex        =   7
+         TabIndex        =   21
          Top             =   2880
          Width           =   1095
       End
@@ -576,7 +576,7 @@ Begin VB.Form frmCustomAddNew
          Height          =   360
          Index           =   4
          Left            =   240
-         TabIndex        =   6
+         TabIndex        =   20
          Top             =   2280
          Width           =   1095
       End
@@ -646,7 +646,7 @@ Begin VB.Form frmCustomAddNew
       Height          =   615
       Index           =   1
       Left            =   5280
-      TabIndex        =   14
+      TabIndex        =   28
       Top             =   120
       Width           =   3375
    End
