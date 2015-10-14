@@ -88,7 +88,7 @@ Begin VB.Form frmConfirm
          Strikethrough   =   0   'False
       EndProperty
       CustomFormat    =   "yyyy/MM/dd"
-      Format          =   94109699
+      Format          =   97189891
       CurrentDate     =   37058
    End
    Begin VB.Label Label1 
@@ -186,22 +186,91 @@ Private Sub cmdCancel_Click()
 End Sub
 
 Sub DayReport(ByVal TargetPath As String)
-    Dim Body As String
+    Dim selectFields As String
+    Dim Body As String, i As Integer, PIDArray(25535) As String, count As Integer, PID As String, OldPID As String, CurrentCount As Integer
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
+    Dim rec1 As New adoDB.Recordset
     
-    SQL = "select * from product;"
+    
+    SQL = "select * from product order by PID;"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
-    SQL = "select * from price where CID='" & basVariable.SelectCID & "' and CurrentDate='" & Format(DateTime.Now, "yyyy/MM/dd") & "';"
-    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
+    
+    SQL = "select * from custom;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
+    
+
     
     
     Open TargetPath For Output As #1
-        Print #1, "日期", vbTab & Format(DateTime.Now, "yyyy/MM/dd")
-        
-        Body = "產品"
+        Print #1, "<table>"
+    
+        'show report datetime
+        Body = "<tr><td>日期</td><td colspan=10>" & txtCurrentDate.Text & "</td></tr>"
         Print #1, Body
+        
+        'show product name
+        Body = "<tr><td>產品"
+        count = 0
+        Do Until product_rec.EOF
+            PIDArray(count) = product_rec.Fields.Item("PID")
+            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
+            count = count + 1
+            product_rec.MoveNext
+        Loop
+        Body = Body & "</td></tr>"
+        Print #1, Body
+        
+        'show every custom order per product
+        product_rec.MoveFirst
+        Do Until custom_rec.EOF
+            'mark custom name
+            CID = custom_rec.Fields.Item("CID")
+            CName = custom_rec.Fields.Item("CName")
+            Body = "<tr>"
+            Body = Body & "<td>" & CName & "</td>"
+
+
+            'show every custom order per product
+            For i = 0 To count - 1
+                'query a new custom order
+                selectFields = "CurrentCount,WinningCount"
+                SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate='" & txtCurrentDate.Text & "' order by [order].PID;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
+                
+                'enum custom every product order count
+                CurrentCount = 0
+                Do Until rec1.EOF
+                    If OldPID = "" Then
+                        OldPID = PIDArray(i)
+                        CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
+                    ElseIf OldPID = PIDArray(i) Then
+                        CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
+                    Else
+                        OldPID = PIDArray(i)
+                        Body = Body & "<td>" & CurrentCount & "</td>"
+                        CurrentCount = Val(rec1.Fields.Item("CurrentCount"))
+                    End If
+                    
+                    rec1.MoveNext
+                Loop
+                Body = Body & "<td>" & CurrentCount & "</td>"
+            Next
+            Body = Body & "</tr>"
+            Print #1, Body
+            
+            
+            custom_rec.MoveNext
+        Loop
+        
+        
+        Print #1, "</table>"
     Close #1
+    
+    
+    product_rec.Close
+    custom_rec.Close
+    rec1.Close
 End Sub
 
 Sub WeekReport(ByVal TargetPath As String)
@@ -217,7 +286,92 @@ Sub YearReport(ByVal TargetPath As String)
 End Sub
 
 Sub DayAccount(ByVal TargetPath As String)
+    Dim selectFields As String
+    Dim Body As String, i As Integer, PIDArray(25535) As String, count As Integer, PID As String, OldPID As String, CurrentCount As Integer
+    Dim SQL As String
+    Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
+    Dim rec1 As New adoDB.Recordset
+    
+    
+    SQL = "select * from product order by PID;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
+    
+    SQL = "select * from custom;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
+    
 
+    
+    
+    Open TargetPath For Output As #1
+        Print #1, "<table>"
+    
+        'show report datetime
+        Body = "<tr><td colspan=2>" & txtCurrentDate.Text & "</td><td>日總計</td></tr>"
+        Print #1, Body
+        
+        'show product name
+        Body = "<tr><td>產品"
+        count = 0
+        Do Until product_rec.EOF
+            PIDArray(count) = product_rec.Fields.Item("PID")
+            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
+            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中</td>"
+            count = count + 1
+            product_rec.MoveNext
+        Loop
+        Body = Body & "</td></tr>"
+        Print #1, Body
+        
+        'show every custom order per product
+        product_rec.MoveFirst
+        Do Until custom_rec.EOF
+            'mark custom name
+            CID = custom_rec.Fields.Item("CID")
+            CName = custom_rec.Fields.Item("CName")
+            Body = "<tr>"
+            Body = Body & "<td>" & CName & "</td>"
+
+
+            'show every custom order per product
+            For i = 0 To count - 1
+                'query a new custom order
+                selectFields = "CurrentCount,WinningCount"
+                SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate='" & txtCurrentDate.Text & "' order by [order].PID;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
+                
+                'enum custom every product order count
+                CurrentCount = 0
+                Do Until rec1.EOF
+                    If OldPID = "" Then
+                        OldPID = PIDArray(i)
+                        CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
+                    ElseIf OldPID = PIDArray(i) Then
+                        CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
+                    Else
+                        OldPID = PIDArray(i)
+                        Body = Body & "<td>" & CurrentCount & "</td>"
+                        CurrentCount = Val(rec1.Fields.Item("CurrentCount"))
+                    End If
+                    
+                    rec1.MoveNext
+                Loop
+                Body = Body & "<td>" & CurrentCount & "</td>"
+            Next
+            Body = Body & "</tr>"
+            Print #1, Body
+            
+            
+            custom_rec.MoveNext
+        Loop
+        
+        
+        Print #1, "</table>"
+    Close #1
+    
+    
+    product_rec.Close
+    custom_rec.Close
+    rec1.Close
 End Sub
 
 Sub WeekAccount(ByVal TargetPath As String)
@@ -280,52 +434,52 @@ Private Sub cmdConfirm_Click()
         
         Select Case basVariable.Parameter
         Case "DayReport"
-            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_日報表.xls"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_日報表.xls"
             Call DayReport(TargetPath)
         Case "WeekReport"
-            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_週報表.xls"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_週報表.xls"
             Call WeekReport(TargetPath)
         Case "MonthReport"
-            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_月報表.xls"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_月報表.xls"
             Call MonthReport(TargetPath)
         Case "YearReport"
-            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_年報表.xls"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_年報表.xls"
             Call YearReport(TargetPath)
         Case "DayAccount"
-            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_日總表.xls"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_日總表.xls"
             Call DayAccount(TargetPath)
         Case "WeekAccount"
-            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_週總表.xls"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_週總表.xls"
             Call WeekAccount(TargetPath)
         Case "MonthAccount"
-            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_月總表.xls"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_月總表.xls"
             Call MonthAccount(TargetPath)
         Case "YearAccount"
-            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_年總表.xls"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_年總表.xls"
             Call YearAccount(TargetPath)
         Case "FourKDayReport"
-            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K日報表.xls"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_4K日報表.xls"
             Call FourKDayReport(TargetPath)
         Case "FourKWeekReport"
-            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K週報表.xls"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_4K週報表.xls"
             Call FourKWeekReport(TargetPath)
         Case "FourKMonthReport"
-            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K月報表.xls"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_4K月報表.xls"
             Call FourKMonthReport(TargetPath)
         Case "FourKYearReport"
-            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K年報表.xls"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_4K年報表.xls"
             Call FourKYearReport(TargetPath)
         Case "FourKDayAccount"
-            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K日總表.xls"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_4K日總表.xls"
             Call FourKDayAccount(TargetPath)
         Case "FourKWeekAccount"
-            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K週總表.xls"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_4K週總表.xls"
             Call FourKWeekAccount(TargetPath)
         Case "FourKMonthAccount"
-            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K月總表.xls"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_4K月總表.xls"
             Call FourKMonthAccount(TargetPath)
         Case "FourKYearAccount"
-            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K年總表.xls"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_4K年總表.xls"
             Call FourKYearAccount(TargetPath)
         End Select
     End If

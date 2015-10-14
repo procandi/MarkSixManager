@@ -510,6 +510,10 @@ Private Sub Form_Load()
     'basDataBase.Connection_String = "Driver=SQLite3 ODBC Driver;Database=main.db;"
     
     Call basDataBase.Connect2DataBase(basDataBase.Connection_String, basDataBase.Connection)
+    
+    'For i = 1 To 127
+    '    Debug.Print i & "," & Chr(i)
+    'Next
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
