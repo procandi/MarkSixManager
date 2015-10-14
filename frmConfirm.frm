@@ -88,7 +88,7 @@ Begin VB.Form frmConfirm
          Strikethrough   =   0   'False
       EndProperty
       CustomFormat    =   "yyyy/MM/dd"
-      Format          =   54329347
+      Format          =   97320963
       CurrentDate     =   37058
    End
    Begin VB.Label Label1 
@@ -953,6 +953,7 @@ Sub YearAccount(ByVal TargetPath As String)
     rec1.Close
 End Sub
 
+
 Sub FourKDayReport(ByVal TargetPath As String)
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, count As Integer, PID As String, OldPID As String, CurrentCount As Integer
@@ -1039,14 +1040,14 @@ Sub FourKDayReport(ByVal TargetPath As String)
 End Sub
 
 Sub FourKWeekReport(ByVal TargetPath As String)
-Dim selectFields As String
+    Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, count As Integer, PID As String, OldPID As String, CurrentCount As Integer
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
     
     
-    SQL = "select * from product order by PID;"
+    SQL = "select * from product where PName like '%4K%' order by PID;"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
     SQL = "select * from custom;"
@@ -1124,14 +1125,14 @@ Dim selectFields As String
 End Sub
 
 Sub FourKMonthReport(ByVal TargetPath As String)
-Dim selectFields As String
+    Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, count As Integer, PID As String, OldPID As String, CurrentCount As Integer
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
     
     
-    SQL = "select * from product order by PID;"
+    SQL = "select * from product where PName like '%4K%' order by PID;"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
     SQL = "select * from custom;"
@@ -1209,23 +1210,516 @@ Dim selectFields As String
 End Sub
 
 Sub FourKYearReport(ByVal TargetPath As String)
+    Dim selectFields As String
+    Dim Body As String, i As Integer, PIDArray(1024) As String, count As Integer, PID As String, OldPID As String, CurrentCount As Integer
+    Dim SQL As String
+    Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
+    Dim rec1 As New adoDB.Recordset
+    
+    
+    SQL = "select * from product where PName like '%4K%'order by PID;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
+    
+    SQL = "select * from custom;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
+    
 
+    
+    
+    Open TargetPath For Output As #1
+        Print #1, "<table>"
+    
+        'show report datetime
+        Body = "<tr><td>日期</td><td colspan=10>" & Format(txtCurrentDate.Text, "yyyy") & "年</td></tr>"
+        Print #1, Body
+        
+        'show product name
+        Body = "<tr><td>產品"
+        count = 0
+        Do Until product_rec.EOF
+            PIDArray(count) = product_rec.Fields.Item("PID")
+            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
+            count = count + 1
+            product_rec.MoveNext
+        Loop
+        Body = Body & "</td></tr>"
+        Print #1, Body
+        
+        'show every custom order per product
+        product_rec.MoveFirst
+        Do Until custom_rec.EOF
+            'mark custom name
+            CID = custom_rec.Fields.Item("CID")
+            CName = custom_rec.Fields.Item("CName")
+            Body = "<tr>"
+            Body = Body & "<td>" & CName & "</td>"
+
+
+            'show every custom order per product
+            For i = 0 To count - 1
+                'query a new custom order
+                selectFields = "CurrentCount,WinningCount"
+                SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31') order by [order].PID;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
+                
+                'enum custom every product order count
+                CurrentCount = 0
+                Do Until rec1.EOF
+                    If OldPID = "" Then
+                        OldPID = PIDArray(i)
+                        CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
+                    ElseIf OldPID = PIDArray(i) Then
+                        CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
+                    Else
+                        OldPID = PIDArray(i)
+                        Body = Body & "<td>" & CurrentCount & "</td>"
+                        CurrentCount = Val(rec1.Fields.Item("CurrentCount"))
+                    End If
+                    
+                    rec1.MoveNext
+                Loop
+                Body = Body & "<td>" & CurrentCount & "</td>"
+            Next
+            Body = Body & "</tr>"
+            Print #1, Body
+            
+            custom_rec.MoveNext
+        Loop
+        
+        Print #1, "</table>"
+    Close #1
+    
+    product_rec.Close
+    custom_rec.Close
+    rec1.Close
 End Sub
 
 Sub FourKDayAccount(ByVal TargetPath As String)
+    Dim selectFields As String
+    Dim Body As String, i As Integer, PIDArray(1024) As String, count As Integer, PID As String, OldPID As String, CurrentCount As Integer, WinningCount As Integer
+    Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
+    Dim SQL As String
+    Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
+    Dim rec1 As New adoDB.Recordset
+    
+    
+    SQL = "select * from product where PName like '%4K%' order by PID;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
+    
+    SQL = "select * from custom;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
+    
 
+    
+    
+    Open TargetPath For Output As #1
+        Print #1, "<table>"
+    
+        'show report datetime
+        Body = "<tr><td colspan=2>" & txtCurrentDate.Text & "</td><td>日總計</td></tr>"
+        Print #1, Body
+        
+        'show product name
+        Body = "<tr><td>產品"
+        count = 0
+        Do Until product_rec.EOF
+            PIDArray(count) = product_rec.Fields.Item("PID")
+            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
+            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中</td>"
+            count = count + 1
+            product_rec.MoveNext
+        Loop
+        Body = Body & "</td></tr>"
+        Print #1, Body
+        
+        'show every custom order per product
+        product_rec.MoveFirst
+        Do Until custom_rec.EOF
+            'mark custom name
+            CID = custom_rec.Fields.Item("CID")
+            CName = custom_rec.Fields.Item("CName")
+            Body = "<tr>"
+            Body = Body & "<td>" & CName & "</td>"
+
+
+            'show every custom order per product
+            For i = 0 To count - 1
+                'query a new custom order
+                selectFields = "CurrentCount,WinningCount"
+                SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate='" & txtCurrentDate.Text & "' order by [order].PID;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
+                
+                'enum custom every product order count
+                CurrentCount = 0
+                WinningCount = 0
+                Do Until rec1.EOF
+                    If OldPID = "" Then
+                        OldPID = PIDArray(i)
+                        CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
+                        WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
+                    ElseIf OldPID = PIDArray(i) Then
+                        CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
+                        WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
+                    Else
+                        OldPID = PIDArray(i)
+                        Body = Body & "<td>" & CurrentCount & "</td>"
+                        Body = Body & "<td>" & WinningCount & "</td>"
+                        CurrentCount = Val(rec1.Fields.Item("CurrentCount"))
+                        WinningCount = Val(rec1.Fields.Item("WinningCount"))
+                    End If
+                    
+                    rec1.MoveNext
+                Loop
+                Body = Body & "<td>" & CurrentCount & "</td>"
+                Body = Body & "<td>" & WinningCount & "</td>"
+                
+                'a new variable to account every product
+                CurrentCountAll(i) = CurrentCountAll(i) + CurrentCount
+                WinningCountAll(i) = WinningCountAll(i) + WinningCount
+            Next
+            Body = Body & "</tr>"
+            Print #1, Body
+            
+            custom_rec.MoveNext
+        Loop
+        
+        
+        Body = "<tr><td>總計</td>"
+        For i = 0 To count - 1
+            Body = Body & "<td>" & CurrentCountAll(i) & "</td>"
+            Body = Body & "<td>" & WinningCountAll(i) & "</td>"
+        Next
+        Body = Body & "</tr>"
+        Print #1, Body
+        
+        
+        Print #1, "</table>"
+    Close #1
+    
+    product_rec.Close
+    custom_rec.Close
+    rec1.Close
 End Sub
 
 Sub FourKWeekAccount(ByVal TargetPath As String)
+    Dim selectFields As String
+    Dim Body As String, i As Integer, PIDArray(1024) As String, count As Integer, PID As String, OldPID As String, CurrentCount As Integer, WinningCount As Integer
+    Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
+    Dim SQL As String
+    Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
+    Dim rec1 As New adoDB.Recordset
+    
+    
+    SQL = "select * from product where PName like '%4K%' order by PID;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
+    
+    SQL = "select * from custom;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
+    
 
+    
+    
+    Open TargetPath For Output As #1
+        Print #1, "<table>"
+    
+        'show report datetime
+        Body = "<tr><td colspan=2>" & DateTime.DateAdd("d", -7, txtCurrentDate.Text) & "至" & txtCurrentDate.Text & "</td><td>週總計</td></tr>"
+        Print #1, Body
+        
+        'show product name
+        Body = "<tr><td>產品"
+        count = 0
+        Do Until product_rec.EOF
+            PIDArray(count) = product_rec.Fields.Item("PID")
+            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
+            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中</td>"
+            count = count + 1
+            product_rec.MoveNext
+        Loop
+        Body = Body & "</td></tr>"
+        Print #1, Body
+        
+        'show every custom order per product
+        product_rec.MoveFirst
+        Do Until custom_rec.EOF
+            'mark custom name
+            CID = custom_rec.Fields.Item("CID")
+            CName = custom_rec.Fields.Item("CName")
+            Body = "<tr>"
+            Body = Body & "<td>" & CName & "</td>"
+
+
+            'show every custom order per product
+            For i = 0 To count - 1
+                'query a new custom order
+                selectFields = "CurrentCount,WinningCount"
+                SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -7, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by [order].PID;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
+                
+                'enum custom every product order count
+                CurrentCount = 0
+                WinningCount = 0
+                Do Until rec1.EOF
+                    If OldPID = "" Then
+                        OldPID = PIDArray(i)
+                        CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
+                        WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
+                    ElseIf OldPID = PIDArray(i) Then
+                        CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
+                        WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
+                    Else
+                        OldPID = PIDArray(i)
+                        Body = Body & "<td>" & CurrentCount & "</td>"
+                        Body = Body & "<td>" & WinningCount & "</td>"
+                        CurrentCount = Val(rec1.Fields.Item("CurrentCount"))
+                        WinningCount = Val(rec1.Fields.Item("WinningCount"))
+                    End If
+                    
+                    rec1.MoveNext
+                Loop
+                Body = Body & "<td>" & CurrentCount & "</td>"
+                Body = Body & "<td>" & WinningCount & "</td>"
+                
+                'a new variable to account every product
+                CurrentCountAll(i) = CurrentCountAll(i) + CurrentCount
+                WinningCountAll(i) = WinningCountAll(i) + WinningCount
+            Next
+            Body = Body & "</tr>"
+            Print #1, Body
+            
+            custom_rec.MoveNext
+        Loop
+        
+        
+        Body = "<tr><td>總計</td>"
+        For i = 0 To count - 1
+            Body = Body & "<td>" & CurrentCountAll(i) & "</td>"
+            Body = Body & "<td>" & WinningCountAll(i) & "</td>"
+        Next
+        Body = Body & "</tr>"
+        Print #1, Body
+        
+        
+        Print #1, "</table>"
+    Close #1
+    
+    product_rec.Close
+    custom_rec.Close
+    rec1.Close
 End Sub
 
 Sub FourKMonthAccount(ByVal TargetPath As String)
+    Dim selectFields As String
+    Dim Body As String, i As Integer, PIDArray(1024) As String, count As Integer, PID As String, OldPID As String, CurrentCount As Integer, WinningCount As Integer
+    Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
+    Dim SQL As String
+    Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
+    Dim rec1 As New adoDB.Recordset
+    
+    
+    SQL = "select * from product where PName like '%4K%' order by PID;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
+    
+    SQL = "select * from custom;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
+    
 
+    
+    
+    Open TargetPath For Output As #1
+        Print #1, "<table>"
+    
+        'show report datetime
+        Body = "<tr><td colspan=2>" & Format(txtCurrentDate.Text, "yyyy/MM") & "</td><td>月總計</td></tr>"
+        Print #1, Body
+        
+        'show product name
+        Body = "<tr><td>產品"
+        count = 0
+        Do Until product_rec.EOF
+            PIDArray(count) = product_rec.Fields.Item("PID")
+            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
+            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中</td>"
+            count = count + 1
+            product_rec.MoveNext
+        Loop
+        Body = Body & "</td></tr>"
+        Print #1, Body
+        
+        'show every custom order per product
+        product_rec.MoveFirst
+        Do Until custom_rec.EOF
+            'mark custom name
+            CID = custom_rec.Fields.Item("CID")
+            CName = custom_rec.Fields.Item("CName")
+            Body = "<tr>"
+            Body = Body & "<td>" & CName & "</td>"
+
+
+            'show every custom order per product
+            For i = 0 To count - 1
+                'query a new custom order
+                selectFields = "CurrentCount,WinningCount"
+                SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/MM/") & "01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/MM/") & Date_Is_28_29_30_31(txtCurrentDate.Text) & "') order by [order].PID;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
+                
+                'enum custom every product order count
+                CurrentCount = 0
+                WinningCount = 0
+                Do Until rec1.EOF
+                    If OldPID = "" Then
+                        OldPID = PIDArray(i)
+                        CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
+                        WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
+                    ElseIf OldPID = PIDArray(i) Then
+                        CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
+                        WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
+                    Else
+                        OldPID = PIDArray(i)
+                        Body = Body & "<td>" & CurrentCount & "</td>"
+                        Body = Body & "<td>" & WinningCount & "</td>"
+                        CurrentCount = Val(rec1.Fields.Item("CurrentCount"))
+                        WinningCount = Val(rec1.Fields.Item("WinningCount"))
+                    End If
+                    
+                    rec1.MoveNext
+                Loop
+                Body = Body & "<td>" & CurrentCount & "</td>"
+                Body = Body & "<td>" & WinningCount & "</td>"
+                
+                'a new variable to account every product
+                CurrentCountAll(i) = CurrentCountAll(i) + CurrentCount
+                WinningCountAll(i) = WinningCountAll(i) + WinningCount
+            Next
+            Body = Body & "</tr>"
+            Print #1, Body
+            
+            custom_rec.MoveNext
+        Loop
+        
+        
+        Body = "<tr><td>總計</td>"
+        For i = 0 To count - 1
+            Body = Body & "<td>" & CurrentCountAll(i) & "</td>"
+            Body = Body & "<td>" & WinningCountAll(i) & "</td>"
+        Next
+        Body = Body & "</tr>"
+        Print #1, Body
+        
+        
+        Print #1, "</table>"
+    Close #1
+    
+    product_rec.Close
+    custom_rec.Close
+    rec1.Close
 End Sub
 
 Sub FourKYearAccount(ByVal TargetPath As String)
+    Dim selectFields As String
+    Dim Body As String, i As Integer, PIDArray(1024) As String, count As Integer, PID As String, OldPID As String, CurrentCount As Integer, WinningCount As Integer
+    Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
+    Dim SQL As String
+    Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
+    Dim rec1 As New adoDB.Recordset
+    
+    
+    SQL = "select * from product where PName like '%4K%'order by PID;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
+    
+    SQL = "select * from custom;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
+    
 
+    
+    
+    Open TargetPath For Output As #1
+        Print #1, "<table>"
+    
+        'show report datetime
+        Body = "<tr><td colspan=2>" & Format(txtCurrentDate.Text, "yyyy") & "</td><td>年總計</td></tr>"
+        Print #1, Body
+        
+        'show product name
+        Body = "<tr><td>產品"
+        count = 0
+        Do Until product_rec.EOF
+            PIDArray(count) = product_rec.Fields.Item("PID")
+            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
+            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中</td>"
+            count = count + 1
+            product_rec.MoveNext
+        Loop
+        Body = Body & "</td></tr>"
+        Print #1, Body
+        
+        'show every custom order per product
+        product_rec.MoveFirst
+        Do Until custom_rec.EOF
+            'mark custom name
+            CID = custom_rec.Fields.Item("CID")
+            CName = custom_rec.Fields.Item("CName")
+            Body = "<tr>"
+            Body = Body & "<td>" & CName & "</td>"
+
+
+            'show every custom order per product
+            For i = 0 To count - 1
+                'query a new custom order
+                selectFields = "CurrentCount,WinningCount"
+                SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31') order by [order].PID;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
+                
+                'enum custom every product order count
+                CurrentCount = 0
+                WinningCount = 0
+                Do Until rec1.EOF
+                    If OldPID = "" Then
+                        OldPID = PIDArray(i)
+                        CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
+                        WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
+                    ElseIf OldPID = PIDArray(i) Then
+                        CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
+                        WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
+                    Else
+                        OldPID = PIDArray(i)
+                        Body = Body & "<td>" & CurrentCount & "</td>"
+                        Body = Body & "<td>" & WinningCount & "</td>"
+                        CurrentCount = Val(rec1.Fields.Item("CurrentCount"))
+                        WinningCount = Val(rec1.Fields.Item("WinningCount"))
+                    End If
+                    
+                    rec1.MoveNext
+                Loop
+                Body = Body & "<td>" & CurrentCount & "</td>"
+                Body = Body & "<td>" & WinningCount & "</td>"
+                
+                'a new variable to account every product
+                CurrentCountAll(i) = CurrentCountAll(i) + CurrentCount
+                WinningCountAll(i) = WinningCountAll(i) + WinningCount
+            Next
+            Body = Body & "</tr>"
+            Print #1, Body
+            
+            custom_rec.MoveNext
+        Loop
+        
+        
+        Body = "<tr><td>總計</td>"
+        For i = 0 To count - 1
+            Body = Body & "<td>" & CurrentCountAll(i) & "</td>"
+            Body = Body & "<td>" & WinningCountAll(i) & "</td>"
+        Next
+        Body = Body & "</tr>"
+        Print #1, Body
+        
+        
+        Print #1, "</table>"
+    Close #1
+    
+    product_rec.Close
+    custom_rec.Close
+    rec1.Close
 End Sub
 
 Private Sub cmdConfirm_Click()
@@ -1250,46 +1744,46 @@ Private Sub cmdConfirm_Click()
             TargetPath = TargetPath & Format(DateTime.DateAdd("d", -7, txtCurrentDate.Text), "yyyyMMdd") & "至" & Format(txtCurrentDate.Text, "yyyyMMdd") & "_週報表.xls"
             Call WeekReport(TargetPath)
         Case "MonthReport"
-            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_月報表.xls"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMM") & "_月報表.xls"
             Call MonthReport(TargetPath)
         Case "YearReport"
-            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_年報表.xls"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyy") & "_年報表.xls"
             Call YearReport(TargetPath)
         Case "DayAccount"
             TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_日總帳.xls"
             Call DayAccount(TargetPath)
         Case "WeekAccount"
-            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_週總帳.xls"
+            TargetPath = TargetPath & Format(DateTime.DateAdd("d", -7, txtCurrentDate.Text), "yyyyMMdd") & "至" & Format(txtCurrentDate.Text, "yyyyMMdd") & "_週總帳.xls"
             Call WeekAccount(TargetPath)
         Case "MonthAccount"
-            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_月總帳.xls"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMM") & "_月總帳.xls"
             Call MonthAccount(TargetPath)
         Case "YearAccount"
-            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_年總帳.xls"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyy") & "_年總帳.xls"
             Call YearAccount(TargetPath)
         Case "FourKDayReport"
             TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_4K日報表.xls"
             Call FourKDayReport(TargetPath)
         Case "FourKWeekReport"
-            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_4K週報表.xls"
+            TargetPath = TargetPath & Format(DateTime.DateAdd("d", -7, txtCurrentDate.Text), "yyyyMMdd") & "至" & Format(txtCurrentDate.Text, "yyyyMMdd") & "_4K週報表.xls"
             Call FourKWeekReport(TargetPath)
         Case "FourKMonthReport"
-            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_4K月報表.xls"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMM") & "_4K月報表.xls"
             Call FourKMonthReport(TargetPath)
         Case "FourKYearReport"
-            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_4K年報表.xls"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyy") & "_4K年報表.xls"
             Call FourKYearReport(TargetPath)
         Case "FourKDayAccount"
             TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_4K日總帳.xls"
             Call FourKDayAccount(TargetPath)
         Case "FourKWeekAccount"
-            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_4K週總帳.xls"
+            TargetPath = TargetPath & Format(DateTime.DateAdd("d", -7, txtCurrentDate.Text), "yyyyMMdd") & "至" & Format(txtCurrentDate.Text, "yyyyMMdd") & "_4K週總帳.xls"
             Call FourKWeekAccount(TargetPath)
         Case "FourKMonthAccount"
-            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_4K月總帳.xls"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMM") & "_4K月總帳.xls"
             Call FourKMonthAccount(TargetPath)
         Case "FourKYearAccount"
-            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_4K年總帳.xls"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyy") & "_4K年總帳.xls"
             Call FourKYearAccount(TargetPath)
         End Select
     End If
@@ -1312,13 +1806,13 @@ Private Sub Form_Load()
     Case "YearReport"
         Label1(0).Caption = "年報表列印"
     Case "DayAccount"
-        Label1(0).Caption = "日總表列印"
+        Label1(0).Caption = "日總帳列印"
     Case "WeekAccount"
-        Label1(0).Caption = "週總表列印"
+        Label1(0).Caption = "週總帳列印"
     Case "MonthAccount"
-        Label1(0).Caption = "月總表列印"
+        Label1(0).Caption = "月總帳列印"
     Case "YearAccount"
-        Label1(0).Caption = "年總表列印"
+        Label1(0).Caption = "年總帳列印"
     Case "FourKDayReport"
         Label1(0).Caption = "4K日報表列印"
     Case "FourKWeekReport"
@@ -1328,13 +1822,13 @@ Private Sub Form_Load()
     Case "FourKYearReport"
         Label1(0).Caption = "4K年報表列印"
     Case "FourKDayAccount"
-        Label1(0).Caption = "4K日總表列印"
+        Label1(0).Caption = "4K日總帳列印"
     Case "FourKWeekAccount"
-        Label1(0).Caption = "4K週總表列印"
+        Label1(0).Caption = "4K週總帳列印"
     Case "FourKMonthAccount"
-        Label1(0).Caption = "4K月總表列印"
+        Label1(0).Caption = "4K月總帳列印"
     Case "FourKYearAccount"
-        Label1(0).Caption = "4K年總表列印"
+        Label1(0).Caption = "4K年總帳列印"
     End Select
     
     
