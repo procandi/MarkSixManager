@@ -42,7 +42,6 @@ Begin VB.Form frmOrderAddNew
       Outline         =   -1  'True
       Alignment       =   6
       Begin VB.ComboBox cmbPName 
-         Enabled         =   0   'False
          Height          =   300
          Left            =   1560
          TabIndex        =   13
@@ -158,7 +157,7 @@ Begin VB.Form frmOrderAddNew
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   94175235
+         Format          =   99090435
          CurrentDate     =   42267
       End
       Begin VB.Label lblBasic 
@@ -391,7 +390,7 @@ End Sub
 
 'import database and export to datagrid when form load
 Private Sub Form_Load()
-    cmbPName.Enabled = False
+    cmbPName.Enabled = True
     
 
     lblName(0).Caption = basVariable.SelectCName
