@@ -401,28 +401,106 @@ Private Sub cmdCustom_Click()
     Me.Hide
 End Sub
 
+Private Sub cmdDayAccount_Click()
+    basVariable.Action = "PrintReport"
+    basVariable.Parameter = "DayAccount"
+    frmConfirm.Show
+End Sub
+
 Private Sub cmdDayReport_Click()
-    Dim TargetPath As String
-    
-    TargetPath = App.Path
-    If Right(TargetPath, 1) <> "\" Then
-        TargetPath = TargetPath & "\report\"
-    Else
-        TargetPath = TargetPath & "report\"
-    End If
-    Call CreatePath(TargetPath)
-    TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "¤é³øªí.xls"
-    
-    
-    Open TargetPath For Output As #1
-        Write #1, "123"
-    Close #1
+    basVariable.Action = "PrintReport"
+    basVariable.Parameter = "DayReport"
+    frmConfirm.Show
+End Sub
+
+Private Sub cmdFourKDayAccount_Click()
+    basVariable.Action = "PrintReport"
+    basVariable.Parameter = "FourKDayAccount"
+    frmConfirm.Show
+End Sub
+
+Private Sub cmdFourKDayReport_Click()
+    basVariable.Action = "PrintReport"
+    basVariable.Parameter = "FourKDayReport"
+    frmConfirm.Show
+End Sub
+
+Private Sub cmdFourKMonthAccount_Click()
+    basVariable.Action = "PrintReport"
+    basVariable.Parameter = "FourKMonthAccount"
+    frmConfirm.Show
+End Sub
+
+Private Sub cmdFourKMonthReport_Click()
+    basVariable.Action = "PrintReport"
+    basVariable.Parameter = "FourKMonthReport"
+    frmConfirm.Show
+End Sub
+
+Private Sub cmdFourKWeekAccount_Click()
+    basVariable.Action = "PrintReport"
+    basVariable.Parameter = "FourKWeekAccount"
+    frmConfirm.Show
+End Sub
+
+Private Sub cmdFourKWeekReport_Click()
+    basVariable.Action = "PrintReport"
+    basVariable.Parameter = "FourKWeekReport"
+    frmConfirm.Show
+End Sub
+
+Private Sub cmdFourKYearAccount_Click()
+    basVariable.Action = "PrintReport"
+    basVariable.Parameter = "FourKYearAccount"
+    frmConfirm.Show
+End Sub
+
+Private Sub cmdFourKYearReport_Click()
+    basVariable.Action = "PrintReport"
+    basVariable.Parameter = "FourKYearReport"
+    frmConfirm.Show
+End Sub
+
+Private Sub cmdMonthAccount_Click()
+    basVariable.Action = "PrintReport"
+    basVariable.Parameter = "MonthAccount"
+    frmConfirm.Show
+End Sub
+
+Private Sub cmdMonthReport_Click()
+    basVariable.Action = "PrintReport"
+    basVariable.Parameter = "MonthReport"
+    frmConfirm.Show
 End Sub
 
 Private Sub cmdProduct_Click()
     basVariable.Action = "ProductDetail"
     frmProduct.Show
     Me.Hide
+End Sub
+
+Private Sub cmdWeekAccount_Click()
+    basVariable.Action = "PrintReport"
+    basVariable.Parameter = "WeekAccount"
+    frmConfirm.Show
+End Sub
+
+Private Sub cmdWeekReport_Click()
+    basVariable.Action = "PrintReport"
+    basVariable.Parameter = "WeekReport"
+    frmConfirm.Show
+End Sub
+
+Private Sub cmdYearAccount_Click()
+    basVariable.Action = "PrintReport"
+    basVariable.Parameter = "YearAccount"
+    frmConfirm.Show
+End Sub
+
+Private Sub cmdYearReport_Click()
+    basVariable.Action = "PrintReport"
+    basVariable.Parameter = "YearReport"
+    frmConfirm.Show
 End Sub
 
 Private Sub Form_Load()
