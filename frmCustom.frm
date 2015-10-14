@@ -360,7 +360,7 @@ Begin VB.Form frmCustom
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   94502915
+         Format          =   94175235
          CurrentDate     =   37058
       End
       Begin VB.Label lblEntry 
@@ -812,6 +812,9 @@ Private Sub Form_Load()
     Adodc1.CommandType = adCmdText
     Adodc1.RecordSource = "select * from custom;"
     Set DataGrid1.DataSource = Adodc1
+    
+    
+    dtpOpenDate.Value = Format(DateTime.Now, "yyyy/MM/dd")
 End Sub
 
 Private Sub cmdClose_Click()

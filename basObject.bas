@@ -83,7 +83,7 @@ Public Function ComboBox_LoadFrom_DataBase_ByFile(ByRef ComboBox_Source As Combo
     Dim Recordset As New adoDB.Recordset
     Dim SQL_String As String
     
-    Connection_String = InputINI("Database", "Connection", FileName)
+    'Connection_String = InputINI("Database", "Connection", FileName)
     
     If Connect2DataBase(Connection_String, Connection) Then
         SQL_String = "select " & FieldsValue & " "

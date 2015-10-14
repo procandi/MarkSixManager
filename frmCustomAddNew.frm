@@ -357,7 +357,7 @@ Begin VB.Form frmCustomAddNew
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   88604675
+         Format          =   94175235
          CurrentDate     =   42267
       End
       Begin VB.Label lblEntry 
@@ -745,6 +745,13 @@ Private Sub Form_Load()
     End If
     
     
+    For i = 1 To 10
+        Call cmbProportion.AddItem(i & "жи")
+    Next
+    Call ComboBox_LoadFrom_DataBase_ByFile(cmbBonusTarget, "CName", "custom", "", "", "")
+    
+    
+    dtpOpenDate.Value = Format(DateTime.Now, "yyyy/MM/dd")
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)

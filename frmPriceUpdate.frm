@@ -223,7 +223,7 @@ Begin VB.Form frmPriceUpdate
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   88604675
+         Format          =   94175235
          CurrentDate     =   42267
       End
       Begin VB.Label lblBasic 
@@ -323,7 +323,7 @@ Begin VB.Form frmPriceUpdate
          BackColor       =   &H80000015&
          BackStyle       =   0  '透明
          BorderStyle     =   1  '單線固定
-         Caption         =   "購買價格"
+         Caption         =   "交易價格"
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -535,8 +535,9 @@ Private Sub Form_Load()
     Else
         cmdNext.Enabled = False
     End If
+       
     
-    
+    dtpCurrentDate.Value = Format(DateTime.Now, "yyyy/MM/dd")
     txtCurrentDate.Text = Format(DateTime.Now, "yyyy/MM/dd")
 End Sub
 

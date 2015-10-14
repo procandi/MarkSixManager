@@ -41,6 +41,14 @@ Begin VB.Form frmOrderAddNew
       BevelInner      =   1
       Outline         =   -1  'True
       Alignment       =   6
+      Begin VB.ComboBox cmbPName 
+         Enabled         =   0   'False
+         Height          =   300
+         Left            =   1560
+         TabIndex        =   13
+         Top             =   600
+         Width           =   4095
+      End
       Begin VB.TextBox txtCurrentDate 
          Enabled         =   0   'False
          BeginProperty Font 
@@ -55,7 +63,7 @@ Begin VB.Form frmOrderAddNew
          Height          =   360
          Left            =   1560
          MaxLength       =   256
-         TabIndex        =   12
+         TabIndex        =   11
          Top             =   1200
          Width           =   3855
       End
@@ -71,7 +79,7 @@ Begin VB.Form frmOrderAddNew
          EndProperty
          Height          =   375
          Left            =   1560
-         TabIndex        =   5
+         TabIndex        =   4
          Top             =   2160
          Width           =   4095
       End
@@ -90,7 +98,7 @@ Begin VB.Form frmOrderAddNew
          Height          =   495
          Left            =   3000
          Style           =   1  '圖片外觀
-         TabIndex        =   7
+         TabIndex        =   6
          Top             =   3120
          Width           =   1215
       End
@@ -109,7 +117,7 @@ Begin VB.Form frmOrderAddNew
          Height          =   495
          Left            =   1560
          Style           =   1  '圖片外觀
-         TabIndex        =   6
+         TabIndex        =   5
          Tag             =   "Edit"
          Top             =   3120
          Width           =   1335
@@ -126,30 +134,14 @@ Begin VB.Form frmOrderAddNew
          EndProperty
          Height          =   375
          Left            =   1560
-         TabIndex        =   4
+         TabIndex        =   3
          Top             =   1680
-         Width           =   4095
-      End
-      Begin VB.TextBox txtPName 
-         BeginProperty Font 
-            Name            =   "新細明體"
-            Size            =   12
-            Charset         =   136
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   375
-         Left            =   1560
-         TabIndex        =   2
-         Top             =   600
          Width           =   4095
       End
       Begin MSComCtl2.DTPicker dtpCurrentDate 
          Height          =   375
          Left            =   1560
-         TabIndex        =   13
+         TabIndex        =   12
          Top             =   1200
          Width           =   4095
          _ExtentX        =   7223
@@ -166,7 +158,7 @@ Begin VB.Form frmOrderAddNew
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   88604675
+         Format          =   94175235
          CurrentDate     =   42267
       End
       Begin VB.Label lblBasic 
@@ -188,7 +180,7 @@ Begin VB.Form frmOrderAddNew
          Height          =   375
          Index           =   3
          Left            =   360
-         TabIndex        =   11
+         TabIndex        =   10
          Top             =   1200
          Width           =   1215
       End
@@ -211,7 +203,7 @@ Begin VB.Form frmOrderAddNew
          Height          =   375
          Index           =   0
          Left            =   360
-         TabIndex        =   10
+         TabIndex        =   9
          Top             =   2160
          Width           =   1215
       End
@@ -234,7 +226,7 @@ Begin VB.Form frmOrderAddNew
          Height          =   375
          Index           =   0
          Left            =   360
-         TabIndex        =   9
+         TabIndex        =   8
          Top             =   120
          Width           =   5295
       End
@@ -243,7 +235,7 @@ Begin VB.Form frmOrderAddNew
          BackColor       =   &H80000015&
          BackStyle       =   0  '透明
          BorderStyle     =   1  '單線固定
-         Caption         =   "購買數量"
+         Caption         =   "交易數量"
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -257,7 +249,7 @@ Begin VB.Form frmOrderAddNew
          Height          =   375
          Index           =   1
          Left            =   360
-         TabIndex        =   8
+         TabIndex        =   7
          Top             =   1680
          Width           =   1215
       End
@@ -280,7 +272,7 @@ Begin VB.Form frmOrderAddNew
          Height          =   375
          Index           =   15
          Left            =   360
-         TabIndex        =   3
+         TabIndex        =   2
          Top             =   600
          Width           =   1215
       End
@@ -376,7 +368,7 @@ Private Sub cmdUpdate_Click()
     LastSwiftCode = order_rec("SwiftCode")
     order_rec.Close
     
-    SQL = "select * from product where PName='" & txtPName.Text & "';"
+    SQL = "select * from product where PName='" & cmbPName.Text & "';"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     PID = product_rec("PID")
     product_rec.Close
@@ -399,6 +391,9 @@ End Sub
 
 'import database and export to datagrid when form load
 Private Sub Form_Load()
+    cmbPName.Enabled = False
+    
+
     lblName(0).Caption = basVariable.SelectCName
     selectFields = "SwiftCode,CID,[order].PID,PName,CurrentDate,CurrentCount,WinningCount"
     
@@ -420,7 +415,10 @@ Private Sub Form_Load()
     Call Adodc1.Recordset.AddNew
     
     
+    Call ComboBox_LoadFrom_DataBase_ByFile(cmbPName, "PName", "product", "", "", "")
     
+    
+    dtpCurrentDate.Value = Format(DateTime.Now, "yyyy/MM/dd")
     txtCurrentDate.Text = Format(DateTime.Now, "yyyy/MM/dd")
 End Sub
 

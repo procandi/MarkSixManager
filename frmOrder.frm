@@ -55,7 +55,7 @@ Begin VB.Form frmOrder
       End
       Begin VB.CommandButton cmdAppend 
          BackColor       =   &H00FFC0C0&
-         Caption         =   "加購"
+         Caption         =   "交易"
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -196,7 +196,7 @@ Begin VB.Form frmOrder
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   88604675
+         Format          =   94175235
          CurrentDate     =   37058
       End
       Begin VB.Label lblEntry 
@@ -519,6 +519,9 @@ Private Sub Form_Load()
     Adodc1.CommandType = adCmdText
     Adodc1.RecordSource = "select " & selectFields & " from [order],product where [order].PID=product.PID and [order].CID='" & basVariable.SelectCID & "';"
     Set DataGrid1.DataSource = Adodc1
+    
+    
+    dtpCurrentDate.Value = Format(DateTime.Now, "yyyy/MM/dd")
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
@@ -533,7 +536,7 @@ Sub RefreshDataGridHeader()
     DataGrid1.Columns("PID").Caption = "產品編號"
     DataGrid1.Columns("PName").Caption = "產品名稱"
     DataGrid1.Columns("CurrentDate").Caption = "交易日期"
-    DataGrid1.Columns("CurrentCount").Caption = "購買數量"
+    DataGrid1.Columns("CurrentCount").Caption = "交易數量"
     DataGrid1.Columns("WinningCount").Caption = "中獎數量"
 End Sub
 

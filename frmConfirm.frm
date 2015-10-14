@@ -88,7 +88,7 @@ Begin VB.Form frmConfirm
          Strikethrough   =   0   'False
       EndProperty
       CustomFormat    =   "yyyy/MM/dd"
-      Format          =   94371843
+      Format          =   94109699
       CurrentDate     =   37058
    End
    Begin VB.Label Label1 
@@ -186,8 +186,21 @@ Private Sub cmdCancel_Click()
 End Sub
 
 Sub DayReport(ByVal TargetPath As String)
+    Dim Body As String
+    Dim SQL As String
+    Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
+    
+    SQL = "select * from product;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
+    SQL = "select * from price where CID='" & basVariable.SelectCID & "' and CurrentDate='" & Format(DateTime.Now, "yyyy/MM/dd") & "';"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
+    
+    
     Open TargetPath For Output As #1
-        Write #1, "123"
+        Print #1, "日期", vbTab & Format(DateTime.Now, "yyyy/MM/dd")
+        
+        Body = "產品"
+        Print #1, Body
     Close #1
 End Sub
 
@@ -252,72 +265,75 @@ Sub FourKYearAccount(ByVal TargetPath As String)
 End Sub
 
 Private Sub cmdConfirm_Click()
-    Dim TargetPath As String
-    
-    TargetPath = App.Path
-    If Right(TargetPath, 1) <> "\" Then
-        TargetPath = TargetPath & "\report\"
+    If txtCurrentDate.Text = "" Then
+        MsgBox "請先選擇要列印的時間！"
     Else
-        TargetPath = TargetPath & "report\"
+        Dim TargetPath As String
+        
+        TargetPath = App.Path
+        If Right(TargetPath, 1) <> "\" Then
+            TargetPath = TargetPath & "\report\"
+        Else
+            TargetPath = TargetPath & "report\"
+        End If
+        Call CreatePath(TargetPath)
+        
+        Select Case basVariable.Parameter
+        Case "DayReport"
+            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_日報表.xls"
+            Call DayReport(TargetPath)
+        Case "WeekReport"
+            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_週報表.xls"
+            Call WeekReport(TargetPath)
+        Case "MonthReport"
+            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_月報表.xls"
+            Call MonthReport(TargetPath)
+        Case "YearReport"
+            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_年報表.xls"
+            Call YearReport(TargetPath)
+        Case "DayAccount"
+            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_日總表.xls"
+            Call DayAccount(TargetPath)
+        Case "WeekAccount"
+            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_週總表.xls"
+            Call WeekAccount(TargetPath)
+        Case "MonthAccount"
+            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_月總表.xls"
+            Call MonthAccount(TargetPath)
+        Case "YearAccount"
+            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_年總表.xls"
+            Call YearAccount(TargetPath)
+        Case "FourKDayReport"
+            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K日報表.xls"
+            Call FourKDayReport(TargetPath)
+        Case "FourKWeekReport"
+            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K週報表.xls"
+            Call FourKWeekReport(TargetPath)
+        Case "FourKMonthReport"
+            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K月報表.xls"
+            Call FourKMonthReport(TargetPath)
+        Case "FourKYearReport"
+            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K年報表.xls"
+            Call FourKYearReport(TargetPath)
+        Case "FourKDayAccount"
+            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K日總表.xls"
+            Call FourKDayAccount(TargetPath)
+        Case "FourKWeekAccount"
+            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K週總表.xls"
+            Call FourKWeekAccount(TargetPath)
+        Case "FourKMonthAccount"
+            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K月總表.xls"
+            Call FourKMonthAccount(TargetPath)
+        Case "FourKYearAccount"
+            TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K年總表.xls"
+            Call FourKYearAccount(TargetPath)
+        End Select
     End If
-    Call CreatePath(TargetPath)
     
-    Select Case basVariable.Parameter
-    Case "DayReport"
-        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_日報表.xls"
-        Call DayReport(TargetPath)
-    Case "WeekReport"
-        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_週報表.xls"
-        Call WeekReport(TargetPath)
-    Case "MonthReport"
-        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_月報表.xls"
-        Call MonthReport(TargetPath)
-    Case "YearReport"
-        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_年報表.xls"
-        Call YearReport(TargetPath)
-    Case "DayAccount"
-        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_日總表.xls"
-        Call DayAccount(TargetPath)
-    Case "WeekAccount"
-        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_週總表.xls"
-        Call WeekAccount(TargetPath)
-    Case "MonthAccount"
-        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_月總表.xls"
-        Call MonthAccount(TargetPath)
-    Case "YearAccount"
-        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_年總表.xls"
-        Call YearAccount(TargetPath)
-    Case "FourKDayReport"
-        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K日報表.xls"
-        Call FourKDayReport(TargetPath)
-    Case "FourKWeekReport"
-        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K週報表.xls"
-        Call FourKWeekReport(TargetPath)
-    Case "FourKMonthReport"
-        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K月報表.xls"
-        Call FourKMonthReport(TargetPath)
-    Case "FourKYearReport"
-        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K年報表.xls"
-        Call FourKYearReport(TargetPath)
-    Case "FourKDayAccount"
-        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K日總表.xls"
-        Call FourKDayAccount(TargetPath)
-    Case "FourKWeekAccount"
-        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K週總表.xls"
-        Call FourKWeekAccount(TargetPath)
-    Case "FourKMonthAccount"
-        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K月總表.xls"
-        Call FourKMonthAccount(TargetPath)
-    Case "FourKYearAccount"
-        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K年總表.xls"
-        Call FourKYearAccount(TargetPath)
-    End Select
-    
-    
-
+    MsgBox "已輸出報表至" & TargetPath & "！"
 End Sub
 
-Private Sub dtpCurrentDate_CallbackKeyDown(ByVal KeyCode As Integer, ByVal Shift As Integer, ByVal CallbackField As String, CallbackDate As Date)
+Private Sub dtpCurrentDate_CloseUp()
     txtCurrentDate.Text = Format(dtpCurrentDate.Value, "yyyy/MM/dd")
 End Sub
 
@@ -356,6 +372,10 @@ Private Sub Form_Load()
     Case "FourKYearAccount"
         Label1(0).Caption = "4K年總表列印"
     End Select
+    
+    
+    dtpCurrentDate.Value = Format(DateTime.Now, "yyyy/MM/dd")
+    txtCurrentDate.Text = Format(DateTime.Now, "yyyy/MM/dd")
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)

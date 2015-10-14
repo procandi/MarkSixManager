@@ -229,7 +229,7 @@ Begin VB.Form frmPrice
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   49741827
+         Format          =   94175235
          CurrentDate     =   37058
       End
       Begin VB.Label lblEntry 
@@ -685,6 +685,9 @@ Private Sub Form_Load()
     Adodc1.RecordSource = "select " & selectFields & " from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "' order by CurrentDate desc,price.PID;"
     Set DataGrid1.DataSource = Adodc1
     RefreshDataGridHeader
+    
+    
+    dtpCurrentDate.Value = Format(DateTime.Now, "yyyy/MM/dd")
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
@@ -698,7 +701,7 @@ Sub RefreshDataGridHeader()
     DataGrid1.Columns("CID").Caption = "客戶編號"
     DataGrid1.Columns("PID").Caption = "產品編號"
     DataGrid1.Columns("CurrentDate").Caption = "交易日期"
-    DataGrid1.Columns("CurrentPrice").Caption = "購買價格"
+    DataGrid1.Columns("CurrentPrice").Caption = "交易價格"
     DataGrid1.Columns("WinningPrice").Caption = "中獎金額"
     DataGrid1.Columns("Upset").Caption = "價格底線"
     
