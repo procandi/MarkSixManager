@@ -88,7 +88,7 @@ Begin VB.Form frmConfirm
          Strikethrough   =   0   'False
       EndProperty
       CustomFormat    =   "yyyy/MM/dd"
-      Format          =   33488899
+      Format          =   94371843
       CurrentDate     =   37058
    End
    Begin VB.Label Label1 
@@ -185,6 +185,72 @@ Private Sub cmdCancel_Click()
     Call Form_Unload(0)
 End Sub
 
+Sub DayReport(ByVal TargetPath As String)
+    Open TargetPath For Output As #1
+        Write #1, "123"
+    Close #1
+End Sub
+
+Sub WeekReport(ByVal TargetPath As String)
+
+End Sub
+
+Sub MonthReport(ByVal TargetPath As String)
+
+End Sub
+
+Sub YearReport(ByVal TargetPath As String)
+
+End Sub
+
+Sub DayAccount(ByVal TargetPath As String)
+
+End Sub
+
+Sub WeekAccount(ByVal TargetPath As String)
+
+End Sub
+
+Sub MonthAccount(ByVal TargetPath As String)
+
+End Sub
+
+Sub YearAccount(ByVal TargetPath As String)
+
+End Sub
+
+Sub FourKDayReport(ByVal TargetPath As String)
+
+End Sub
+
+Sub FourKWeekReport(ByVal TargetPath As String)
+
+End Sub
+
+Sub FourKMonthReport(ByVal TargetPath As String)
+
+End Sub
+
+Sub FourKYearReport(ByVal TargetPath As String)
+
+End Sub
+
+Sub FourKDayAccount(ByVal TargetPath As String)
+
+End Sub
+
+Sub FourKWeekAccount(ByVal TargetPath As String)
+
+End Sub
+
+Sub FourKMonthAccount(ByVal TargetPath As String)
+
+End Sub
+
+Sub FourKYearAccount(ByVal TargetPath As String)
+
+End Sub
+
 Private Sub cmdConfirm_Click()
     Dim TargetPath As String
     
@@ -195,12 +261,60 @@ Private Sub cmdConfirm_Click()
         TargetPath = TargetPath & "report\"
     End If
     Call CreatePath(TargetPath)
-    TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "日報表.xls"
+    
+    Select Case basVariable.Parameter
+    Case "DayReport"
+        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_日報表.xls"
+        Call DayReport(TargetPath)
+    Case "WeekReport"
+        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_週報表.xls"
+        Call WeekReport(TargetPath)
+    Case "MonthReport"
+        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_月報表.xls"
+        Call MonthReport(TargetPath)
+    Case "YearReport"
+        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_年報表.xls"
+        Call YearReport(TargetPath)
+    Case "DayAccount"
+        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_日總表.xls"
+        Call DayAccount(TargetPath)
+    Case "WeekAccount"
+        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_週總表.xls"
+        Call WeekAccount(TargetPath)
+    Case "MonthAccount"
+        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_月總表.xls"
+        Call MonthAccount(TargetPath)
+    Case "YearAccount"
+        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_年總表.xls"
+        Call YearAccount(TargetPath)
+    Case "FourKDayReport"
+        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K日報表.xls"
+        Call FourKDayReport(TargetPath)
+    Case "FourKWeekReport"
+        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K週報表.xls"
+        Call FourKWeekReport(TargetPath)
+    Case "FourKMonthReport"
+        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K月報表.xls"
+        Call FourKMonthReport(TargetPath)
+    Case "FourKYearReport"
+        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K年報表.xls"
+        Call FourKYearReport(TargetPath)
+    Case "FourKDayAccount"
+        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K日總表.xls"
+        Call FourKDayAccount(TargetPath)
+    Case "FourKWeekAccount"
+        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K週總表.xls"
+        Call FourKWeekAccount(TargetPath)
+    Case "FourKMonthAccount"
+        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K月總表.xls"
+        Call FourKMonthAccount(TargetPath)
+    Case "FourKYearAccount"
+        TargetPath = TargetPath & Format(DateTime.Now, "yyyyMMdd") & "_4K年總表.xls"
+        Call FourKYearAccount(TargetPath)
+    End Select
     
     
-    Open TargetPath For Output As #1
-        Write #1, "123"
-    Close #1
+
 End Sub
 
 Private Sub dtpCurrentDate_CallbackKeyDown(ByVal KeyCode As Integer, ByVal Shift As Integer, ByVal CallbackField As String, CallbackDate As Date)
