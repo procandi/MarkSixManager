@@ -360,7 +360,7 @@ Begin VB.Form frmCustom
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   103612419
+         Format          =   35061763
          CurrentDate     =   37058
       End
       Begin VB.Label lblEntry 
@@ -840,7 +840,7 @@ Sub RefreshDataGridHeader()
     DataGrid1.Columns("OpenDate").Caption = "開戶日期"
     DataGrid1.Columns("BankID").Caption = "銀行帳號"
     DataGrid1.Columns("Proportion").Caption = "成數"
-    DataGrid1.Columns("BonusTarget").Caption = "退水"
+    DataGrid1.Columns("BonusTarget").Caption = "成數對象"
     DataGrid1.Columns("Phone1").Caption = "電話1"
     DataGrid1.Columns("Phone2").Caption = "電話2"
     DataGrid1.Columns("Phone3").Caption = "電話3"
