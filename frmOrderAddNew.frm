@@ -6,25 +6,25 @@ Begin VB.Form frmOrderAddNew
    BackColor       =   &H00808080&
    BorderStyle     =   1  '單線固定
    Caption         =   "產品價格變更"
-   ClientHeight    =   4755
-   ClientLeft      =   6135
-   ClientTop       =   5940
+   ClientHeight    =   6360
+   ClientLeft      =   5400
+   ClientTop       =   6675
    ClientWidth     =   6495
    Icon            =   "frmOrderAddNew.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   4755
+   ScaleHeight     =   6360
    ScaleWidth      =   6495
    Begin Threed.SSPanel pnlBasic 
-      Height          =   3855
+      Height          =   5415
       Left            =   240
       TabIndex        =   0
       Top             =   720
       Width           =   5895
       _Version        =   65536
       _ExtentX        =   10398
-      _ExtentY        =   6800
+      _ExtentY        =   9551
       _StockProps     =   15
       ForeColor       =   0
       BackColor       =   12632256
@@ -41,11 +41,67 @@ Begin VB.Form frmOrderAddNew
       BevelInner      =   1
       Outline         =   -1  'True
       Alignment       =   6
+      Begin VB.ComboBox cmbBonusTarget 
+         Enabled         =   0   'False
+         Height          =   300
+         Left            =   1560
+         TabIndex        =   22
+         Top             =   3120
+         Width           =   4095
+      End
+      Begin VB.TextBox txtNote 
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   375
+         Left            =   1560
+         TabIndex        =   20
+         Top             =   4080
+         Width           =   4095
+      End
+      Begin VB.TextBox txtBonusMoney 
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   375
+         Left            =   1560
+         TabIndex        =   18
+         Top             =   3600
+         Width           =   4095
+      End
+      Begin VB.TextBox txtAddMoney 
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   375
+         Left            =   1560
+         TabIndex        =   16
+         Top             =   2640
+         Width           =   4095
+      End
       Begin VB.ComboBox cmbPName 
          Enabled         =   0   'False
          Height          =   300
          Left            =   1560
-         TabIndex        =   13
+         TabIndex        =   1
          Top             =   600
          Width           =   4095
       End
@@ -63,7 +119,7 @@ Begin VB.Form frmOrderAddNew
          Height          =   360
          Left            =   1560
          MaxLength       =   256
-         TabIndex        =   11
+         TabIndex        =   12
          Top             =   1200
          Width           =   3855
       End
@@ -79,7 +135,7 @@ Begin VB.Form frmOrderAddNew
          EndProperty
          Height          =   375
          Left            =   1560
-         TabIndex        =   4
+         TabIndex        =   5
          Top             =   2160
          Width           =   4095
       End
@@ -96,10 +152,10 @@ Begin VB.Form frmOrderAddNew
             Strikethrough   =   0   'False
          EndProperty
          Height          =   495
-         Left            =   3000
+         Left            =   3120
          Style           =   1  '圖片外觀
-         TabIndex        =   6
-         Top             =   3120
+         TabIndex        =   7
+         Top             =   4680
          Width           =   1215
       End
       Begin VB.CommandButton cmdUpdate 
@@ -117,9 +173,9 @@ Begin VB.Form frmOrderAddNew
          Height          =   495
          Left            =   1560
          Style           =   1  '圖片外觀
-         TabIndex        =   5
+         TabIndex        =   6
          Tag             =   "Edit"
-         Top             =   3120
+         Top             =   4680
          Width           =   1335
       End
       Begin VB.TextBox txtCurrentCount 
@@ -134,14 +190,14 @@ Begin VB.Form frmOrderAddNew
          EndProperty
          Height          =   375
          Left            =   1560
-         TabIndex        =   3
+         TabIndex        =   4
          Top             =   1680
          Width           =   4095
       End
       Begin MSComCtl2.DTPicker dtpCurrentDate 
          Height          =   375
          Left            =   1560
-         TabIndex        =   12
+         TabIndex        =   13
          Top             =   1200
          Width           =   4095
          _ExtentX        =   7223
@@ -158,8 +214,100 @@ Begin VB.Form frmOrderAddNew
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   94175235
+         Format          =   103612419
          CurrentDate     =   42267
+      End
+      Begin VB.Label lblBasic 
+         Alignment       =   1  '靠右對齊
+         BackColor       =   &H80000015&
+         BackStyle       =   0  '透明
+         BorderStyle     =   1  '單線固定
+         Caption         =   "交易備註"
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00000000&
+         Height          =   375
+         Index           =   6
+         Left            =   360
+         TabIndex        =   21
+         Top             =   4080
+         Width           =   1215
+      End
+      Begin VB.Label lblBasic 
+         Alignment       =   1  '靠右對齊
+         BackColor       =   &H80000015&
+         BackStyle       =   0  '透明
+         BorderStyle     =   1  '單線固定
+         Caption         =   "退水金額"
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00000000&
+         Height          =   375
+         Index           =   5
+         Left            =   360
+         TabIndex        =   19
+         Top             =   3600
+         Width           =   1215
+      End
+      Begin VB.Label lblBasic 
+         Alignment       =   1  '靠右對齊
+         BackColor       =   &H80000015&
+         BackStyle       =   0  '透明
+         BorderStyle     =   1  '單線固定
+         Caption         =   "退水對象"
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00000000&
+         Height          =   375
+         Index           =   4
+         Left            =   360
+         TabIndex        =   17
+         Top             =   3120
+         Width           =   1215
+      End
+      Begin VB.Label lblBasic 
+         Alignment       =   1  '靠右對齊
+         BackColor       =   &H80000015&
+         BackStyle       =   0  '透明
+         BorderStyle     =   1  '單線固定
+         Caption         =   "漲價"
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00000000&
+         Height          =   375
+         Index           =   2
+         Left            =   360
+         TabIndex        =   15
+         Top             =   2640
+         Width           =   1215
       End
       Begin VB.Label lblBasic 
          Alignment       =   1  '靠右對齊
@@ -180,7 +328,7 @@ Begin VB.Form frmOrderAddNew
          Height          =   375
          Index           =   3
          Left            =   360
-         TabIndex        =   10
+         TabIndex        =   11
          Top             =   1200
          Width           =   1215
       End
@@ -203,7 +351,7 @@ Begin VB.Form frmOrderAddNew
          Height          =   375
          Index           =   0
          Left            =   360
-         TabIndex        =   9
+         TabIndex        =   10
          Top             =   2160
          Width           =   1215
       End
@@ -226,7 +374,7 @@ Begin VB.Form frmOrderAddNew
          Height          =   375
          Index           =   0
          Left            =   360
-         TabIndex        =   8
+         TabIndex        =   9
          Top             =   120
          Width           =   5295
       End
@@ -249,7 +397,7 @@ Begin VB.Form frmOrderAddNew
          Height          =   375
          Index           =   1
          Left            =   360
-         TabIndex        =   7
+         TabIndex        =   8
          Top             =   1680
          Width           =   1215
       End
@@ -272,15 +420,15 @@ Begin VB.Form frmOrderAddNew
          Height          =   375
          Index           =   15
          Left            =   360
-         TabIndex        =   2
+         TabIndex        =   3
          Top             =   600
          Width           =   1215
       End
    End
    Begin MSAdodcLib.Adodc Adodc1 
       Height          =   330
-      Left            =   240
-      Top             =   360
+      Left            =   3720
+      Top             =   6000
       Visible         =   0   'False
       Width           =   2775
       _ExtentX        =   4895
@@ -324,6 +472,27 @@ Begin VB.Form frmOrderAddNew
       EndProperty
       _Version        =   393216
    End
+   Begin VB.Label lblAddCount 
+      Appearance      =   0  '平面
+      BackColor       =   &H80000005&
+      BackStyle       =   0  '透明
+      Caption         =   "己新增0筆"
+      BeginProperty Font 
+         Name            =   "標楷體"
+         Size            =   18
+         Charset         =   136
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H000000FF&
+      Height          =   495
+      Left            =   240
+      TabIndex        =   14
+      Top             =   360
+      Width           =   1815
+   End
    Begin VB.Label Label1 
       Appearance      =   0  '平面
       BackColor       =   &H80000005&
@@ -342,7 +511,7 @@ Begin VB.Form frmOrderAddNew
       Height          =   615
       Index           =   0
       Left            =   3120
-      TabIndex        =   1
+      TabIndex        =   2
       Top             =   240
       Width           =   3015
    End
@@ -352,6 +521,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Dim addCount As Integer
 Dim selectFields As String
 
 Private Sub cmdClose_Click()
@@ -362,6 +532,7 @@ Private Sub cmdUpdate_Click()
     Dim PID As String, LastSwiftCode As String
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
+    Dim BonusTarget As String
     
     SQL = "select * from [order] order by SwiftCode desc;"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
@@ -373,6 +544,8 @@ Private Sub cmdUpdate_Click()
     PID = product_rec("PID")
     product_rec.Close
     
+    'Call Str_Classify(cmbBonusTarget.Text, BonusTarget, "", Asc("0"), Asc("9"))
+    
     
     Adodc1.Recordset.Fields.Item("SwiftCode").Value = Val(LastSwiftCode) + 1
     Adodc1.Recordset.Fields.Item("PID").Value = PID
@@ -381,8 +554,25 @@ Private Sub cmdUpdate_Click()
     Adodc1.Recordset.Fields.Item("CurrentDate").Value = txtCurrentDate.Text
     Adodc1.Recordset.Fields.Item("CurrentCount").Value = txtCurrentCount.Text
     Adodc1.Recordset.Fields.Item("WinningCount").Value = txtWinningCount.Text
+    Adodc1.Recordset.Fields.Item("AddMoney").Value = txtAddMoney.Text
+    Adodc1.Recordset.Fields.Item("BonusTarget").Value = cmbBonusTarget.Text 'Adodc1.Recordset.Fields.Item("BonusTarget").Value = BonusTarget
+    Adodc1.Recordset.Fields.Item("BonusMoney").Value = txtBonusMoney.Text
+    Adodc1.Recordset.Fields.Item("Note").Value = txtNote.Text
     Call Adodc1.Recordset.Update
-    Call Form_Unload(0)
+    Call Adodc1.Recordset.AddNew    'Call Form_Unload(0)
+    
+    
+    cmbPName.Text = ""
+    dtpCurrentDate.Value = Format(DateTime.Now, "yyyy/MM/dd")
+    txtCurrentDate.Text = Format(DateTime.Now, "yyyy/MM/dd")
+    txtCurrentCount.Text = ""
+    txtWinningCount.Text = ""
+    txtAddMoney.Text = ""
+    cmbBonusTarget.Text = ""
+    txtBonusMoney.Text = ""
+    txtNote.Text = ""
+    addCount = addCount + 1
+    lblAddCount.Caption = "已新增" & addCount & "筆"
 End Sub
 
 Private Sub dtpCurrentDate_CloseUp()
@@ -391,7 +581,10 @@ End Sub
 
 'import database and export to datagrid when form load
 Private Sub Form_Load()
-    cmbPName.Enabled = False
+    cmbPName.Enabled = True
+    txtCurrentDate.Enabled = True
+    dtpCurrentDate.Enabled = True
+    cmbBonusTarget.Enabled = True
     
 
     lblName(0).Caption = basVariable.SelectCName
@@ -408,6 +601,7 @@ Private Sub Form_Load()
     Set txtCurrentDate.DataSource = Adodc1
     Set txtCurrentCount.DataSource = Adodc1
     Set txtWinningCount.DataSource = Adodc1
+    Set txtAddMoney.DataSource = Adodc1
 
 
     'add new
@@ -416,13 +610,68 @@ Private Sub Form_Load()
     
     
     Call ComboBox_LoadFrom_DataBase_ByFile(cmbPName, "PName", "product", "", "", "")
+    Call ComboBox_LoadFrom_DataBase_ByFile(cmbBonusTarget, "CID,CName", "custom", "", "", "")
     
     
     dtpCurrentDate.Value = Format(DateTime.Now, "yyyy/MM/dd")
     txtCurrentDate.Text = Format(DateTime.Now, "yyyy/MM/dd")
+    
+    
+    addCount = 0
+    lblAddCount.Caption = "已新增" & addCount & "筆"
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
     frmOrder.Show
     Unload Me
 End Sub
+
+
+Private Sub cmbPName_KeyUp(KeyCode As Integer, Shift As Integer)
+    If KeyCode = vbKeyReturn Then
+        Call txtCurrentDate.SetFocus
+    End If
+End Sub
+
+Private Sub txtCurrentDate_KeyUp(KeyCode As Integer, Shift As Integer)
+    If KeyCode = vbKeyReturn Then
+        Call txtCurrentCount.SetFocus
+    End If
+End Sub
+
+Private Sub txtCurrentCount_KeyUp(KeyCode As Integer, Shift As Integer)
+    If KeyCode = vbKeyReturn Then
+        Call txtWinningCount.SetFocus
+    End If
+End Sub
+
+Private Sub txtWinningCount_KeyUp(KeyCode As Integer, Shift As Integer)
+    If KeyCode = vbKeyReturn Then
+        Call txtAddMoney.SetFocus
+    End If
+End Sub
+
+Private Sub txtAddMoney_KeyUp(KeyCode As Integer, Shift As Integer)
+    If KeyCode = vbKeyReturn Then
+        Call cmbBonusTarget.SetFocus
+    End If
+End Sub
+
+Private Sub cmbBonusTarget_KeyUp(KeyCode As Integer, Shift As Integer)
+    If KeyCode = vbKeyReturn Then
+        Call txtBonusMoney.SetFocus
+    End If
+End Sub
+
+Private Sub txtBonusMoney_KeyUp(KeyCode As Integer, Shift As Integer)
+    If KeyCode = vbKeyReturn Then
+        Call txtNote.SetFocus
+    End If
+End Sub
+
+Private Sub txtNote_KeyUp(KeyCode As Integer, Shift As Integer)
+    If KeyCode = vbKeyReturn Then
+        Call cmdUpdate_Click
+    End If
+End Sub
+

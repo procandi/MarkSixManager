@@ -7,8 +7,8 @@ Begin VB.Form frmPriceUpdate
    BorderStyle     =   1  '單線固定
    Caption         =   "產品價格變更"
    ClientHeight    =   4755
-   ClientLeft      =   6135
-   ClientTop       =   5940
+   ClientLeft      =   5400
+   ClientTop       =   5760
    ClientWidth     =   6495
    Icon            =   "frmPriceUpdate.frx":0000
    LinkTopic       =   "Form1"
@@ -223,7 +223,7 @@ Begin VB.Form frmPriceUpdate
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   94175235
+         Format          =   103481347
          CurrentDate     =   42267
       End
       Begin VB.Label lblBasic 
@@ -367,8 +367,8 @@ Begin VB.Form frmPriceUpdate
    End
    Begin MSAdodcLib.Adodc Adodc1 
       Height          =   330
-      Left            =   240
-      Top             =   360
+      Left            =   3720
+      Top             =   4440
       Visible         =   0   'False
       Width           =   2775
       _ExtentX        =   4895
@@ -411,6 +411,26 @@ Begin VB.Form frmPriceUpdate
          Strikethrough   =   0   'False
       EndProperty
       _Version        =   393216
+   End
+   Begin VB.Label lblUpdateData 
+      Appearance      =   0  '平面
+      BackColor       =   &H80000005&
+      BackStyle       =   0  '透明
+      BeginProperty Font 
+         Name            =   "標楷體"
+         Size            =   18
+         Charset         =   136
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H000000FF&
+      Height          =   495
+      Left            =   240
+      TabIndex        =   18
+      Top             =   360
+      Width           =   1815
    End
    Begin VB.Label Label1 
       Appearance      =   0  '平面
@@ -463,6 +483,8 @@ Private Sub cmdNext_Click()
     Else
         cmdNext.Enabled = False
     End If
+    
+    lblUpdateData.Caption = ""
 End Sub
 
 Private Sub cmdPrev_Click()
@@ -482,11 +504,15 @@ Private Sub cmdPrev_Click()
     Else
         cmdNext.Enabled = False
     End If
+    
+    lblUpdateData.Caption = ""
 End Sub
 
 Private Sub cmdUpdate_Click()
     Call Adodc1.Recordset.Update
-    Call Form_Unload(0)
+    'Call Form_Unload(0)
+    
+    lblUpdateData.Caption = "己修改"
 End Sub
 
 Private Sub dtpCurrentDate_CloseUp()
@@ -539,9 +565,42 @@ Private Sub Form_Load()
     
     dtpCurrentDate.Value = Format(DateTime.Now, "yyyy/MM/dd")
     txtCurrentDate.Text = Format(DateTime.Now, "yyyy/MM/dd")
+    
+    lblUpdateData.Caption = ""
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
     frmPrice.Show
     Unload Me
+End Sub
+
+
+Private Sub txtPName_KeyUp(KeyCode As Integer, Shift As Integer)
+    If KeyCode = vbKeyReturn Then
+        txtCurrentDate.SetFocus
+    End If
+End Sub
+
+Private Sub txtCurrentDate_KeyUp(KeyCode As Integer, Shift As Integer)
+    If KeyCode = vbKeyReturn Then
+        txtCurrentPrice.SetFocus
+    End If
+End Sub
+
+Private Sub txtCurrentPrice_KeyUp(KeyCode As Integer, Shift As Integer)
+    If KeyCode = vbKeyReturn Then
+        txtWinningPrice.SetFocus
+    End If
+End Sub
+
+Private Sub txtWinningPrice_KeyUp(KeyCode As Integer, Shift As Integer)
+    If KeyCode = vbKeyReturn Then
+        txtUpset.SetFocus
+    End If
+End Sub
+
+Private Sub txtUpset_KeyUp(KeyCode As Integer, Shift As Integer)
+    If KeyCode = vbKeyReturn Then
+        Call cmdUpdate_Click
+    End If
 End Sub

@@ -4,8 +4,8 @@ Begin VB.Form frmProve
    BorderStyle     =   1  '單線固定
    Caption         =   "系統主頁面"
    ClientHeight    =   9120
-   ClientLeft      =   2835
-   ClientTop       =   3480
+   ClientLeft      =   5025
+   ClientTop       =   3900
    ClientWidth     =   6765
    Icon            =   "frmProve.frx":0000
    LinkTopic       =   "Form1"
@@ -13,7 +13,6 @@ Begin VB.Form frmProve
    MinButton       =   0   'False
    ScaleHeight     =   9120
    ScaleWidth      =   6765
-   StartUpPosition =   2  '螢幕中央
    Begin VB.CommandButton cmdProduct 
       Caption         =   "產品資料"
       Height          =   615

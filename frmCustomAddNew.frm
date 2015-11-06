@@ -7,8 +7,8 @@ Begin VB.Form frmCustomAddNew
    BorderStyle     =   1  '單線固定
    Caption         =   "客戶資料明細"
    ClientHeight    =   6270
-   ClientLeft      =   10800
-   ClientTop       =   4425
+   ClientLeft      =   4665
+   ClientTop       =   5760
    ClientWidth     =   8775
    Icon            =   "frmCustomAddNew.frx":0000
    LinkTopic       =   "Form1"
@@ -357,7 +357,7 @@ Begin VB.Form frmCustomAddNew
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   94175235
+         Format          =   103481347
          CurrentDate     =   42267
       End
       Begin VB.Label lblEntry 
@@ -562,7 +562,7 @@ Begin VB.Form frmCustomAddNew
          Alignment       =   1  '靠右對齊
          BackColor       =   &H00808080&
          BorderStyle     =   1  '單線固定
-         Caption         =   "退水"
+         Caption         =   "成數對象"
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12

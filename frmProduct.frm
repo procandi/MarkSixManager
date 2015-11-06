@@ -5,8 +5,8 @@ Object = "{CDE57A40-8B86-11D0-B3C6-00A0C90AEA82}#1.0#0"; "MSDATGRD.OCX"
 Begin VB.Form frmProduct 
    Caption         =   "產品資料表"
    ClientHeight    =   10515
-   ClientLeft      =   7620
-   ClientTop       =   3285
+   ClientLeft      =   1410
+   ClientTop       =   3615
    ClientWidth     =   14940
    Icon            =   "frmProduct.frx":0000
    LinkTopic       =   "Form2"

@@ -4,8 +4,8 @@ Begin VB.Form frmConfirm
    BorderStyle     =   1  '單線固定
    Caption         =   "Report Confirm"
    ClientHeight    =   3105
-   ClientLeft      =   12510
-   ClientTop       =   7530
+   ClientLeft      =   6315
+   ClientTop       =   7785
    ClientWidth     =   4680
    Icon            =   "frmConfirm.frx":0000
    LinkTopic       =   "Form1"
@@ -88,7 +88,7 @@ Begin VB.Form frmConfirm
          Strikethrough   =   0   'False
       EndProperty
       CustomFormat    =   "yyyy/MM/dd"
-      Format          =   97320963
+      Format          =   103612419
       CurrentDate     =   37058
    End
    Begin VB.Label Label1 
@@ -187,7 +187,7 @@ End Sub
 
 Sub DayReport(ByVal TargetPath As String)
     Dim selectFields As String
-    Dim Body As String, i As Integer, PIDArray(1024) As String, count As Integer, PID As String, OldPID As String, CurrentCount As Integer
+    Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String, OldPID As String, CurrentCount As Integer
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
@@ -211,11 +211,11 @@ Sub DayReport(ByVal TargetPath As String)
         
         'show product name
         Body = "<tr><td>產品"
-        count = 0
+        Count = 0
         Do Until product_rec.EOF
-            PIDArray(count) = product_rec.Fields.Item("PID")
+            PIDArray(Count) = product_rec.Fields.Item("PID")
             Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
-            count = count + 1
+            Count = Count + 1
             product_rec.MoveNext
         Loop
         Body = Body & "</td></tr>"
@@ -232,7 +232,7 @@ Sub DayReport(ByVal TargetPath As String)
 
 
             'show every custom order per product
-            For i = 0 To count - 1
+            For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount"
                 SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate='" & txtCurrentDate.Text & "' order by [order].PID;"
@@ -272,7 +272,7 @@ End Sub
 
 Sub WeekReport(ByVal TargetPath As String)
     Dim selectFields As String
-    Dim Body As String, i As Integer, PIDArray(1024) As String, count As Integer, PID As String, OldPID As String, CurrentCount As Integer
+    Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String, OldPID As String, CurrentCount As Integer
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
@@ -296,11 +296,11 @@ Sub WeekReport(ByVal TargetPath As String)
         
         'show product name
         Body = "<tr><td>產品"
-        count = 0
+        Count = 0
         Do Until product_rec.EOF
-            PIDArray(count) = product_rec.Fields.Item("PID")
+            PIDArray(Count) = product_rec.Fields.Item("PID")
             Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
-            count = count + 1
+            Count = Count + 1
             product_rec.MoveNext
         Loop
         Body = Body & "</td></tr>"
@@ -317,7 +317,7 @@ Sub WeekReport(ByVal TargetPath As String)
 
 
             'show every custom order per product
-            For i = 0 To count - 1
+            For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount"
                 SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -7, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by [order].PID;"
@@ -357,7 +357,7 @@ End Sub
 
 Sub MonthReport(ByVal TargetPath As String)
     Dim selectFields As String
-    Dim Body As String, i As Integer, PIDArray(1024) As String, count As Integer, PID As String, OldPID As String, CurrentCount As Integer
+    Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String, OldPID As String, CurrentCount As Integer
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
@@ -381,11 +381,11 @@ Sub MonthReport(ByVal TargetPath As String)
         
         'show product name
         Body = "<tr><td>產品"
-        count = 0
+        Count = 0
         Do Until product_rec.EOF
-            PIDArray(count) = product_rec.Fields.Item("PID")
+            PIDArray(Count) = product_rec.Fields.Item("PID")
             Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
-            count = count + 1
+            Count = Count + 1
             product_rec.MoveNext
         Loop
         Body = Body & "</td></tr>"
@@ -402,7 +402,7 @@ Sub MonthReport(ByVal TargetPath As String)
 
 
             'show every custom order per product
-            For i = 0 To count - 1
+            For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount"
                 SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/MM/") & "01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/MM/") & Date_Is_28_29_30_31(txtCurrentDate.Text) & "') order by [order].PID;"
@@ -442,7 +442,7 @@ End Sub
 
 Sub YearReport(ByVal TargetPath As String)
     Dim selectFields As String
-    Dim Body As String, i As Integer, PIDArray(1024) As String, count As Integer, PID As String, OldPID As String, CurrentCount As Integer
+    Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String, OldPID As String, CurrentCount As Integer
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
@@ -466,11 +466,11 @@ Sub YearReport(ByVal TargetPath As String)
         
         'show product name
         Body = "<tr><td>產品"
-        count = 0
+        Count = 0
         Do Until product_rec.EOF
-            PIDArray(count) = product_rec.Fields.Item("PID")
+            PIDArray(Count) = product_rec.Fields.Item("PID")
             Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
-            count = count + 1
+            Count = Count + 1
             product_rec.MoveNext
         Loop
         Body = Body & "</td></tr>"
@@ -487,7 +487,7 @@ Sub YearReport(ByVal TargetPath As String)
 
 
             'show every custom order per product
-            For i = 0 To count - 1
+            For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount"
                 SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31') order by [order].PID;"
@@ -527,7 +527,7 @@ End Sub
 
 Sub DayAccount(ByVal TargetPath As String)
     Dim selectFields As String
-    Dim Body As String, i As Integer, PIDArray(1024) As String, count As Integer, PID As String, OldPID As String, CurrentCount As Integer, WinningCount As Integer
+    Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String, OldPID As String, CurrentCount As Integer, WinningCount As Integer
     Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
@@ -552,12 +552,12 @@ Sub DayAccount(ByVal TargetPath As String)
         
         'show product name
         Body = "<tr><td>產品"
-        count = 0
+        Count = 0
         Do Until product_rec.EOF
-            PIDArray(count) = product_rec.Fields.Item("PID")
+            PIDArray(Count) = product_rec.Fields.Item("PID")
             Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
             Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中</td>"
-            count = count + 1
+            Count = Count + 1
             product_rec.MoveNext
         Loop
         Body = Body & "</td></tr>"
@@ -574,7 +574,7 @@ Sub DayAccount(ByVal TargetPath As String)
 
 
             'show every custom order per product
-            For i = 0 To count - 1
+            For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount"
                 SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate='" & txtCurrentDate.Text & "' order by [order].PID;"
@@ -616,7 +616,7 @@ Sub DayAccount(ByVal TargetPath As String)
         
         
         Body = "<tr><td>總計</td>"
-        For i = 0 To count - 1
+        For i = 0 To Count - 1
             Body = Body & "<td>" & CurrentCountAll(i) & "</td>"
             Body = Body & "<td>" & WinningCountAll(i) & "</td>"
         Next
@@ -634,7 +634,7 @@ End Sub
 
 Sub WeekAccount(ByVal TargetPath As String)
     Dim selectFields As String
-    Dim Body As String, i As Integer, PIDArray(1024) As String, count As Integer, PID As String, OldPID As String, CurrentCount As Integer, WinningCount As Integer
+    Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String, OldPID As String, CurrentCount As Integer, WinningCount As Integer
     Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
@@ -659,12 +659,12 @@ Sub WeekAccount(ByVal TargetPath As String)
         
         'show product name
         Body = "<tr><td>產品"
-        count = 0
+        Count = 0
         Do Until product_rec.EOF
-            PIDArray(count) = product_rec.Fields.Item("PID")
+            PIDArray(Count) = product_rec.Fields.Item("PID")
             Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
             Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中</td>"
-            count = count + 1
+            Count = Count + 1
             product_rec.MoveNext
         Loop
         Body = Body & "</td></tr>"
@@ -681,7 +681,7 @@ Sub WeekAccount(ByVal TargetPath As String)
 
 
             'show every custom order per product
-            For i = 0 To count - 1
+            For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount"
                 SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -7, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by [order].PID;"
@@ -723,7 +723,7 @@ Sub WeekAccount(ByVal TargetPath As String)
         
         
         Body = "<tr><td>總計</td>"
-        For i = 0 To count - 1
+        For i = 0 To Count - 1
             Body = Body & "<td>" & CurrentCountAll(i) & "</td>"
             Body = Body & "<td>" & WinningCountAll(i) & "</td>"
         Next
@@ -741,7 +741,7 @@ End Sub
 
 Sub MonthAccount(ByVal TargetPath As String)
     Dim selectFields As String
-    Dim Body As String, i As Integer, PIDArray(1024) As String, count As Integer, PID As String, OldPID As String, CurrentCount As Integer, WinningCount As Integer
+    Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String, OldPID As String, CurrentCount As Integer, WinningCount As Integer
     Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
@@ -766,12 +766,12 @@ Sub MonthAccount(ByVal TargetPath As String)
         
         'show product name
         Body = "<tr><td>產品"
-        count = 0
+        Count = 0
         Do Until product_rec.EOF
-            PIDArray(count) = product_rec.Fields.Item("PID")
+            PIDArray(Count) = product_rec.Fields.Item("PID")
             Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
             Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中</td>"
-            count = count + 1
+            Count = Count + 1
             product_rec.MoveNext
         Loop
         Body = Body & "</td></tr>"
@@ -788,7 +788,7 @@ Sub MonthAccount(ByVal TargetPath As String)
 
 
             'show every custom order per product
-            For i = 0 To count - 1
+            For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount"
                 SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/MM/") & "01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/MM/") & Date_Is_28_29_30_31(txtCurrentDate.Text) & "') order by [order].PID;"
@@ -830,7 +830,7 @@ Sub MonthAccount(ByVal TargetPath As String)
         
         
         Body = "<tr><td>總計</td>"
-        For i = 0 To count - 1
+        For i = 0 To Count - 1
             Body = Body & "<td>" & CurrentCountAll(i) & "</td>"
             Body = Body & "<td>" & WinningCountAll(i) & "</td>"
         Next
@@ -848,7 +848,7 @@ End Sub
 
 Sub YearAccount(ByVal TargetPath As String)
     Dim selectFields As String
-    Dim Body As String, i As Integer, PIDArray(1024) As String, count As Integer, PID As String, OldPID As String, CurrentCount As Integer, WinningCount As Integer
+    Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String, OldPID As String, CurrentCount As Integer, WinningCount As Integer
     Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
@@ -873,12 +873,12 @@ Sub YearAccount(ByVal TargetPath As String)
         
         'show product name
         Body = "<tr><td>產品"
-        count = 0
+        Count = 0
         Do Until product_rec.EOF
-            PIDArray(count) = product_rec.Fields.Item("PID")
+            PIDArray(Count) = product_rec.Fields.Item("PID")
             Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
             Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中</td>"
-            count = count + 1
+            Count = Count + 1
             product_rec.MoveNext
         Loop
         Body = Body & "</td></tr>"
@@ -895,7 +895,7 @@ Sub YearAccount(ByVal TargetPath As String)
 
 
             'show every custom order per product
-            For i = 0 To count - 1
+            For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount"
                 SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31') order by [order].PID;"
@@ -937,7 +937,7 @@ Sub YearAccount(ByVal TargetPath As String)
         
         
         Body = "<tr><td>總計</td>"
-        For i = 0 To count - 1
+        For i = 0 To Count - 1
             Body = Body & "<td>" & CurrentCountAll(i) & "</td>"
             Body = Body & "<td>" & WinningCountAll(i) & "</td>"
         Next
@@ -956,7 +956,7 @@ End Sub
 
 Sub FourKDayReport(ByVal TargetPath As String)
     Dim selectFields As String
-    Dim Body As String, i As Integer, PIDArray(1024) As String, count As Integer, PID As String, OldPID As String, CurrentCount As Integer
+    Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String, OldPID As String, CurrentCount As Integer
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
@@ -980,11 +980,11 @@ Sub FourKDayReport(ByVal TargetPath As String)
         
         'show product name
         Body = "<tr><td>產品"
-        count = 0
+        Count = 0
         Do Until product_rec.EOF
-            PIDArray(count) = product_rec.Fields.Item("PID")
+            PIDArray(Count) = product_rec.Fields.Item("PID")
             Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
-            count = count + 1
+            Count = Count + 1
             product_rec.MoveNext
         Loop
         Body = Body & "</td></tr>"
@@ -1001,7 +1001,7 @@ Sub FourKDayReport(ByVal TargetPath As String)
 
 
             'show every custom order per product
-            For i = 0 To count - 1
+            For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount"
                 SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate='" & txtCurrentDate.Text & "' order by [order].PID;"
@@ -1041,7 +1041,7 @@ End Sub
 
 Sub FourKWeekReport(ByVal TargetPath As String)
     Dim selectFields As String
-    Dim Body As String, i As Integer, PIDArray(1024) As String, count As Integer, PID As String, OldPID As String, CurrentCount As Integer
+    Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String, OldPID As String, CurrentCount As Integer
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
@@ -1065,11 +1065,11 @@ Sub FourKWeekReport(ByVal TargetPath As String)
         
         'show product name
         Body = "<tr><td>產品"
-        count = 0
+        Count = 0
         Do Until product_rec.EOF
-            PIDArray(count) = product_rec.Fields.Item("PID")
+            PIDArray(Count) = product_rec.Fields.Item("PID")
             Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
-            count = count + 1
+            Count = Count + 1
             product_rec.MoveNext
         Loop
         Body = Body & "</td></tr>"
@@ -1086,7 +1086,7 @@ Sub FourKWeekReport(ByVal TargetPath As String)
 
 
             'show every custom order per product
-            For i = 0 To count - 1
+            For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount"
                 SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -7, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by [order].PID;"
@@ -1126,7 +1126,7 @@ End Sub
 
 Sub FourKMonthReport(ByVal TargetPath As String)
     Dim selectFields As String
-    Dim Body As String, i As Integer, PIDArray(1024) As String, count As Integer, PID As String, OldPID As String, CurrentCount As Integer
+    Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String, OldPID As String, CurrentCount As Integer
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
@@ -1150,11 +1150,11 @@ Sub FourKMonthReport(ByVal TargetPath As String)
         
         'show product name
         Body = "<tr><td>產品"
-        count = 0
+        Count = 0
         Do Until product_rec.EOF
-            PIDArray(count) = product_rec.Fields.Item("PID")
+            PIDArray(Count) = product_rec.Fields.Item("PID")
             Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
-            count = count + 1
+            Count = Count + 1
             product_rec.MoveNext
         Loop
         Body = Body & "</td></tr>"
@@ -1171,7 +1171,7 @@ Sub FourKMonthReport(ByVal TargetPath As String)
 
 
             'show every custom order per product
-            For i = 0 To count - 1
+            For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount"
                 SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/MM/") & "01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/MM/") & Date_Is_28_29_30_31(txtCurrentDate.Text) & "') order by [order].PID;"
@@ -1211,7 +1211,7 @@ End Sub
 
 Sub FourKYearReport(ByVal TargetPath As String)
     Dim selectFields As String
-    Dim Body As String, i As Integer, PIDArray(1024) As String, count As Integer, PID As String, OldPID As String, CurrentCount As Integer
+    Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String, OldPID As String, CurrentCount As Integer
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
@@ -1235,11 +1235,11 @@ Sub FourKYearReport(ByVal TargetPath As String)
         
         'show product name
         Body = "<tr><td>產品"
-        count = 0
+        Count = 0
         Do Until product_rec.EOF
-            PIDArray(count) = product_rec.Fields.Item("PID")
+            PIDArray(Count) = product_rec.Fields.Item("PID")
             Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
-            count = count + 1
+            Count = Count + 1
             product_rec.MoveNext
         Loop
         Body = Body & "</td></tr>"
@@ -1256,7 +1256,7 @@ Sub FourKYearReport(ByVal TargetPath As String)
 
 
             'show every custom order per product
-            For i = 0 To count - 1
+            For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount"
                 SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31') order by [order].PID;"
@@ -1296,7 +1296,7 @@ End Sub
 
 Sub FourKDayAccount(ByVal TargetPath As String)
     Dim selectFields As String
-    Dim Body As String, i As Integer, PIDArray(1024) As String, count As Integer, PID As String, OldPID As String, CurrentCount As Integer, WinningCount As Integer
+    Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String, OldPID As String, CurrentCount As Integer, WinningCount As Integer
     Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
@@ -1321,12 +1321,12 @@ Sub FourKDayAccount(ByVal TargetPath As String)
         
         'show product name
         Body = "<tr><td>產品"
-        count = 0
+        Count = 0
         Do Until product_rec.EOF
-            PIDArray(count) = product_rec.Fields.Item("PID")
+            PIDArray(Count) = product_rec.Fields.Item("PID")
             Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
             Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中</td>"
-            count = count + 1
+            Count = Count + 1
             product_rec.MoveNext
         Loop
         Body = Body & "</td></tr>"
@@ -1343,7 +1343,7 @@ Sub FourKDayAccount(ByVal TargetPath As String)
 
 
             'show every custom order per product
-            For i = 0 To count - 1
+            For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount"
                 SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate='" & txtCurrentDate.Text & "' order by [order].PID;"
@@ -1385,7 +1385,7 @@ Sub FourKDayAccount(ByVal TargetPath As String)
         
         
         Body = "<tr><td>總計</td>"
-        For i = 0 To count - 1
+        For i = 0 To Count - 1
             Body = Body & "<td>" & CurrentCountAll(i) & "</td>"
             Body = Body & "<td>" & WinningCountAll(i) & "</td>"
         Next
@@ -1403,7 +1403,7 @@ End Sub
 
 Sub FourKWeekAccount(ByVal TargetPath As String)
     Dim selectFields As String
-    Dim Body As String, i As Integer, PIDArray(1024) As String, count As Integer, PID As String, OldPID As String, CurrentCount As Integer, WinningCount As Integer
+    Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String, OldPID As String, CurrentCount As Integer, WinningCount As Integer
     Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
@@ -1428,12 +1428,12 @@ Sub FourKWeekAccount(ByVal TargetPath As String)
         
         'show product name
         Body = "<tr><td>產品"
-        count = 0
+        Count = 0
         Do Until product_rec.EOF
-            PIDArray(count) = product_rec.Fields.Item("PID")
+            PIDArray(Count) = product_rec.Fields.Item("PID")
             Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
             Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中</td>"
-            count = count + 1
+            Count = Count + 1
             product_rec.MoveNext
         Loop
         Body = Body & "</td></tr>"
@@ -1450,7 +1450,7 @@ Sub FourKWeekAccount(ByVal TargetPath As String)
 
 
             'show every custom order per product
-            For i = 0 To count - 1
+            For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount"
                 SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -7, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by [order].PID;"
@@ -1492,7 +1492,7 @@ Sub FourKWeekAccount(ByVal TargetPath As String)
         
         
         Body = "<tr><td>總計</td>"
-        For i = 0 To count - 1
+        For i = 0 To Count - 1
             Body = Body & "<td>" & CurrentCountAll(i) & "</td>"
             Body = Body & "<td>" & WinningCountAll(i) & "</td>"
         Next
@@ -1510,7 +1510,7 @@ End Sub
 
 Sub FourKMonthAccount(ByVal TargetPath As String)
     Dim selectFields As String
-    Dim Body As String, i As Integer, PIDArray(1024) As String, count As Integer, PID As String, OldPID As String, CurrentCount As Integer, WinningCount As Integer
+    Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String, OldPID As String, CurrentCount As Integer, WinningCount As Integer
     Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
@@ -1535,12 +1535,12 @@ Sub FourKMonthAccount(ByVal TargetPath As String)
         
         'show product name
         Body = "<tr><td>產品"
-        count = 0
+        Count = 0
         Do Until product_rec.EOF
-            PIDArray(count) = product_rec.Fields.Item("PID")
+            PIDArray(Count) = product_rec.Fields.Item("PID")
             Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
             Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中</td>"
-            count = count + 1
+            Count = Count + 1
             product_rec.MoveNext
         Loop
         Body = Body & "</td></tr>"
@@ -1557,7 +1557,7 @@ Sub FourKMonthAccount(ByVal TargetPath As String)
 
 
             'show every custom order per product
-            For i = 0 To count - 1
+            For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount"
                 SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/MM/") & "01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/MM/") & Date_Is_28_29_30_31(txtCurrentDate.Text) & "') order by [order].PID;"
@@ -1599,7 +1599,7 @@ Sub FourKMonthAccount(ByVal TargetPath As String)
         
         
         Body = "<tr><td>總計</td>"
-        For i = 0 To count - 1
+        For i = 0 To Count - 1
             Body = Body & "<td>" & CurrentCountAll(i) & "</td>"
             Body = Body & "<td>" & WinningCountAll(i) & "</td>"
         Next
@@ -1617,7 +1617,7 @@ End Sub
 
 Sub FourKYearAccount(ByVal TargetPath As String)
     Dim selectFields As String
-    Dim Body As String, i As Integer, PIDArray(1024) As String, count As Integer, PID As String, OldPID As String, CurrentCount As Integer, WinningCount As Integer
+    Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String, OldPID As String, CurrentCount As Integer, WinningCount As Integer
     Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
@@ -1642,12 +1642,12 @@ Sub FourKYearAccount(ByVal TargetPath As String)
         
         'show product name
         Body = "<tr><td>產品"
-        count = 0
+        Count = 0
         Do Until product_rec.EOF
-            PIDArray(count) = product_rec.Fields.Item("PID")
+            PIDArray(Count) = product_rec.Fields.Item("PID")
             Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
             Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中</td>"
-            count = count + 1
+            Count = Count + 1
             product_rec.MoveNext
         Loop
         Body = Body & "</td></tr>"
@@ -1664,7 +1664,7 @@ Sub FourKYearAccount(ByVal TargetPath As String)
 
 
             'show every custom order per product
-            For i = 0 To count - 1
+            For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount"
                 SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31') order by [order].PID;"
@@ -1706,7 +1706,7 @@ Sub FourKYearAccount(ByVal TargetPath As String)
         
         
         Body = "<tr><td>總計</td>"
-        For i = 0 To count - 1
+        For i = 0 To Count - 1
             Body = Body & "<td>" & CurrentCountAll(i) & "</td>"
             Body = Body & "<td>" & WinningCountAll(i) & "</td>"
         Next
@@ -1730,9 +1730,9 @@ Private Sub cmdConfirm_Click()
         
         TargetPath = App.Path
         If Right(TargetPath, 1) <> "\" Then
-            TargetPath = TargetPath & "\report\"
+            TargetPath = TargetPath & "\report\" & Format(txtCurrentDate.Text, "yyyy") & "\" & Format(txtCurrentDate.Text, "mm") & "\"
         Else
-            TargetPath = TargetPath & "report\"
+            TargetPath = TargetPath & "report\" & Format(txtCurrentDate.Text, "yyyy") & "\" & Format(txtCurrentDate.Text, "mm") & "\"
         End If
         Call CreatePath(TargetPath)
         

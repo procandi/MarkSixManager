@@ -6,8 +6,8 @@ Object = "{CDE57A40-8B86-11D0-B3C6-00A0C90AEA82}#1.0#0"; "MSDATGRD.OCX"
 Begin VB.Form frmCustom 
    Caption         =   "客戶資料表"
    ClientHeight    =   10665
-   ClientLeft      =   8235
-   ClientTop       =   2880
+   ClientLeft      =   1965
+   ClientTop       =   3240
    ClientWidth     =   14985
    Icon            =   "frmCustom.frx":0000
    LinkTopic       =   "Form2"
@@ -360,7 +360,7 @@ Begin VB.Form frmCustom
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   94175235
+         Format          =   103612419
          CurrentDate     =   37058
       End
       Begin VB.Label lblEntry 

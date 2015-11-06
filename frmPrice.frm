@@ -6,8 +6,8 @@ Object = "{CDE57A40-8B86-11D0-B3C6-00A0C90AEA82}#1.0#0"; "MSDATGRD.OCX"
 Begin VB.Form frmPrice 
    Caption         =   "客戶產品價格表"
    ClientHeight    =   10560
-   ClientLeft      =   7425
-   ClientTop       =   3285
+   ClientLeft      =   2145
+   ClientTop       =   3615
    ClientWidth     =   14895
    Icon            =   "frmPrice.frx":0000
    LinkTopic       =   "Form2"
@@ -229,7 +229,7 @@ Begin VB.Form frmPrice
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   94175235
+         Format          =   103481347
          CurrentDate     =   37058
       End
       Begin VB.Label lblEntry 
@@ -570,7 +570,7 @@ End Sub
 Private Sub cmdModifyPrice_Click()
     basVariable.Action = "ModifyPrice"
     frmPriceUpdate.Show
-    Me.Hide
+    'Me.Hide
 End Sub
 
 Private Sub cmdClose_Click()
