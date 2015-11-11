@@ -223,7 +223,7 @@ Begin VB.Form frmPriceUpdate
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   103481347
+         Format          =   104595459
          CurrentDate     =   42267
       End
       Begin VB.Label lblBasic 
@@ -530,7 +530,7 @@ Private Sub Form_Load()
     
     Adodc1.ConnectionString = basDataBase.Connection_String
     Adodc1.CommandType = adCmdText
-    Adodc1.RecordSource = "select * from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "' order by price.PID,CurrentDate desc;"
+    Adodc1.RecordSource = "select * from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "' order by CurrentDate desc,price.PID;"
     Adodc1.LockType = adLockOptimistic
     
     
@@ -563,8 +563,8 @@ Private Sub Form_Load()
     End If
        
     
-    dtpCurrentDate.Value = Format(DateTime.Now, "yyyy/MM/dd")
-    txtCurrentDate.Text = Format(DateTime.Now, "yyyy/MM/dd")
+    dtpCurrentDate.Value = Format(basVariable.SelectDate, "yyyy/MM/dd")
+    txtCurrentDate.Text = Format(basVariable.SelectDate, "yyyy/MM/dd")
     
     lblUpdateData.Caption = ""
 End Sub

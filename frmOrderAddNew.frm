@@ -6,7 +6,7 @@ Begin VB.Form frmOrderAddNew
    BackColor       =   &H00808080&
    BorderStyle     =   1  '單線固定
    Caption         =   "產品價格變更"
-   ClientHeight    =   6360
+   ClientHeight    =   5865
    ClientLeft      =   5400
    ClientTop       =   6675
    ClientWidth     =   6495
@@ -14,17 +14,17 @@ Begin VB.Form frmOrderAddNew
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   6360
+   ScaleHeight     =   5865
    ScaleWidth      =   6495
    Begin Threed.SSPanel pnlBasic 
-      Height          =   5415
+      Height          =   4935
       Left            =   240
       TabIndex        =   0
       Top             =   720
       Width           =   5895
       _Version        =   65536
       _ExtentX        =   10398
-      _ExtentY        =   9551
+      _ExtentY        =   8705
       _StockProps     =   15
       ForeColor       =   0
       BackColor       =   12632256
@@ -41,14 +41,6 @@ Begin VB.Form frmOrderAddNew
       BevelInner      =   1
       Outline         =   -1  'True
       Alignment       =   6
-      Begin VB.ComboBox cmbBonusTarget 
-         Enabled         =   0   'False
-         Height          =   300
-         Left            =   1560
-         TabIndex        =   22
-         Top             =   3120
-         Width           =   4095
-      End
       Begin VB.TextBox txtNote 
          BeginProperty Font 
             Name            =   "新細明體"
@@ -61,8 +53,8 @@ Begin VB.Form frmOrderAddNew
          EndProperty
          Height          =   375
          Left            =   1560
-         TabIndex        =   20
-         Top             =   4080
+         TabIndex        =   8
+         Top             =   3600
          Width           =   4095
       End
       Begin VB.TextBox txtBonusMoney 
@@ -77,8 +69,8 @@ Begin VB.Form frmOrderAddNew
          EndProperty
          Height          =   375
          Left            =   1560
-         TabIndex        =   18
-         Top             =   3600
+         TabIndex        =   7
+         Top             =   3120
          Width           =   4095
       End
       Begin VB.TextBox txtAddMoney 
@@ -93,7 +85,7 @@ Begin VB.Form frmOrderAddNew
          EndProperty
          Height          =   375
          Left            =   1560
-         TabIndex        =   16
+         TabIndex        =   6
          Top             =   2640
          Width           =   4095
       End
@@ -118,7 +110,7 @@ Begin VB.Form frmOrderAddNew
          Height          =   360
          Left            =   1560
          MaxLength       =   256
-         TabIndex        =   12
+         TabIndex        =   15
          Top             =   1200
          Width           =   3855
       End
@@ -153,8 +145,8 @@ Begin VB.Form frmOrderAddNew
          Height          =   495
          Left            =   3120
          Style           =   1  '圖片外觀
-         TabIndex        =   7
-         Top             =   4680
+         TabIndex        =   10
+         Top             =   4200
          Width           =   1215
       End
       Begin VB.CommandButton cmdUpdate 
@@ -172,9 +164,9 @@ Begin VB.Form frmOrderAddNew
          Height          =   495
          Left            =   1560
          Style           =   1  '圖片外觀
-         TabIndex        =   6
+         TabIndex        =   9
          Tag             =   "Edit"
-         Top             =   4680
+         Top             =   4200
          Width           =   1335
       End
       Begin VB.TextBox txtCurrentCount 
@@ -196,7 +188,7 @@ Begin VB.Form frmOrderAddNew
       Begin MSComCtl2.DTPicker dtpCurrentDate 
          Height          =   375
          Left            =   1560
-         TabIndex        =   13
+         TabIndex        =   16
          Top             =   1200
          Width           =   4095
          _ExtentX        =   7223
@@ -213,7 +205,7 @@ Begin VB.Form frmOrderAddNew
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   103809027
+         Format          =   104988675
          CurrentDate     =   42267
       End
       Begin VB.Label lblBasic 
@@ -235,8 +227,8 @@ Begin VB.Form frmOrderAddNew
          Height          =   375
          Index           =   6
          Left            =   360
-         TabIndex        =   21
-         Top             =   4080
+         TabIndex        =   20
+         Top             =   3600
          Width           =   1215
       End
       Begin VB.Label lblBasic 
@@ -259,29 +251,6 @@ Begin VB.Form frmOrderAddNew
          Index           =   5
          Left            =   360
          TabIndex        =   19
-         Top             =   3600
-         Width           =   1215
-      End
-      Begin VB.Label lblBasic 
-         Alignment       =   1  '靠右對齊
-         BackColor       =   &H80000015&
-         BackStyle       =   0  '透明
-         BorderStyle     =   1  '單線固定
-         Caption         =   "退水對象"
-         BeginProperty Font 
-            Name            =   "新細明體"
-            Size            =   12
-            Charset         =   136
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         ForeColor       =   &H00000000&
-         Height          =   375
-         Index           =   4
-         Left            =   360
-         TabIndex        =   17
          Top             =   3120
          Width           =   1215
       End
@@ -304,7 +273,7 @@ Begin VB.Form frmOrderAddNew
          Height          =   375
          Index           =   2
          Left            =   360
-         TabIndex        =   15
+         TabIndex        =   18
          Top             =   2640
          Width           =   1215
       End
@@ -327,7 +296,7 @@ Begin VB.Form frmOrderAddNew
          Height          =   375
          Index           =   3
          Left            =   360
-         TabIndex        =   11
+         TabIndex        =   14
          Top             =   1200
          Width           =   1215
       End
@@ -350,7 +319,7 @@ Begin VB.Form frmOrderAddNew
          Height          =   375
          Index           =   0
          Left            =   360
-         TabIndex        =   10
+         TabIndex        =   13
          Top             =   2160
          Width           =   1215
       End
@@ -373,7 +342,7 @@ Begin VB.Form frmOrderAddNew
          Height          =   375
          Index           =   0
          Left            =   360
-         TabIndex        =   9
+         TabIndex        =   12
          Top             =   120
          Width           =   5295
       End
@@ -396,7 +365,7 @@ Begin VB.Form frmOrderAddNew
          Height          =   375
          Index           =   1
          Left            =   360
-         TabIndex        =   8
+         TabIndex        =   11
          Top             =   1680
          Width           =   1215
       End
@@ -427,7 +396,7 @@ Begin VB.Form frmOrderAddNew
    Begin MSAdodcLib.Adodc Adodc1 
       Height          =   330
       Left            =   3720
-      Top             =   6000
+      Top             =   5520
       Visible         =   0   'False
       Width           =   2775
       _ExtentX        =   4895
@@ -488,7 +457,7 @@ Begin VB.Form frmOrderAddNew
       ForeColor       =   &H000000FF&
       Height          =   495
       Left            =   240
-      TabIndex        =   14
+      TabIndex        =   17
       Top             =   360
       Width           =   1815
    End
@@ -543,8 +512,6 @@ Private Sub cmdUpdate_Click()
     PID = product_rec("PID")
     product_rec.Close
     
-    'Call Str_Classify(cmbBonusTarget.Text, BonusTarget, "", Asc("0"), Asc("9"))
-    
     
     Adodc1.Recordset.Fields.Item("SwiftCode").Value = Val(LastSwiftCode) + 1
     Adodc1.Recordset.Fields.Item("PID").Value = PID
@@ -554,7 +521,6 @@ Private Sub cmdUpdate_Click()
     Adodc1.Recordset.Fields.Item("CurrentCount").Value = txtCurrentCount.Text
     Adodc1.Recordset.Fields.Item("WinningCount").Value = txtWinningCount.Text
     Adodc1.Recordset.Fields.Item("AddMoney").Value = txtAddMoney.Text
-    Adodc1.Recordset.Fields.Item("BonusTarget").Value = cmbBonusTarget.Text 'Adodc1.Recordset.Fields.Item("BonusTarget").Value = BonusTarget
     Adodc1.Recordset.Fields.Item("BonusMoney").Value = txtBonusMoney.Text
     Adodc1.Recordset.Fields.Item("Note").Value = txtNote.Text
     Call Adodc1.Recordset.Update
@@ -567,7 +533,6 @@ Private Sub cmdUpdate_Click()
     txtCurrentCount.Text = ""
     txtWinningCount.Text = ""
     txtAddMoney.Text = ""
-    cmbBonusTarget.Text = ""
     txtBonusMoney.Text = ""
     txtNote.Text = ""
     addCount = addCount + 1
@@ -583,8 +548,6 @@ Private Sub Form_Load()
     cmbPName.Enabled = True
     txtCurrentDate.Enabled = True
     dtpCurrentDate.Enabled = True
-    cmbBonusTarget.Enabled = True
-
     
 
     lblName(0).Caption = basVariable.SelectCName
@@ -610,8 +573,6 @@ Private Sub Form_Load()
     
     
     Call ComboBox_LoadFrom_DataBase_ByFile(cmbPName, "PName", "product", "", "", "")
-    Call ComboBox_LoadFrom_DataBase_ByFile(cmbBonusTarget, "CID,CName", "custom", "", "", "")
-    
     
     dtpCurrentDate.Value = Format(DateTime.Now, "yyyy/MM/dd")
     txtCurrentDate.Text = Format(DateTime.Now, "yyyy/MM/dd")

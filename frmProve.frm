@@ -13,10 +13,18 @@ Begin VB.Form frmProve
    MinButton       =   0   'False
    ScaleHeight     =   9120
    ScaleWidth      =   6765
+   Begin VB.CommandButton cmdCustromProductReport 
+      Caption         =   "客別產品日報表"
+      Height          =   615
+      Left            =   4320
+      TabIndex        =   29
+      Top             =   4800
+      Width           =   1215
+   End
    Begin VB.CommandButton cmdProduct 
       Caption         =   "產品資料"
       Height          =   615
-      Left            =   4200
+      Left            =   2760
       TabIndex        =   28
       Top             =   4800
       Width           =   1215
@@ -398,6 +406,12 @@ Private Sub cmdCustom_Click()
     basVariable.Action = "CustomDetail"
     frmCustom.Show
     Me.Hide
+End Sub
+
+Private Sub cmdCustromProductReport_Click()
+    basVariable.Action = "PrintReport"
+    basVariable.Parameter = "CustromProductDayReport"
+    frmConfirm.Show
 End Sub
 
 Private Sub cmdDayAccount_Click()

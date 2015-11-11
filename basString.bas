@@ -61,6 +61,29 @@ End Function
 '/**************************地э(2009/03/03)***********************************/
 
 
+'/**************************т﹃SourceいじStartEndぇ丁じだ摸ㄓTarget璶ぃ才沧ゎ***********************************/
+Public Function Str_ClassifyBreak(ByRef Str_Source As String, ByRef Str_Target As String, ByRef Str_Start As Long, ByRef Str_End As Long) As Long
+    Dim i As Integer
+    Dim Count As Long
+    
+    Str_Target = ""
+    Count = 0
+
+    For i = 1 To Len(Str_Source)
+        If Asc(Mid(Str_Source, i, 1)) >= Str_Start And Asc(Mid(Str_Source, i, 1)) <= Str_End Then
+            Str_Target = Str_Target & Mid(Str_Source, i, 1)
+            Count = Count + 1
+        Else
+            Exit For
+        End If
+    Next
+    
+    Str_ClassifyBreak = Count
+End Function
+'/**************************地э(2009/03/03)***********************************/
+
+
+
 '/**************************ノ盢﹃干ㄧΑInsert_Count璶干Θ碭璽计璶рFill_Source_Char干Fill_Target_String玡タ计玥(ㄒパオだ琌-4,099玥肚穦0099)***********************************/
 Public Function Ch_Fill(ByVal Insert_Count As Long, ByVal Fill_Source_Char As String, ByVal Fill_Target_String As String) As String
     Dim i As Long

@@ -229,7 +229,7 @@ Begin VB.Form frmPrice
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   103481347
+         Format          =   104595459
          CurrentDate     =   37058
       End
       Begin VB.Label lblEntry 
@@ -585,6 +585,7 @@ Private Sub DataGrid1_RowColChange(LastRow As Variant, ByVal LastCol As Integer)
             basVariable.Parameter = DataGrid1.Row
             basVariable.CurrentSwiftCode = DataGrid1.Columns("交易流水號")
             basVariable.SelectPID = DataGrid1.Columns("產品編號")
+            basVariable.SelectDate = DataGrid1.Columns("交易日期")
         End If
         
         If DataGrid1.SelBookmarks.Count <> 0 Then Call DataGrid1.SelBookmarks.Remove(0)

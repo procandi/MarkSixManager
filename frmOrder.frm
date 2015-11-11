@@ -196,7 +196,7 @@ Begin VB.Form frmOrder
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   103809027
+         Format          =   104857603
          CurrentDate     =   37058
       End
       Begin VB.Label lblEntry 
@@ -513,7 +513,7 @@ Private Sub Form_Load()
     DataGrid1.AllowUpdate = True
     
     lblName(0).Caption = basVariable.SelectCName
-    selectFields = "SwiftCode,CID,[order].PID,PName,CurrentDate,CurrentCount,WinningCount,AddMoney,BonusTarget,BonusMoney,Note"
+    selectFields = "SwiftCode,CID,[order].PID,PName,CurrentDate,CurrentCount,WinningCount,AddMoney,BonusMoney,Note"
     
     Adodc1.ConnectionString = basDataBase.Connection_String
     Adodc1.CommandType = adCmdText
@@ -539,7 +539,6 @@ Sub RefreshDataGridHeader()
     DataGrid1.Columns("CurrentCount").Caption = "交易數量"
     DataGrid1.Columns("WinningCount").Caption = "中獎數量"
     DataGrid1.Columns("AddMoney").Caption = "漲價"
-    DataGrid1.Columns("BonusTarget").Caption = "退水對象"
     DataGrid1.Columns("BonusMoney").Caption = "退水金額"
     DataGrid1.Columns("Note").Caption = "備註"
 End Sub
