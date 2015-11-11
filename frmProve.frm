@@ -3,158 +3,222 @@ Begin VB.Form frmProve
    BackColor       =   &H00C0C0C0&
    BorderStyle     =   1  '單線固定
    Caption         =   "系統主頁面"
-   ClientHeight    =   9120
-   ClientLeft      =   5025
-   ClientTop       =   3900
+   ClientHeight    =   11970
+   ClientLeft      =   5655
+   ClientTop       =   2115
    ClientWidth     =   6765
    Icon            =   "frmProve.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   9120
+   ScaleHeight     =   11970
    ScaleWidth      =   6765
-   Begin VB.CommandButton cmdCustromProductReport 
-      Caption         =   "客別產品日報表"
-      Height          =   615
-      Left            =   4320
-      TabIndex        =   29
-      Top             =   4800
-      Width           =   1215
+   Begin VB.Frame Frame4 
+      Caption         =   "客別不分產品報表"
+      Height          =   975
+      Left            =   240
+      TabIndex        =   34
+      Top             =   10560
+      Width           =   6135
+      Begin VB.CommandButton cmdCustromYearReport 
+         Caption         =   "客別不分產品年報表"
+         Height          =   615
+         Left            =   4680
+         TabIndex        =   37
+         Top             =   240
+         Width           =   1215
+      End
+      Begin VB.CommandButton cmdCustromMonthReport 
+         Caption         =   "客別不分產品月報表"
+         Height          =   615
+         Left            =   3240
+         TabIndex        =   36
+         Top             =   240
+         Width           =   1215
+      End
+      Begin VB.CommandButton cmdCustromWeekReport 
+         Caption         =   "客別不分產品週報表"
+         Height          =   615
+         Left            =   1680
+         TabIndex        =   35
+         Top             =   240
+         Width           =   1215
+      End
+   End
+   Begin VB.Frame Frame3 
+      Caption         =   "客別分產品報表"
+      Height          =   1095
+      Left            =   240
+      TabIndex        =   31
+      Top             =   9360
+      Width           =   6135
+      Begin VB.CommandButton cmdCustromProductWeekReport 
+         Caption         =   "客別分產品週報表"
+         Height          =   615
+         Left            =   1680
+         TabIndex        =   33
+         Top             =   240
+         Width           =   1215
+      End
+      Begin VB.CommandButton cmdCustromProductDayReport 
+         Caption         =   "客別分產品日報表"
+         Height          =   615
+         Left            =   240
+         TabIndex        =   32
+         Top             =   240
+         Width           =   1215
+      End
+   End
+   Begin VB.Frame Frame2 
+      Caption         =   "4K總表"
+      Height          =   1695
+      Left            =   240
+      TabIndex        =   22
+      Top             =   7440
+      Width           =   6135
+      Begin VB.CommandButton cmdFourKYearReport 
+         Caption         =   "4K年報表"
+         Height          =   615
+         Left            =   4680
+         TabIndex        =   30
+         Top             =   240
+         Width           =   1215
+      End
+      Begin VB.CommandButton cmdFourKMonthReport 
+         Caption         =   "4K月報表"
+         Height          =   615
+         Left            =   3240
+         TabIndex        =   29
+         Top             =   240
+         Width           =   1215
+      End
+      Begin VB.CommandButton cmdFourKWeekReport 
+         Caption         =   "4K週報表"
+         Height          =   615
+         Left            =   1680
+         TabIndex        =   28
+         Top             =   240
+         Width           =   1215
+      End
+      Begin VB.CommandButton cmdFourKDayReport 
+         Caption         =   "4K日報表"
+         Height          =   615
+         Left            =   120
+         TabIndex        =   27
+         Top             =   240
+         Width           =   1215
+      End
+      Begin VB.CommandButton cmdFourKYearAccount 
+         Caption         =   "4K年總帳"
+         Height          =   615
+         Left            =   4680
+         TabIndex        =   26
+         Top             =   960
+         Width           =   1215
+      End
+      Begin VB.CommandButton cmdFourKMonthAccount 
+         Caption         =   "4K月總帳"
+         Height          =   615
+         Left            =   3240
+         TabIndex        =   25
+         Top             =   960
+         Width           =   1215
+      End
+      Begin VB.CommandButton cmdFourKWeekAccount 
+         Caption         =   "4K週總帳"
+         Height          =   615
+         Left            =   1680
+         TabIndex        =   24
+         Top             =   960
+         Width           =   1215
+      End
+      Begin VB.CommandButton cmdFourKDayAccount 
+         Caption         =   "4K日總帳"
+         Height          =   615
+         Left            =   120
+         TabIndex        =   23
+         Top             =   960
+         Width           =   1215
+      End
+   End
+   Begin VB.Frame Frame1 
+      Caption         =   "一般總表"
+      Height          =   1695
+      Left            =   240
+      TabIndex        =   13
+      Top             =   5520
+      Width           =   6135
+      Begin VB.CommandButton cmdDayAccount 
+         Caption         =   "日總帳"
+         Height          =   615
+         Left            =   120
+         TabIndex        =   21
+         Top             =   960
+         Width           =   1215
+      End
+      Begin VB.CommandButton cmdYearAccount 
+         Caption         =   "年總帳"
+         Height          =   615
+         Left            =   4680
+         TabIndex        =   20
+         Top             =   960
+         Width           =   1215
+      End
+      Begin VB.CommandButton cmdMonthAccount 
+         Caption         =   "月總帳"
+         Height          =   615
+         Left            =   3240
+         TabIndex        =   19
+         Top             =   960
+         Width           =   1215
+      End
+      Begin VB.CommandButton cmdWeekAccount 
+         Caption         =   "週總帳"
+         Height          =   615
+         Left            =   1680
+         TabIndex        =   18
+         Top             =   960
+         Width           =   1215
+      End
+      Begin VB.CommandButton cmdYearReport 
+         Caption         =   "年報表"
+         Height          =   615
+         Left            =   4680
+         TabIndex        =   17
+         Top             =   240
+         Width           =   1215
+      End
+      Begin VB.CommandButton cmdDayReport 
+         Caption         =   "日報表"
+         Height          =   615
+         Left            =   120
+         TabIndex        =   16
+         Top             =   240
+         Width           =   1215
+      End
+      Begin VB.CommandButton cmdWeekReport 
+         Caption         =   "週報表"
+         Height          =   615
+         Left            =   1680
+         TabIndex        =   15
+         Top             =   240
+         Width           =   1215
+      End
+      Begin VB.CommandButton cmdMonthReport 
+         Caption         =   "月報表"
+         Height          =   615
+         Left            =   3240
+         TabIndex        =   14
+         Top             =   240
+         Width           =   1215
+      End
    End
    Begin VB.CommandButton cmdProduct 
       Caption         =   "產品資料"
       Height          =   615
-      Left            =   2760
-      TabIndex        =   28
-      Top             =   4800
-      Width           =   1215
-   End
-   Begin VB.CommandButton cmdFourKDayAccount 
-      Caption         =   "4K日總帳"
-      Height          =   615
-      Left            =   480
-      TabIndex        =   27
-      Top             =   7920
-      Width           =   1215
-   End
-   Begin VB.CommandButton cmdFourKWeekAccount 
-      Caption         =   "4K週總帳"
-      Height          =   615
-      Left            =   2040
-      TabIndex        =   26
-      Top             =   7920
-      Width           =   1215
-   End
-   Begin VB.CommandButton cmdFourKMonthAccount 
-      Caption         =   "4K月總帳"
-      Height          =   615
-      Left            =   3600
-      TabIndex        =   25
-      Top             =   7920
-      Width           =   1215
-   End
-   Begin VB.CommandButton cmdFourKYearAccount 
-      Caption         =   "4K年總帳"
-      Height          =   615
-      Left            =   5040
-      TabIndex        =   24
-      Top             =   7920
-      Width           =   1215
-   End
-   Begin VB.CommandButton cmdFourKDayReport 
-      Caption         =   "4K日報表"
-      Height          =   615
-      Left            =   480
-      TabIndex        =   23
-      Top             =   7200
-      Width           =   1215
-   End
-   Begin VB.CommandButton cmdFourKWeekReport 
-      Caption         =   "4K週報表"
-      Height          =   615
-      Left            =   2040
-      TabIndex        =   22
-      Top             =   7200
-      Width           =   1215
-   End
-   Begin VB.CommandButton cmdFourKMonthReport 
-      Caption         =   "4K月報表"
-      Height          =   615
-      Left            =   3600
-      TabIndex        =   21
-      Top             =   7200
-      Width           =   1215
-   End
-   Begin VB.CommandButton cmdFourKYearReport 
-      Caption         =   "4K年報表"
-      Height          =   615
-      Left            =   5040
-      TabIndex        =   20
-      Top             =   7200
-      Width           =   1215
-   End
-   Begin VB.CommandButton cmdWeekAccount 
-      Caption         =   "週總帳"
-      Height          =   615
-      Left            =   2040
-      TabIndex        =   19
-      Top             =   6360
-      Width           =   1215
-   End
-   Begin VB.CommandButton cmdMonthAccount 
-      Caption         =   "月總帳"
-      Height          =   615
-      Left            =   3600
-      TabIndex        =   18
-      Top             =   6360
-      Width           =   1215
-   End
-   Begin VB.CommandButton cmdYearAccount 
-      Caption         =   "年總帳"
-      Height          =   615
-      Left            =   5040
-      TabIndex        =   17
-      Top             =   6360
-      Width           =   1215
-   End
-   Begin VB.CommandButton cmdDayAccount 
-      Caption         =   "日總帳"
-      Height          =   615
-      Left            =   480
-      TabIndex        =   16
-      Top             =   6360
-      Width           =   1215
-   End
-   Begin VB.CommandButton cmdYearReport 
-      Caption         =   "年報表"
-      Height          =   615
-      Left            =   5040
-      TabIndex        =   15
-      Top             =   5640
-      Width           =   1215
-   End
-   Begin VB.CommandButton cmdMonthReport 
-      Caption         =   "月報表"
-      Height          =   615
-      Left            =   3600
-      TabIndex        =   14
-      Top             =   5640
-      Width           =   1215
-   End
-   Begin VB.CommandButton cmdWeekReport 
-      Caption         =   "週報表"
-      Height          =   615
-      Left            =   2040
-      TabIndex        =   13
-      Top             =   5640
-      Width           =   1215
-   End
-   Begin VB.CommandButton cmdDayReport 
-      Caption         =   "日報表"
-      Height          =   615
-      Left            =   480
+      Left            =   4080
       TabIndex        =   12
-      Top             =   5640
+      Top             =   4800
       Width           =   1215
    End
    Begin VB.CommandButton cmdCustom 
@@ -329,7 +393,7 @@ Begin VB.Form frmProve
    Begin VB.Label lblVersion 
       BackColor       =   &H00808080&
       BorderStyle     =   1  '單線固定
-      Caption         =   "Version 20150920"
+      Caption         =   "Version 20151111"
       BeginProperty Font 
          Name            =   "新細明體"
          Size            =   12
@@ -389,7 +453,7 @@ Begin VB.Form frmProve
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Height          =   4515
+      Height          =   7395
       Index           =   5
       Left            =   120
       TabIndex        =   3
@@ -408,9 +472,33 @@ Private Sub cmdCustom_Click()
     Me.Hide
 End Sub
 
-Private Sub cmdCustromProductReport_Click()
+Private Sub cmdCustromProductDayReport_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "CustromProductDayReport"
+    frmConfirm.Show
+End Sub
+
+Private Sub cmdCustromProductWeekReport_Click()
+    basVariable.Action = "PrintReport"
+    basVariable.Parameter = "CustromProductWeekReport"
+    frmConfirm.Show
+End Sub
+
+Private Sub cmdCustromWeekReport_Click()
+    basVariable.Action = "PrintReport"
+    basVariable.Parameter = "CustromWeekReport"
+    frmConfirm.Show
+End Sub
+
+Private Sub cmdCustromMonthReport_Click()
+    basVariable.Action = "PrintReport"
+    basVariable.Parameter = "CustromMonthReport"
+    frmConfirm.Show
+End Sub
+
+Private Sub cmdCustromYearReport_Click()
+    basVariable.Action = "PrintReport"
+    basVariable.Parameter = "CustromYearReport"
     frmConfirm.Show
 End Sub
 

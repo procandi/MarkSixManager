@@ -104,7 +104,7 @@ Begin VB.Form frmConfirm
          Strikethrough   =   0   'False
       EndProperty
       CustomFormat    =   "yyyy/MM/dd"
-      Format          =   104857603
+      Format          =   104595459
       CurrentDate     =   37058
    End
    Begin VB.Label lblEntry 
@@ -1821,6 +1821,8 @@ Sub CustromProductDayReport(ByVal TargetPath As String)
     Dim rec1 As New adoDB.Recordset
     Dim CData() As String
     Dim PData() As String
+    Dim beginv As Integer
+    Dim endv As Integer
     
     'search product
     SQL = "select * from product order by PID;"
@@ -1829,12 +1831,24 @@ Sub CustromProductDayReport(ByVal TargetPath As String)
     'search order
     CData = Split(cmbCName.Text, " ")
     PData = Split(cmbPName.Text, " ")
-    SQL = "select * from [order] where [order].PID='" & PData(0) & "' and CID='" & CData(0) & "' and CurrentDate='" & txtCurrentDate.Text & "';"
+    If Val(PData(0)) >= 100 Then
+        beginv = Mid(PData(0), 2, 1)
+        endv = beginv & "9"
+        SQL = "select * from [order] where cint(PID)>=" & beginv & " and cint(PID)<=" & endv & " and CID='" & CData(0) & "' and CurrentDate='" & txtCurrentDate.Text & "';"
+    Else
+        SQL = "select * from [order] where PID='" & PData(0) & "' and CID='" & CData(0) & "' and CurrentDate='" & txtCurrentDate.Text & "';"
+    End If
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
     
     'search price
     selectFields = "CurrentPrice,WinningPrice,Upset"
-    SQL = "select * from price where PID='" & PData(0) & "' and CID='" & CData(0) & "' and CurrentDate<='" & txtCurrentDate.Text & "' order by CurrentDate desc;"
+    If Val(PData(0)) >= 100 Then
+        beginv = Mid(PData(0), 2, 1)
+        endv = beginv & "9"
+        SQL = "select * from price where cint(PID)>=" & beginv & " and cint(PID)<=" & endv & " and CID='" & CData(0) & "' and CurrentDate<='" & txtCurrentDate.Text & "' order by CurrentDate desc;"
+    Else
+        SQL = "select * from price where PID='" & PData(0) & "' and CID='" & CData(0) & "' and CurrentDate<='" & txtCurrentDate.Text & "' order by CurrentDate desc;"
+    End If
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
 
     
@@ -1903,6 +1917,8 @@ Private Sub cmdConfirm_Click()
         MsgBox "尚未選擇客戶或產品！"
     Else
         Dim TargetPath As String
+        Dim CData() As String
+        Dim PData() As String
         
         TargetPath = App.Path
         If Right(TargetPath, 1) <> "\" Then
@@ -1962,12 +1978,29 @@ Private Sub cmdConfirm_Click()
             TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyy") & "_4K年總帳.xls"
             Call FourKYearAccount(TargetPath)
         Case "CustromProductDayReport"
-            Dim CData() As String
-            Dim PData() As String
-            
             CData = Split(cmbCName.Text, " ")
             PData = Split(cmbPName.Text, " ")
-            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_" & CData(1) & "_" & PData(1) & "_客別產品日報表.xls"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_" & CData(1) & "_" & PData(1) & "_客別分產品日報表.xls"
+            Call CustromProductDayReport(TargetPath)
+        Case "CustromProductWeekReport"
+            CData = Split(cmbCName.Text, " ")
+            PData = Split(cmbPName.Text, " ")
+            TargetPath = TargetPath & Format(DateTime.DateAdd("d", -7, txtCurrentDate.Text), "yyyyMMdd") & "至" & Format(txtCurrentDate.Text, "yyyyMMdd") & "_" & CData(1) & "_" & PData(1) & "_客別分產品週報表.xls"
+            Call CustromProductDayReport(TargetPath)
+        Case "CustromWeekReport"
+            CData = Split(cmbCName.Text, " ")
+            PData = Split(cmbPName.Text, " ")
+            TargetPath = TargetPath & Format(DateTime.DateAdd("d", -7, txtCurrentDate.Text), "yyyyMMdd") & "至" & Format(txtCurrentDate.Text, "yyyyMMdd") & "_" & CData(1) & "_客別不分產品週報表.xls"
+            Call CustromProductDayReport(TargetPath)
+        Case "CustromMonthReport"
+            CData = Split(cmbCName.Text, " ")
+            PData = Split(cmbPName.Text, " ")
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMM") & "_" & CData(1) & "_客別不分產品月報表.xls"
+            Call CustromProductDayReport(TargetPath)
+        Case "CustromYearReport"
+            CData = Split(cmbCName.Text, " ")
+            PData = Split(cmbPName.Text, " ")
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyy") & "_" & CData(1) & "_客別不分產品年報表.xls"
             Call CustromProductDayReport(TargetPath)
         End Select
     End If
@@ -2014,13 +2047,44 @@ Private Sub Form_Load()
     Case "FourKYearAccount"
         Label1(0).Caption = "4K年總帳列印"
     Case "CustromProductDayReport"
-        Label1(0).Caption = "客別產品日報表列印"
+        Label1(0).Caption = "客別分產品日報表列印"
         lblEntry(0).Visible = True
         lblEntry(2).Visible = True
         cmbCName.Visible = True
         cmbPName.Visible = True
         Call ComboBox_LoadFrom_DataBase_ByFile(cmbCName, "CID,CName", "custom", "", "", "")
         Call ComboBox_LoadFrom_DataBase_ByFile(cmbPName, "PID,PName", "product", "", "", "")
+        
+        Call cmbPName.AddItem("100 539_全")
+        Call cmbPName.AddItem("110 港號_全")
+        Call cmbPName.AddItem("120 大樂透_全")
+    Case "CustromProductWeekReport"
+        Label1(0).Caption = "客別分產品週報表列印"
+        lblEntry(0).Visible = True
+        lblEntry(2).Visible = True
+        cmbCName.Visible = True
+        cmbPName.Visible = True
+        Call ComboBox_LoadFrom_DataBase_ByFile(cmbCName, "CID,CName", "custom", "", "", "")
+        Call ComboBox_LoadFrom_DataBase_ByFile(cmbPName, "PID,PName", "product", "", "", "")
+        
+        Call cmbPName.AddItem("100 539_全")
+        Call cmbPName.AddItem("110 港號_全")
+        Call cmbPName.AddItem("120 大樂透_全")
+    Case "CustromWeekReport"
+        Label1(0).Caption = "客別不分產品週報表列印"
+        lblEntry(0).Visible = True
+        cmbCName.Visible = True
+        Call ComboBox_LoadFrom_DataBase_ByFile(cmbCName, "CID,CName", "custom", "", "", "")
+    Case "CustromMonthReport"
+        Label1(0).Caption = "客別不分產品月報表列印"
+        lblEntry(0).Visible = True
+        cmbCName.Visible = True
+        Call ComboBox_LoadFrom_DataBase_ByFile(cmbCName, "CID,CName", "custom", "", "", "")
+    Case "CustromYearReport"
+        Label1(0).Caption = "客別不分產品年報表列印"
+        lblEntry(0).Visible = True
+        cmbCName.Visible = True
+        Call ComboBox_LoadFrom_DataBase_ByFile(cmbCName, "CID,CName", "custom", "", "", "")
     End Select
     
     
