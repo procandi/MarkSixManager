@@ -357,7 +357,7 @@ Begin VB.Form frmCustomAddNew
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   103481347
+         Format          =   98238467
          CurrentDate     =   42267
       End
       Begin VB.Label lblEntry 
@@ -662,10 +662,16 @@ Private Sub cmdClose_Click()
 End Sub
 
 Private Sub cmdOK_Click()
+On Error GoTo errout:
     Adodc1.Recordset.Fields.Item("CID").Value = txtCID.Text
     Adodc1.Recordset.Fields.Item("CName").Value = txtCName.Text
     Call Adodc1.Recordset.Update
     Call Form_Unload(0)
+    
+    If False Then
+errout:
+        MsgBox "輸入的資料有問題，或尚有姓名未填寫！"
+    End If
 End Sub
 
 Private Sub cmdUpdate_Click()
@@ -746,9 +752,9 @@ Private Sub Form_Load()
     
     
     For i = 1 To 10
-        Call cmbProportion.AddItem(i & "成")
+        Call cmbProportion.AddItem(i & "0")
     Next
-    Call ComboBox_LoadFrom_DataBase_ByFile(cmbBonusTarget, "CName", "custom", "", "", "")
+    Call ComboBox_LoadFrom_DataBase_ByFile(cmbBonusTarget, "CID,CName", "custom", "", "", "")
     
     
     dtpOpenDate.Value = Format(DateTime.Now, "yyyy/MM/dd")

@@ -223,7 +223,7 @@ Begin VB.Form frmPriceUpdate
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   104595459
+         Format          =   98238467
          CurrentDate     =   42267
       End
       Begin VB.Label lblBasic 
@@ -509,10 +509,16 @@ Private Sub cmdPrev_Click()
 End Sub
 
 Private Sub cmdUpdate_Click()
+On Error GoTo errout:
     Call Adodc1.Recordset.Update
     'Call Form_Unload(0)
     
     lblUpdateData.Caption = "己修改"
+    
+    If False Then
+errout:
+        MsgBox "輸入的資料有問題，且所有欄位不得為空！"
+    End If
 End Sub
 
 Private Sub dtpCurrentDate_CloseUp()

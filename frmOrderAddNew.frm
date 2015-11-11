@@ -205,7 +205,7 @@ Begin VB.Form frmOrderAddNew
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   104988675
+         Format          =   98107395
          CurrentDate     =   42267
       End
       Begin VB.Label lblBasic 
@@ -497,6 +497,7 @@ Private Sub cmdClose_Click()
 End Sub
 
 Private Sub cmdUpdate_Click()
+On Error GoTo errout:
     Dim PID As String, LastSwiftCode As String
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
@@ -537,6 +538,11 @@ Private Sub cmdUpdate_Click()
     txtNote.Text = ""
     addCount = addCount + 1
     lblAddCount.Caption = "已新增" & addCount & "筆"
+    
+    If False Then
+errout:
+        MsgBox "輸入的資料有問題，或產品名稱、交易日期、交易數量、中獎數量未填寫！"
+    End If
 End Sub
 
 Private Sub dtpCurrentDate_CloseUp()
