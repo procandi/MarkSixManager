@@ -104,7 +104,7 @@ Begin VB.Form frmConfirm
          Strikethrough   =   0   'False
       EndProperty
       CustomFormat    =   "yyyy/MM/dd"
-      Format          =   98238467
+      Format          =   98304003
       CurrentDate     =   37058
    End
    Begin VB.Label lblEntry 
@@ -281,7 +281,7 @@ Sub DayReport(ByVal TargetPath As String)
         Print #1, Body
         
         'show product name
-        Body = "<tr><td>產品"
+        Body = "<tr><td>產品</td>"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
@@ -290,7 +290,7 @@ Sub DayReport(ByVal TargetPath As String)
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "</td></tr>"
+        Body = Body & "</tr>"
         Print #1, Body
         
         'show every custom order per product
@@ -615,7 +615,7 @@ Sub MonthReport(ByVal TargetPath As String)
         Print #1, Body
         
         'show product name
-        Body = "<tr><td>產品"
+        Body = "<tr><td>產品</td>"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
@@ -624,7 +624,8 @@ Sub MonthReport(ByVal TargetPath As String)
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "</td></tr>"
+        Body = Body & "<td>成數</td>"
+        Body = Body & "</tr>"
         Print #1, Body
         
         'show every custom order per product
@@ -796,7 +797,7 @@ Sub YearReport(ByVal TargetPath As String)
         Print #1, Body
         
         'show product name
-        Body = "<tr><td>產品"
+        Body = "<tr><td>產品</td>"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
@@ -805,7 +806,8 @@ Sub YearReport(ByVal TargetPath As String)
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "</td></tr>"
+        Body = Body & "<td>成數</td>"
+        Body = Body & "</tr>"
         Print #1, Body
         
         'show every custom order per product
@@ -983,7 +985,7 @@ Sub DayAccount(ByVal TargetPath As String)
         Print #1, Body
         
         'show product name
-        Body = "<tr><td>產品"
+        Body = "<tr><td>產品</td>"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
@@ -994,7 +996,7 @@ Sub DayAccount(ByVal TargetPath As String)
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "</td></tr>"
+        Body = Body & "</tr>"
         Print #1, Body
         
         'show every custom order per product
@@ -1158,7 +1160,7 @@ Sub WeekAccount(ByVal TargetPath As String)
         Print #1, Body
         
         'show product name
-        Body = "<tr><td>產品"
+        Body = "<tr><td>產品</td>"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
@@ -1169,8 +1171,9 @@ Sub WeekAccount(ByVal TargetPath As String)
             Count = Count + 1
             product_rec.MoveNext
         Loop
+        Body = Body & "<td>成數</td>"
         Body = Body & "<td>前帳</td>"
-        Body = Body & "</td></tr>"
+        Body = Body & "</tr>"
         Print #1, Body
         
         'show every custom order per product
@@ -1358,7 +1361,7 @@ Sub MonthAccount(ByVal TargetPath As String)
         Print #1, Body
         
         'show product name
-        Body = "<tr><td>產品"
+        Body = "<tr><td>產品</td>"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
@@ -1369,7 +1372,8 @@ Sub MonthAccount(ByVal TargetPath As String)
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "</td></tr>"
+        Body = Body & "<td>成數</td>"
+        Body = Body & "</tr>"
         Print #1, Body
         
         'show every custom order per product
@@ -1557,7 +1561,7 @@ Sub YearAccount(ByVal TargetPath As String)
         Print #1, Body
         
         'show product name
-        Body = "<tr><td>產品"
+        Body = "<tr><td>產品</td>"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
@@ -1568,7 +1572,8 @@ Sub YearAccount(ByVal TargetPath As String)
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "</td></tr>"
+        Body = Body & "<td>成數</td>"
+        Body = Body & "</tr>"
         Print #1, Body
         
         'show every custom order per product
@@ -1756,7 +1761,7 @@ Sub FourKDayReport(ByVal TargetPath As String)
         Print #1, Body
         
         'show product name
-        Body = "<tr><td>產品"
+        Body = "<tr><td>產品</td>"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
@@ -1765,7 +1770,7 @@ Sub FourKDayReport(ByVal TargetPath As String)
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "</td></tr>"
+        Body = Body & "</tr>"
         Print #1, Body
         
         'show every custom order per product
@@ -1907,7 +1912,7 @@ Sub FourKWeekReport(ByVal TargetPath As String)
         Print #1, Body
         
         'show product name
-        Body = "<tr><td>產品"
+        Body = "<tr><td>產品</td>"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
@@ -1916,8 +1921,9 @@ Sub FourKWeekReport(ByVal TargetPath As String)
             Count = Count + 1
             product_rec.MoveNext
         Loop
+        Body = Body & "<td>成數</td>"
         Body = Body & "<td>前帳</td>"
-        Body = Body & "</td></tr>"
+        Body = Body & "</tr>"
         Print #1, Body
         
         'show every custom order per product
@@ -2091,7 +2097,7 @@ Sub FourKMonthReport(ByVal TargetPath As String)
         Print #1, Body
         
         'show product name
-        Body = "<tr><td>產品"
+        Body = "<tr><td>產品</td>"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
@@ -2100,7 +2106,8 @@ Sub FourKMonthReport(ByVal TargetPath As String)
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "</td></tr>"
+        Body = Body & "<td>成數</td>"
+        Body = Body & "</tr>"
         Print #1, Body
         
         'show every custom order per product
@@ -2274,7 +2281,7 @@ Sub FourKYearReport(ByVal TargetPath As String)
         Print #1, Body
         
         'show product name
-        Body = "<tr><td>產品"
+        Body = "<tr><td>產品</td>"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
@@ -2283,7 +2290,8 @@ Sub FourKYearReport(ByVal TargetPath As String)
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "</td></tr>"
+        Body = Body & "<td>成數</td>"
+        Body = Body & "</tr>"
         Print #1, Body
         
         'show every custom order per product
@@ -2456,7 +2464,7 @@ Sub FourKDayAccount(ByVal TargetPath As String)
         Print #1, Body
         
         'show product name
-        Body = "<tr><td>產品"
+        Body = "<tr><td>產品</td>"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
@@ -2467,7 +2475,7 @@ Sub FourKDayAccount(ByVal TargetPath As String)
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "</td></tr>"
+        Body = Body & "</tr>"
         Print #1, Body
         
         'show every custom order per product
@@ -2633,7 +2641,7 @@ Sub FourKWeekAccount(ByVal TargetPath As String)
         Print #1, Body
         
         'show product name
-        Body = "<tr><td>產品"
+        Body = "<tr><td>產品</td>"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
@@ -2644,8 +2652,9 @@ Sub FourKWeekAccount(ByVal TargetPath As String)
             Count = Count + 1
             product_rec.MoveNext
         Loop
+        Body = Body & "<td>成數</td>"
         Body = Body & "<td>前帳</td>"
-        Body = Body & "</td></tr>"
+        Body = Body & "</tr>"
         Print #1, Body
         
         'show every custom order per product
@@ -2833,7 +2842,7 @@ Sub FourKMonthAccount(ByVal TargetPath As String)
         Print #1, Body
         
         'show product name
-        Body = "<tr><td>產品"
+        Body = "<tr><td>產品</td>"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
@@ -2844,7 +2853,8 @@ Sub FourKMonthAccount(ByVal TargetPath As String)
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "</td></tr>"
+        Body = Body & "<td>成數</td>"
+        Body = Body & "</tr>"
         Print #1, Body
         
         'show every custom order per product
@@ -3032,7 +3042,7 @@ Sub FourKYearAccount(ByVal TargetPath As String)
         Print #1, Body
         
         'show product name
-        Body = "<tr><td>產品"
+        Body = "<tr><td>產品</td>"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
@@ -3043,7 +3053,8 @@ Sub FourKYearAccount(ByVal TargetPath As String)
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "</td></tr>"
+        Body = Body & "<td>成數</td>"
+        Body = Body & "</tr>"
         Print #1, Body
         
         'show every custom order per product
