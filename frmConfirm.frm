@@ -104,7 +104,7 @@ Begin VB.Form frmConfirm
          Strikethrough   =   0   'False
       EndProperty
       CustomFormat    =   "yyyy/MM/dd"
-      Format          =   96862211
+      Format          =   103677955
       CurrentDate     =   37058
    End
    Begin VB.Label lblEntry 
@@ -3293,7 +3293,7 @@ Sub CustromProductDayReport(ByVal TargetPath As String)
         Print #1, "</table>"
     Close #1
     
-    If product_rec Is Not Null Then product_rec.Close
+    product_rec.Close
     order_rec.Close
 End Sub
 
@@ -3345,9 +3345,9 @@ Sub CustromProductWeekReport(ByVal TargetPath As String)
         Do Until order_rec.EOF
             'search price
             OrderDate = order_rec.Fields.Item("CurrentDate")
-            ProductName = order_rec.Fields.Item("PID")
+            ProductID = order_rec.Fields.Item("PID")
             selectFields = "CurrentPrice,WinningPrice,Upset"
-            SQL = "select * from price where PID='" & ProductName & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+            SQL = "select * from price where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
             Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
             
             'search product
@@ -3398,7 +3398,7 @@ Sub CustromProductWeekReport(ByVal TargetPath As String)
         Print #1, "</table>"
     Close #1
     
-    If product_rec Is Not Null Then product_rec.Close
+    product_rec.Close
     order_rec.Close
 End Sub
 
@@ -3441,9 +3441,9 @@ Sub CustromWeekReport(ByVal TargetPath As String)
         Do Until order_rec.EOF
             'search price
             OrderDate = order_rec.Fields.Item("CurrentDate")
-            ProductName = order_rec.Fields.Item("PID")
+            ProductID = order_rec.Fields.Item("PID")
             selectFields = "CurrentPrice,WinningPrice,Upset"
-            SQL = "select * from price where PID='" & ProductName & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+            SQL = "select * from price where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
             Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
             
             'search product
@@ -3494,7 +3494,7 @@ Sub CustromWeekReport(ByVal TargetPath As String)
         Print #1, "</table>"
     Close #1
     
-    If product_rec Is Not Null Then product_rec.Close
+    product_rec.Close
     order_rec.Close
 End Sub
 
@@ -3537,9 +3537,9 @@ Sub CustromMonthReport(ByVal TargetPath As String)
         Do Until order_rec.EOF
             'search price
             OrderDate = order_rec.Fields.Item("CurrentDate")
-            ProductName = order_rec.Fields.Item("PID")
+            ProductID = order_rec.Fields.Item("PID")
             selectFields = "CurrentPrice,WinningPrice,Upset"
-            SQL = "select * from price where PID='" & ProductName & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+            SQL = "select * from price where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
             Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
             
             'search product
@@ -3590,7 +3590,7 @@ Sub CustromMonthReport(ByVal TargetPath As String)
         Print #1, "</table>"
     Close #1
     
-    If product_rec Is Not Null Then product_rec.Close
+    product_rec.Close
     order_rec.Close
 End Sub
 
@@ -3633,9 +3633,9 @@ Sub CustromYearReport(ByVal TargetPath As String)
         Do Until order_rec.EOF
             'search price
             OrderDate = order_rec.Fields.Item("CurrentDate")
-            ProductName = order_rec.Fields.Item("PID")
+            ProductID = order_rec.Fields.Item("PID")
             selectFields = "CurrentPrice,WinningPrice,Upset"
-            SQL = "select * from price where PID='" & ProductName & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+            SQL = "select * from price where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
             Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
             
             'search product
@@ -3686,7 +3686,7 @@ Sub CustromYearReport(ByVal TargetPath As String)
         Print #1, "</table>"
     Close #1
     
-    If product_rec Is Not Null Then product_rec.Close
+    product_rec.Close
     order_rec.Close
 End Sub
 
