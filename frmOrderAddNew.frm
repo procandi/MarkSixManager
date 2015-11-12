@@ -205,7 +205,7 @@ Begin VB.Form frmOrderAddNew
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   98107395
+         Format          =   88276995
          CurrentDate     =   42267
       End
       Begin VB.Label lblBasic 
@@ -520,7 +520,11 @@ On Error GoTo errout:
     Adodc1.Recordset.Fields.Item("CID").Value = basVariable.SelectCID
     Adodc1.Recordset.Fields.Item("CurrentDate").Value = txtCurrentDate.Text
     Adodc1.Recordset.Fields.Item("CurrentCount").Value = txtCurrentCount.Text
-    Adodc1.Recordset.Fields.Item("WinningCount").Value = txtWinningCount.Text
+    If txtWinningCount.Text = "" Then
+        Adodc1.Recordset.Fields.Item("WinningCount").Value = "0"
+    Else
+        Adodc1.Recordset.Fields.Item("WinningCount").Value = txtWinningCount.Text
+    End If
     Adodc1.Recordset.Fields.Item("AddMoney").Value = txtAddMoney.Text
     Adodc1.Recordset.Fields.Item("BonusMoney").Value = txtBonusMoney.Text
     Adodc1.Recordset.Fields.Item("Note").Value = txtNote.Text

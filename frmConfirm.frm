@@ -104,7 +104,7 @@ Begin VB.Form frmConfirm
          Strikethrough   =   0   'False
       EndProperty
       CustomFormat    =   "yyyy/MM/dd"
-      Format          =   98304003
+      Format          =   96862211
       CurrentDate     =   37058
    End
    Begin VB.Label lblEntry 
@@ -1104,12 +1104,6 @@ Sub DayAccount(ByVal TargetPath As String)
         Body = Body & "<td>金額</td>"
         Body = Body & "<td>" & SellWinningPrice & "</td><td></td>"
         Body = Body & "</tr>"
-        Print #1, Body
-        
-        Body = "<tr></tr>"
-        Print #1, Body
-        Body = Body & "<td>誤差</td>"
-        Body = Body & "<td>" & BuyCurrentCount + SellCurrentCount & "</td><td></td>"
         Print #1, Body
         
         
@@ -2585,12 +2579,6 @@ Sub FourKDayAccount(ByVal TargetPath As String)
         Body = Body & "</tr>"
         Print #1, Body
         
-        Body = "<tr></tr>"
-        Print #1, Body
-        Body = Body & "<td>誤差</td>"
-        Body = Body & "<td>" & BuyCurrentCount + SellCurrentCount & "</td><td></td>"
-        Print #1, Body
-        
         
         Print #1, "</table>"
     Close #1
@@ -3215,12 +3203,9 @@ Sub CustromProductDayReport(ByVal TargetPath As String)
     Dim PData() As String
     Dim beginv As Integer
     Dim endv As Integer
-    Dim OrderDate As String, ProductName As String
-    
-    'search product
-    SQL = "select * from product order by PID;"
-    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
-    
+    Dim OrderDate As String, ProductID As String, ProductName As String
+        
+        
     'search order
     CData = Split(cmbCName.Text, " ")
     PData = Split(cmbPName.Text, " ")
@@ -3246,7 +3231,7 @@ Sub CustromProductDayReport(ByVal TargetPath As String)
         Print #1, Body
         Body = "<tr><td>產品名稱</td><td colspan=10>" & PData(1) & "</td></tr>"
         Print #1, Body
-        Body = "<tr><td>交易流水號</td><td>交易數量</td><td>交易金額</td><td>中獎數量</td><td>中獎金額</td><td>漲價</td><td>退水對象</td><td>退水金額</td><td>備註</td></tr>"
+        Body = "<tr><td>交易流水號</td><td>產品名稱</td><td>交易數量</td><td>交易金額</td><td>中獎數量</td><td>中獎金額</td><td>漲價</td><td>退水金額</td><td>備註</td></tr>"
         Print #1, Body
         
         'show every order with current date
@@ -3255,14 +3240,20 @@ Sub CustromProductDayReport(ByVal TargetPath As String)
         Do Until order_rec.EOF
             'search price
             OrderDate = order_rec.Fields.Item("CurrentDate")
-            ProductName = order_rec.Fields.Item("PID")
+            ProductID = order_rec.Fields.Item("PID")
             selectFields = "CurrentPrice,WinningPrice,Upset"
-            SQL = "select * from price where PID='" & ProductName & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+            SQL = "select * from price where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
             Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
+            
+            'search product
+            SQL = "select * from product where PID='" & ProductID & "';"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
+            ProductName = product_rec.Fields.Item("PName")
 
             'mark custom name
             Body = "<tr>"
             Body = Body & "<td>" & order_rec.Fields.Item("SwiftCode") & "</td>"
+            Body = Body & "<td>" & ProductName & "</td>"
             
             Body = Body & "<td>" & order_rec.Fields.Item("CurrentCount") & "</td>"
             If price_rec.EOF Then
@@ -3281,7 +3272,7 @@ Sub CustromProductDayReport(ByVal TargetPath As String)
             End If
             
             Body = Body & "<td>" & order_rec.Fields.Item("AddMoney") & "</td>"
-            If Not IsNull(order_rec.Fields.Item("AddMoney")) Then PriceCount = PriceCount + order_rec.Fields.Item("AddMoney")
+            If Not IsNull(order_rec.Fields.Item("AddMoney")) Then PriceCount = PriceCount + Val(order_rec.Fields.Item("AddMoney"))
             
             Body = Body & "<td>" & order_rec.Fields.Item("BonusMoney") & "</td>"
             '不計退水金額 'If Not IsNull(order_rec.Fields.Item("BonusMoney")) Then PriceCount = PriceCount - order_rec.Fields.Item("BonusMoney")
@@ -3302,7 +3293,7 @@ Sub CustromProductDayReport(ByVal TargetPath As String)
         Print #1, "</table>"
     Close #1
     
-    product_rec.Close
+    If product_rec Is Not Null Then product_rec.Close
     order_rec.Close
 End Sub
 
@@ -3317,12 +3308,9 @@ Sub CustromProductWeekReport(ByVal TargetPath As String)
     Dim PData() As String
     Dim beginv As Integer
     Dim endv As Integer
-    Dim OrderDate As String, ProductName As String
-    
-    'search product
-    SQL = "select * from product order by PID;"
-    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
-    
+    Dim OrderDate As String, ProductID As String, ProductName As String
+       
+       
     'search order
     CData = Split(cmbCName.Text, " ")
     PData = Split(cmbPName.Text, " ")
@@ -3348,7 +3336,7 @@ Sub CustromProductWeekReport(ByVal TargetPath As String)
         Print #1, Body
         Body = "<tr><td>產品名稱</td><td colspan=10>" & PData(1) & "</td></tr>"
         Print #1, Body
-        Body = "<tr><td>交易流水號</td><td>交易數量</td><td>交易金額</td><td>中獎數量</td><td>中獎金額</td><td>漲價</td><td>退水對象</td><td>退水金額</td><td>備註</td></tr>"
+        Body = "<tr><td>交易流水號</td><td>產品名稱</td><td>交易數量</td><td>交易金額</td><td>中獎數量</td><td>中獎金額</td><td>漲價</td><td>退水金額</td><td>備註</td></tr>"
         Print #1, Body
         
         'show every order with current date
@@ -3361,10 +3349,16 @@ Sub CustromProductWeekReport(ByVal TargetPath As String)
             selectFields = "CurrentPrice,WinningPrice,Upset"
             SQL = "select * from price where PID='" & ProductName & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
             Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
+            
+            'search product
+            SQL = "select * from product where PID='" & ProductID & "';"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
+            ProductName = product_rec.Fields.Item("PName")
         
             'mark custom name
             Body = "<tr>"
             Body = Body & "<td>" & order_rec.Fields.Item("SwiftCode") & "</td>"
+            Body = Body & "<td>" & ProductName & "</td>"
             
             Body = Body & "<td>" & order_rec.Fields.Item("CurrentCount") & "</td>"
             If price_rec.EOF Then
@@ -3383,7 +3377,7 @@ Sub CustromProductWeekReport(ByVal TargetPath As String)
             End If
             
             Body = Body & "<td>" & order_rec.Fields.Item("AddMoney") & "</td>"
-            If Not IsNull(order_rec.Fields.Item("AddMoney")) Then PriceCount = PriceCount + order_rec.Fields.Item("AddMoney")
+            If Not IsNull(order_rec.Fields.Item("AddMoney")) Then PriceCount = PriceCount + Val(order_rec.Fields.Item("AddMoney"))
             
             Body = Body & "<td>" & order_rec.Fields.Item("BonusMoney") & "</td>"
             '不計退水金額 'If Not IsNull(order_rec.Fields.Item("BonusMoney")) Then PriceCount = PriceCount - order_rec.Fields.Item("BonusMoney")
@@ -3404,7 +3398,7 @@ Sub CustromProductWeekReport(ByVal TargetPath As String)
         Print #1, "</table>"
     Close #1
     
-    product_rec.Close
+    If product_rec Is Not Null Then product_rec.Close
     order_rec.Close
 End Sub
 
@@ -3419,7 +3413,8 @@ Sub CustromWeekReport(ByVal TargetPath As String)
     Dim PData() As String
     Dim beginv As Integer
     Dim endv As Integer
-    Dim OrderDate As String, ProductName As String
+    Dim OrderDate As String, ProductID As String, ProductName As String
+    
     
     'search order
     CData = Split(cmbCName.Text, " ")
@@ -3437,7 +3432,7 @@ Sub CustromWeekReport(ByVal TargetPath As String)
         'show custom name and product name
         Body = "<tr><td>客戶名稱</td><td colspan=10>" & CData(1) & "</td></tr>"
         Print #1, Body
-        Body = "<tr><td>交易流水號</td><td>交易數量</td><td>交易金額</td><td>中獎數量</td><td>中獎金額</td><td>漲價</td><td>退水對象</td><td>退水金額</td><td>備註</td></tr>"
+        Body = "<tr><td>交易流水號</td><td>產品名稱</td><td>交易數量</td><td>交易金額</td><td>中獎數量</td><td>中獎金額</td><td>漲價</td><td>退水金額</td><td>備註</td></tr>"
         Print #1, Body
         
         'show every order with current date
@@ -3450,10 +3445,16 @@ Sub CustromWeekReport(ByVal TargetPath As String)
             selectFields = "CurrentPrice,WinningPrice,Upset"
             SQL = "select * from price where PID='" & ProductName & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
             Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
+            
+            'search product
+            SQL = "select * from product where PID='" & ProductID & "';"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
+            ProductName = product_rec.Fields.Item("PName")
         
             'mark custom name
             Body = "<tr>"
             Body = Body & "<td>" & order_rec.Fields.Item("SwiftCode") & "</td>"
+            Body = Body & "<td>" & ProductName & "</td>"
             
             Body = Body & "<td>" & order_rec.Fields.Item("CurrentCount") & "</td>"
             If price_rec.EOF Then
@@ -3472,7 +3473,7 @@ Sub CustromWeekReport(ByVal TargetPath As String)
             End If
             
             Body = Body & "<td>" & order_rec.Fields.Item("AddMoney") & "</td>"
-            If Not IsNull(order_rec.Fields.Item("AddMoney")) Then PriceCount = PriceCount + order_rec.Fields.Item("AddMoney")
+            If Not IsNull(order_rec.Fields.Item("AddMoney")) Then PriceCount = PriceCount + Val(order_rec.Fields.Item("AddMoney"))
             
             Body = Body & "<td>" & order_rec.Fields.Item("BonusMoney") & "</td>"
             '不計退水金額 'If Not IsNull(order_rec.Fields.Item("BonusMoney")) Then PriceCount = PriceCount - order_rec.Fields.Item("BonusMoney")
@@ -3493,6 +3494,7 @@ Sub CustromWeekReport(ByVal TargetPath As String)
         Print #1, "</table>"
     Close #1
     
+    If product_rec Is Not Null Then product_rec.Close
     order_rec.Close
 End Sub
 
@@ -3508,6 +3510,7 @@ Sub CustromMonthReport(ByVal TargetPath As String)
     Dim beginv As Integer
     Dim endv As Integer
     Dim OrderDate As String, ProductName As String
+    
     
     'search order
     CData = Split(cmbCName.Text, " ")
@@ -3525,7 +3528,7 @@ Sub CustromMonthReport(ByVal TargetPath As String)
         'show custom name and product name
         Body = "<tr><td>客戶名稱</td><td colspan=10>" & CData(1) & "</td></tr>"
         Print #1, Body
-        Body = "<tr><td>交易流水號</td><td>交易數量</td><td>交易金額</td><td>中獎數量</td><td>中獎金額</td><td>漲價</td><td>退水對象</td><td>退水金額</td><td>備註</td></tr>"
+        Body = "<tr><td>交易流水號</td><td>產品名稱</td><td>交易數量</td><td>交易金額</td><td>中獎數量</td><td>中獎金額</td><td>漲價</td><td>退水金額</td><td>備註</td></tr>"
         Print #1, Body
         
         'show every order with current date
@@ -3538,10 +3541,16 @@ Sub CustromMonthReport(ByVal TargetPath As String)
             selectFields = "CurrentPrice,WinningPrice,Upset"
             SQL = "select * from price where PID='" & ProductName & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
             Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
+            
+            'search product
+            SQL = "select * from product where PID='" & ProductID & "';"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
+            ProductName = product_rec.Fields.Item("PName")
         
             'mark custom name
             Body = "<tr>"
             Body = Body & "<td>" & order_rec.Fields.Item("SwiftCode") & "</td>"
+            Body = Body & "<td>" & ProductName & "</td>"
             
             Body = Body & "<td>" & order_rec.Fields.Item("CurrentCount") & "</td>"
             If price_rec.EOF Then
@@ -3560,7 +3569,7 @@ Sub CustromMonthReport(ByVal TargetPath As String)
             End If
             
             Body = Body & "<td>" & order_rec.Fields.Item("AddMoney") & "</td>"
-            If Not IsNull(order_rec.Fields.Item("AddMoney")) Then PriceCount = PriceCount + order_rec.Fields.Item("AddMoney")
+            If Not IsNull(order_rec.Fields.Item("AddMoney")) Then PriceCount = PriceCount + Val(order_rec.Fields.Item("AddMoney"))
             
             Body = Body & "<td>" & order_rec.Fields.Item("BonusMoney") & "</td>"
             '不計退水金額 'If Not IsNull(order_rec.Fields.Item("BonusMoney")) Then PriceCount = PriceCount - order_rec.Fields.Item("BonusMoney")
@@ -3581,6 +3590,7 @@ Sub CustromMonthReport(ByVal TargetPath As String)
         Print #1, "</table>"
     Close #1
     
+    If product_rec Is Not Null Then product_rec.Close
     order_rec.Close
 End Sub
 
@@ -3596,6 +3606,7 @@ Sub CustromYearReport(ByVal TargetPath As String)
     Dim beginv As Integer
     Dim endv As Integer
     Dim OrderDate As String, ProductName As String
+    
     
     'search order
     CData = Split(cmbCName.Text, " ")
@@ -3613,7 +3624,7 @@ Sub CustromYearReport(ByVal TargetPath As String)
         'show custom name and product name
         Body = "<tr><td>客戶名稱</td><td colspan=10>" & CData(1) & "</td></tr>"
         Print #1, Body
-        Body = "<tr><td>交易流水號</td><td>交易數量</td><td>交易金額</td><td>中獎數量</td><td>中獎金額</td><td>漲價</td><td>退水對象</td><td>退水金額</td><td>備註</td></tr>"
+        Body = "<tr><td>交易流水號</td><td>產品名稱</td><td>交易數量</td><td>交易金額</td><td>中獎數量</td><td>中獎金額</td><td>漲價</td><td>退水金額</td><td>備註</td></tr>"
         Print #1, Body
         
         'show every order with current date
@@ -3626,10 +3637,16 @@ Sub CustromYearReport(ByVal TargetPath As String)
             selectFields = "CurrentPrice,WinningPrice,Upset"
             SQL = "select * from price where PID='" & ProductName & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
             Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
+            
+            'search product
+            SQL = "select * from product where PID='" & ProductID & "';"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
+            ProductName = product_rec.Fields.Item("PName")
         
             'mark custom name
             Body = "<tr>"
             Body = Body & "<td>" & order_rec.Fields.Item("SwiftCode") & "</td>"
+            Body = Body & "<td>" & ProductName & "</td>"
             
             Body = Body & "<td>" & order_rec.Fields.Item("CurrentCount") & "</td>"
             If price_rec.EOF Then
@@ -3648,7 +3665,7 @@ Sub CustromYearReport(ByVal TargetPath As String)
             End If
             
             Body = Body & "<td>" & order_rec.Fields.Item("AddMoney") & "</td>"
-            If Not IsNull(order_rec.Fields.Item("AddMoney")) Then PriceCount = PriceCount + order_rec.Fields.Item("AddMoney")
+            If Not IsNull(order_rec.Fields.Item("AddMoney")) Then PriceCount = PriceCount + Val(order_rec.Fields.Item("AddMoney"))
             
             Body = Body & "<td>" & order_rec.Fields.Item("BonusMoney") & "</td>"
             '不計退水金額 'If Not IsNull(order_rec.Fields.Item("BonusMoney")) Then PriceCount = PriceCount - order_rec.Fields.Item("BonusMoney")
@@ -3669,10 +3686,12 @@ Sub CustromYearReport(ByVal TargetPath As String)
         Print #1, "</table>"
     Close #1
     
+    If product_rec Is Not Null Then product_rec.Close
     order_rec.Close
 End Sub
 
 Private Sub cmdConfirm_Click()
+On Error GoTo errout:
     If txtCurrentDate.Text = "" Then
         MsgBox "請先選擇要列印的時間！"
     ElseIf (basVariable.Parameter = "CustromProductDayReport" Or basVariable.Parameter = "CustromProductWeekReport") And cmbCName.Text = "" And cmbPName.Text = "" Then
@@ -3769,6 +3788,11 @@ Private Sub cmdConfirm_Click()
         End Select
         
         MsgBox "已輸出報表至" & TargetPath & "！"
+    End If
+
+    If False Then
+errout:
+        MsgBox "資料檔有誤。或無法寫入，因為舊報表未關閉！"
     End If
 End Sub
 
