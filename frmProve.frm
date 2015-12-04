@@ -3,7 +3,7 @@ Begin VB.Form frmProve
    BackColor       =   &H00C0C0C0&
    BorderStyle     =   1  '單線固定
    Caption         =   "系統主頁面"
-   ClientHeight    =   13110
+   ClientHeight    =   14250
    ClientLeft      =   5610
    ClientTop       =   825
    ClientWidth     =   6765
@@ -11,11 +11,43 @@ Begin VB.Form frmProve
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   13110
+   ScaleHeight     =   14250
    ScaleWidth      =   6765
+   Begin VB.Frame Frame5 
+      Caption         =   "不分客別產品的總表"
+      Height          =   975
+      Left            =   240
+      TabIndex        =   39
+      Top             =   12240
+      Width           =   6135
+      Begin VB.CommandButton cmdYearTransaction 
+         Caption         =   "年交易金額表"
+         Height          =   615
+         Left            =   4680
+         TabIndex        =   45
+         Top             =   240
+         Width           =   1215
+      End
+      Begin VB.CommandButton cmdMonthTransaction 
+         Caption         =   "月交易金額表"
+         Height          =   615
+         Left            =   3240
+         TabIndex        =   44
+         Top             =   240
+         Width           =   1215
+      End
+      Begin VB.CommandButton cmdWeekTransaction 
+         Caption         =   "週交易金額表"
+         Height          =   615
+         Left            =   1680
+         TabIndex        =   43
+         Top             =   240
+         Width           =   1215
+      End
+   End
    Begin VB.Frame Frame4 
       Caption         =   "客別不分產品報表"
-      Height          =   1695
+      Height          =   975
       Left            =   240
       TabIndex        =   34
       Top             =   11160
@@ -24,24 +56,24 @@ Begin VB.Form frmProve
          Caption         =   "客別不分產品年交易金額表"
          Height          =   615
          Left            =   4680
-         TabIndex        =   41
-         Top             =   960
+         TabIndex        =   42
+         Top             =   -120
          Width           =   1215
       End
       Begin VB.CommandButton cmdCustromMonthTransaction 
          Caption         =   "客別不分產品月交易金額表"
          Height          =   615
          Left            =   3240
-         TabIndex        =   40
-         Top             =   960
+         TabIndex        =   41
+         Top             =   -120
          Width           =   1215
       End
       Begin VB.CommandButton cmdCustromWeekTransaction 
          Caption         =   "客別不分產品週交易金額表"
          Height          =   615
          Left            =   1680
-         TabIndex        =   39
-         Top             =   960
+         TabIndex        =   40
+         Top             =   -120
          Width           =   1215
       End
       Begin VB.CommandButton cmdCustromYearReport 
@@ -485,7 +517,7 @@ Begin VB.Form frmProve
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Height          =   8715
+      Height          =   9135
       Index           =   5
       Left            =   120
       TabIndex        =   3
@@ -630,6 +662,12 @@ Private Sub cmdMonthReport_Click()
     frmConfirm.Show
 End Sub
 
+Private Sub cmdMonthTransaction_Click()
+    basVariable.Action = "PrintReport"
+    basVariable.Parameter = "MonthTransaction"
+    frmConfirm.Show
+End Sub
+
 Private Sub cmdProduct_Click()
     basVariable.Action = "ProductDetail"
     frmProduct.Show
@@ -648,6 +686,12 @@ Private Sub cmdWeekReport_Click()
     frmConfirm.Show
 End Sub
 
+Private Sub cmdWeekTransaction_Click()
+    basVariable.Action = "PrintReport"
+    basVariable.Parameter = "WeekTransaction"
+    frmConfirm.Show
+End Sub
+
 Private Sub cmdYearAccount_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "YearAccount"
@@ -657,6 +701,12 @@ End Sub
 Private Sub cmdYearReport_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "YearReport"
+    frmConfirm.Show
+End Sub
+
+Private Sub cmdYearTransaction_Click()
+    basVariable.Action = "PrintReport"
+    basVariable.Parameter = "YearTransaction"
     frmConfirm.Show
 End Sub
 

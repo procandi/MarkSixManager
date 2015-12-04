@@ -104,7 +104,7 @@ Begin VB.Form frmConfirm
          Strikethrough   =   0   'False
       EndProperty
       CustomFormat    =   "yyyy/MM/dd"
-      Format          =   35454979
+      Format          =   108265475
       CurrentDate     =   37058
    End
    Begin VB.Label lblEntry 
@@ -269,7 +269,7 @@ Sub DayReport(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    SQL = "select * from product order by PID;"
+    SQL = "select * from product order by CLng(PID);"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
     SQL = "select * from custom;"
@@ -421,7 +421,7 @@ Sub WeekReport(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    SQL = "select * from product order by PID;"
+    SQL = "select * from product order by CLng(PID);"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
     SQL = "select * from custom;"
@@ -606,7 +606,7 @@ Sub MonthReport(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    SQL = "select * from product order by PID;"
+    SQL = "select * from product order by CLng(PID);"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
     SQL = "select * from custom;"
@@ -789,7 +789,7 @@ Sub YearReport(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    SQL = "select * from product order by PID;"
+    SQL = "select * from product order by CLng(PID);"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
     SQL = "select * from custom;"
@@ -978,7 +978,7 @@ Sub DayAccount(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    SQL = "select * from product order by PID;"
+    SQL = "select * from product order by CLng(PID);"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
     SQL = "select * from custom;"
@@ -1148,7 +1148,7 @@ Sub WeekAccount(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    SQL = "select * from product order by PID;"
+    SQL = "select * from product order by CLng(PID);"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
     SQL = "select * from custom;"
@@ -1350,7 +1350,7 @@ Sub MonthAccount(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    SQL = "select * from product order by PID;"
+    SQL = "select * from product order by CLng(PID);"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
     SQL = "select * from custom;"
@@ -1551,7 +1551,7 @@ Sub YearAccount(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    SQL = "select * from product order by PID;"
+    SQL = "select * from product order by CLng(PID);"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
     SQL = "select * from custom;"
@@ -1752,7 +1752,7 @@ Sub FourKDayReport(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    SQL = "select * from product where PName like '539_4K' order by PID;" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
+    SQL = "select * from product where PName like '539_4K' order by CLng(PID);" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
     SQL = "select * from custom;"
@@ -1904,7 +1904,7 @@ Sub FourKWeekReport(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    SQL = "select * from product where PName like '539_4K' order by PID;" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
+    SQL = "select * from product where PName like '539_4K' order by CLng(PID);" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
     SQL = "select * from custom;"
@@ -2088,7 +2088,7 @@ Sub FourKMonthReport(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    SQL = "select * from product where PName like '539_4K' order by PID;" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
+    SQL = "select * from product where PName like '539_4K' order by CLng(PID);" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
     SQL = "select * from custom;"
@@ -2273,7 +2273,7 @@ Sub FourKYearReport(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    SQL = "select * from product where PName like '539_4K' order by PID;" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
+    SQL = "select * from product where PName like '539_4K' order by CLng(PID);" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
     SQL = "select * from custom;"
@@ -2459,7 +2459,7 @@ Sub FourKDayAccount(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    SQL = "select * from product where PName like '539_4K' order by PID;" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
+    SQL = "select * from product where PName like '539_4K' order by CLng(PID);" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
     SQL = "select * from custom;"
@@ -2629,7 +2629,7 @@ Sub FourKWeekAccount(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    SQL = "select * from product where PName like '539_4K' order by PID;" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
+    SQL = "select * from product where PName like '539_4K' order by CLng(PID);" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
     SQL = "select * from custom;"
@@ -2833,7 +2833,7 @@ Sub FourKMonthAccount(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    SQL = "select * from product where PName like '539_4K' order by PID;" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
+    SQL = "select * from product where PName like '539_4K' order by CLng(PID);" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
     SQL = "select * from custom;"
@@ -3034,7 +3034,7 @@ Sub FourKYearAccount(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    SQL = "select * from product where PName like '539_4K' order by PID;" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
+    SQL = "select * from product where PName like '539_4K' order by CLng(PID);" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
     SQL = "select * from custom;"
@@ -4353,8 +4353,183 @@ Sub CustromYearTransaction(ByVal TargetPath As String)
     order_rec.Close
 End Sub
 
+
+Sub WeekTransaction(ByVal TargetPath As String)
+    Dim selectFields As String
+    Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer
+    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
+    Dim SQL As String
+    Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
+    Dim rec1 As New adoDB.Recordset
+    Dim CData() As String
+    Dim PData() As String
+    Dim beginv As Integer
+    Dim endv As Integer
+    Dim OrderDate As String, ProductID As String, ProductName As String
+    Dim PriceCount As Double
+    Dim OldOrderDate As String, CurrentPriceCount As Double, WinningPriceCount As Double, AddMoney As Double, BonusMoney As Double
+    Dim DayDiff As Integer
+       
+       
+    'list all custom
+    SQL = "select * from custom;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
+  
+    
+    Open TargetPath For Output As #1
+        Print #1, "<table>"
+    
+        'show report datetime
+        Body = "<tr><td>日期</td><td colspan=10>" & DateTime.DateAdd("d", -7, txtCurrentDate.Text) & "至" & txtCurrentDate.Text & "</td></tr>"
+        Print #1, Body
+        
+        'list all day
+        Body = "<tr><td>客戶名稱</td>"
+        For i = 6 To 0 Step -1
+            Body = Body & "<td>" & DateTime.DateAdd("d", -i, txtCurrentDate.Text) & "</td>"
+        Next
+        Body = Body & "</tr>"
+        Print #1, Body
+        
+       
+        'list all custom again
+        custom_rec.MoveFirst
+        Do Until custom_rec.EOF
+            'search order
+            SQL = "select * from [order] where CID='" & custom_rec.Fields.Item("CID") & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -7, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by CurrentDate;"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
+            
+            'list all custom name
+            Body = "<tr><td>" & custom_rec.Fields.Item("CName") & "</td>"
+            
+            'show every order with current date
+            PriceCount = 0
+            CurrentPriceCount = 0
+            WinningPriceCount = 0
+            AddMoney = 0
+            BonusMoney = 0
+            'order_rec.MoveFirst
+            Do Until order_rec.EOF
+            
+                'search price
+                OrderDate = order_rec.Fields.Item("CurrentDate")
+                ProductID = order_rec.Fields.Item("PID")
+                selectFields = "CurrentPrice,WinningPrice,Upset"
+                SQL = "select * from price where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
+                
+                
+                If OldOrderDate = OrderDate Or OldOrderDate = "" Then
+                    'fill data as first
+                    If OldOrderDate = "" And OrderDate <> "" Then
+                        DayDiff = DateDiff("d", Format(DateTime.DateAdd("d", -7, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd"), OrderDate)
+                        For i = 0 To DayDiff - 1
+                            Body = "<tr>"
+                            Body = Body & "<td>" & DateTime.DateAdd("d", i, Format(DateTime.DateAdd("d", -7, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd")) & "</td>"
+                            Body = Body & "<td>0</td>"
+                            Body = Body & "<td>0</td>"
+                            Body = Body & "<td>0</td>"
+                            Body = Body & "<td>0</td>"
+                            Body = Body & "<td>0</td>"
+                            Body = Body & "</tr>"
+                            Print #1, Body
+                        Next
+                    End If
+                    
+                    'save data
+                    If Not price_rec.EOF Then
+                        CurrentPriceCount = CurrentPriceCount + (order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")))
+                        WinningPriceCount = WinningPriceCount + (order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")))
+                    End If
+                    If Not IsNull(order_rec.Fields.Item("AddMoney")) Then AddMoney = AddMoney + Val(order_rec.Fields.Item("AddMoney"))
+                    If Not IsNull(order_rec.Fields.Item("BonusMoney")) Then BonusMoney = BonusMoney + Val(order_rec.Fields.Item("BonusMoney"))
+                Else
+                    'mark custom name
+                    Body = "<tr>"
+                    Body = Body & "<td>" & OldOrderDate & "</td>"
+                    Body = Body & "<td>" & CurrentPriceCount & "</td>"
+                    Body = Body & "<td>" & WinningPriceCount & "</td>"
+                    Body = Body & "<td>" & AddMoney & "</td>"
+                    Body = Body & "<td>" & BonusMoney & "</td>"
+                    Body = Body & "<td>" & CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney & "</td>"
+                    PriceCount = PriceCount + CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney
+                    Body = Body & "</tr>"
+                    Print #1, Body
+                    
+                    'clear variable data
+                    CurrentPriceCount = 0
+                    WinningPriceCount = 0
+                    AddMoney = 0
+                    BonusMoney = 0
+                    
+                    'fill data per day
+                    DayDiff = DateDiff("d", OldOrderDate, OrderDate)
+                    For i = 1 To DayDiff - 1
+                        Body = "<tr>"
+                        Body = Body & "<td>" & DateTime.DateAdd("d", i, OldOrderDate) & "</td>"
+                        Body = Body & "<td>0</td>"
+                        Body = Body & "<td>0</td>"
+                        Body = Body & "<td>0</td>"
+                        Body = Body & "<td>0</td>"
+                        Body = Body & "<td>0</td>"
+                        Body = Body & "</tr>"
+                        Print #1, Body
+                    Next
+                End If
+                OldOrderDate = OrderDate
+                
+                
+                order_rec.MoveNext
+            Loop
+            custom_rec.MoveNext
+        Loop
+        
+        
+        'show the last data and fill data to lastday as last
+        'if everything is empty, then setting a startup date for full data
+        If OrderDate = "" Then OrderDate = Format(DateTime.DateAdd("d", -7, Format(txtCurrentDate.Text, "yyyy/MM/dd")))
+        If OldOrderDate = "" Then OldOrderDate = OrderDate
+        
+        'mark custom name
+        Body = "<tr>"
+        Body = Body & "<td>" & OldOrderDate & "</td>"
+        Body = Body & "<td>" & CurrentPriceCount & "</td>"
+        Body = Body & "<td>" & WinningPriceCount & "</td>"
+        Body = Body & "<td>" & AddMoney & "</td>"
+        Body = Body & "<td>" & BonusMoney & "</td>"
+        Body = Body & "<td>" & CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney & "</td>"
+        PriceCount = PriceCount + CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney
+        Body = Body & "</tr>"
+        Print #1, Body
+        DayDiff = DateDiff("d", OrderDate, txtCurrentDate.Text)
+        For i = 1 To DayDiff - 1
+            Body = "<tr>"
+            Body = Body & "<td>" & DateTime.DateAdd("d", i, OrderDate) & "</td>"
+            Body = Body & "<td>0</td>"
+            Body = Body & "<td>0</td>"
+            Body = Body & "<td>0</td>"
+            Body = Body & "<td>0</td>"
+            Body = Body & "<td>0</td>"
+            Body = Body & "</tr>"
+            Print #1, Body
+        Next
+        
+        
+        'show price count
+        Body = "<tr><td>總計</td><td>" & PriceCount & "</td></tr>"
+        Print #1, Body
+        
+        Print #1, "</table>"
+    Close #1
+    
+    order_rec.Close
+End Sub
+
+
+
+
 Private Sub cmdConfirm_Click()
-'On Error GoTo errout:
+On Error GoTo errout:
     If txtCurrentDate.Text = "" Then
         MsgBox "請先選擇要列印的時間！"
     ElseIf (basVariable.Parameter = "CustromProductDayReport" Or basVariable.Parameter = "CustromProductWeekReport") And cmbCName.Text = "" And cmbPName.Text = "" Then
@@ -4468,6 +4643,15 @@ Private Sub cmdConfirm_Click()
             PData = Split(cmbPName.Text, " ")
             TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyy") & "_" & CData(1) & "_客別不分產品年交易金額表.xls"
             Call CustromYearTransaction(TargetPath)
+        Case "WeekTransaction"
+            TargetPath = TargetPath & Format(DateTime.DateAdd("d", -7, txtCurrentDate.Text), "yyyyMMdd") & "至" & Format(txtCurrentDate.Text, "yyyyMMdd") & "_週交易金額表.xls"
+            Call WeekTransaction(TargetPath)
+        Case "MonthTransaction"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMM") & "_月交易金額表.xls"
+            'Call MonthTransaction(TargetPath)
+        Case "YearTransaction"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyy") & "_年交易金額表.xls"
+            'Call YearTransaction(TargetPath)
         End Select
         
         MsgBox "已輸出報表至" & TargetPath & "！"
@@ -4583,6 +4767,12 @@ Private Sub Form_Load()
         lblEntry(0).Visible = True
         cmbCName.Visible = True
         Call ComboBox_LoadFrom_DataBase_ByFile(cmbCName, "CID,CName", "custom", "", "", "")
+    Case "WeekTransaction"
+        Label1(0).Caption = "週交易金額表列印"
+    Case "MonthTransaction"
+        Label1(0).Caption = "月交易金額表列印"
+    Case "YearTransaction"
+        Label1(0).Caption = "年交易金額表列印"
     End Select
     
     

@@ -205,7 +205,7 @@ Begin VB.Form frmOrderAddNew
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   88276995
+         Format          =   108527619
          CurrentDate     =   42267
       End
       Begin VB.Label lblBasic 
@@ -505,7 +505,11 @@ On Error GoTo errout:
     
     SQL = "select * from [order] order by SwiftCode desc;"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
-    LastSwiftCode = order_rec("SwiftCode")
+    If order_rec.EOF Then
+        LastSwiftCode = "0"
+    Else
+        LastSwiftCode = order_rec("SwiftCode")
+    End If
     order_rec.Close
     
     SQL = "select * from product where PName='" & cmbPName.Text & "';"
@@ -623,12 +627,6 @@ Private Sub txtWinningCount_KeyUp(KeyCode As Integer, Shift As Integer)
 End Sub
 
 Private Sub txtAddMoney_KeyUp(KeyCode As Integer, Shift As Integer)
-    If KeyCode = vbKeyReturn Then
-        Call cmbBonusTarget.SetFocus
-    End If
-End Sub
-
-Private Sub cmbBonusTarget_KeyUp(KeyCode As Integer, Shift As Integer)
     If KeyCode = vbKeyReturn Then
         Call txtBonusMoney.SetFocus
     End If

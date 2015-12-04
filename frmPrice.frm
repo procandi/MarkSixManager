@@ -229,7 +229,7 @@ Begin VB.Form frmPrice
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   104595459
+         Format          =   108462083
          CurrentDate     =   37058
       End
       Begin VB.Label lblEntry 
@@ -550,9 +550,9 @@ Private Sub cmdRefresh_Click()
     End If
 
     If condition = "" Then
-        Adodc1.RecordSource = "select " & selectFields & " from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "' order by CurrentDate desc,price.PID;"
+        Adodc1.RecordSource = "select " & selectFields & " from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "' order by CurrentDate desc,CLng(price.PID);"
     Else
-        Adodc1.RecordSource = "select " & selectFields & " from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "' and " & condition & " order by CurrentDate desc,price.PID;"
+        Adodc1.RecordSource = "select " & selectFields & " from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "' and " & condition & " order by CurrentDate desc,CLng(price.PID);"
     End If
     Adodc1.Refresh
     RefreshDataGridHeader
@@ -599,7 +599,7 @@ Private Sub Form_Load()
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset
     
-    SQL = "select * from product;"
+    SQL = "select * from product order by CLng(PID);"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     SQL = "select * from price where CID='" & basVariable.SelectCID & "' and CurrentDate='" & Format(DateTime.Now, "yyyy/MM/dd") & "';"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
@@ -683,7 +683,7 @@ Private Sub Form_Load()
 
     Adodc1.ConnectionString = basDataBase.Connection_String
     Adodc1.CommandType = adCmdText
-    Adodc1.RecordSource = "select " & selectFields & " from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "' order by CurrentDate desc,price.PID;"
+    Adodc1.RecordSource = "select " & selectFields & " from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "' order by CurrentDate desc,CLng(product.PID);" 'Adodc1.RecordSource = "select " & selectFields & " from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "' order by CurrentDate desc,CLng(product.PID);"
     Set DataGrid1.DataSource = Adodc1
     RefreshDataGridHeader
     
