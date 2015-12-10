@@ -360,7 +360,7 @@ Begin VB.Form frmCustom
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   35061763
+         Format          =   99418115
          CurrentDate     =   37058
       End
       Begin VB.Label lblEntry 

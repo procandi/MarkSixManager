@@ -43,6 +43,7 @@ Public Parameter As String
 Public SelectCID As String
 Public SelectCName As String
 Public SelectPID As String
+Public SelectPName As String
 Public CurrentSwiftCode As Integer
 Public SelectDate As String
 '/**************************小華修改的(2015/10/05)***********************************/

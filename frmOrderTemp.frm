@@ -3,16 +3,16 @@ Object = "{0BA686C6-F7D3-101A-993E-0000C0EF6F5E}#1.0#0"; "THREED32.OCX"
 Object = "{86CF1D34-0C5F-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCT2.OCX"
 Object = "{67397AA1-7FB1-11D0-B148-00A0C922E820}#6.0#0"; "MSADODC.OCX"
 Object = "{CDE57A40-8B86-11D0-B3C6-00A0C90AEA82}#1.0#0"; "MSDATGRD.OCX"
-Begin VB.Form frmPrice 
-   Caption         =   "客戶產品價格表"
+Begin VB.Form frmOrderTemp 
+   Caption         =   "產品購買明細"
    ClientHeight    =   10560
-   ClientLeft      =   2145
-   ClientTop       =   3615
-   ClientWidth     =   14895
-   Icon            =   "frmPrice.frx":0000
+   ClientLeft      =   1965
+   ClientTop       =   3420
+   ClientWidth     =   15105
+   Icon            =   "frmOrderTemp.frx":0000
    LinkTopic       =   "Form2"
    ScaleHeight     =   10560
-   ScaleWidth      =   14895
+   ScaleWidth      =   15105
    Begin Threed.SSPanel pnlFilter 
       Height          =   1095
       Left            =   0
@@ -35,22 +35,6 @@ Begin VB.Form frmPrice
       EndProperty
       BorderWidth     =   1
       Outline         =   -1  'True
-      Begin VB.TextBox txtUpset 
-         BeginProperty Font 
-            Name            =   "新細明體"
-            Size            =   12
-            Charset         =   136
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   360
-         Left            =   10440
-         TabIndex        =   19
-         Top             =   120
-         Width           =   1935
-      End
       Begin VB.TextBox txtCurrentDate 
          Enabled         =   0   'False
          BeginProperty Font 
@@ -65,11 +49,30 @@ Begin VB.Form frmPrice
          Height          =   360
          Left            =   7320
          MaxLength       =   10
-         TabIndex        =   16
+         TabIndex        =   14
          Top             =   120
          Width           =   1650
       End
-      Begin VB.TextBox txtWinningPrice 
+      Begin VB.CommandButton cmdAppend 
+         BackColor       =   &H00FFC0C0&
+         Caption         =   "交易"
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   375
+         Left            =   10920
+         Style           =   1  '圖片外觀
+         TabIndex        =   13
+         Top             =   600
+         Width           =   1215
+      End
+      Begin VB.TextBox txtWinningCount 
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -81,7 +84,7 @@ Begin VB.Form frmPrice
          EndProperty
          Height          =   360
          Left            =   7320
-         TabIndex        =   15
+         TabIndex        =   11
          Top             =   600
          Width           =   1935
       End
@@ -97,11 +100,11 @@ Begin VB.Form frmPrice
          EndProperty
          Height          =   360
          Left            =   1200
-         TabIndex        =   10
+         TabIndex        =   7
          Top             =   600
          Width           =   1815
       End
-      Begin VB.TextBox txtCurrentPrice 
+      Begin VB.TextBox txtCurrentCount 
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -113,7 +116,7 @@ Begin VB.Form frmPrice
          EndProperty
          Height          =   360
          Left            =   4200
-         TabIndex        =   9
+         TabIndex        =   6
          Top             =   600
          Width           =   1935
       End
@@ -132,25 +135,9 @@ Begin VB.Form frmPrice
          Height          =   375
          Left            =   13560
          Style           =   1  '圖片外觀
-         TabIndex        =   5
+         TabIndex        =   3
          Top             =   600
          Width           =   1335
-      End
-      Begin VB.TextBox txtAccessionNo 
-         BeginProperty Font 
-            Name            =   "新細明體"
-            Size            =   12
-            Charset         =   136
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   360
-         Left            =   1200
-         TabIndex        =   4
-         Top             =   1680
-         Width           =   1815
       End
       Begin VB.CommandButton cmdClear 
          BackColor       =   &H00FFC0C0&
@@ -167,7 +154,7 @@ Begin VB.Form frmPrice
          Height          =   375
          Left            =   12240
          Style           =   1  '圖片外觀
-         TabIndex        =   3
+         TabIndex        =   2
          Top             =   600
          Width           =   1215
       End
@@ -186,34 +173,14 @@ Begin VB.Form frmPrice
          Height          =   375
          Left            =   12960
          Style           =   1  '圖片外觀
-         TabIndex        =   2
+         TabIndex        =   1
          Top             =   120
          Width           =   1935
-      End
-      Begin VB.CommandButton cmdModifyPrice 
-         BackColor       =   &H00FFC0C0&
-         Caption         =   "修改客戶產品價格"
-         Enabled         =   0   'False
-         BeginProperty Font 
-            Name            =   "新細明體"
-            Size            =   12
-            Charset         =   136
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   375
-         Left            =   9720
-         Style           =   1  '圖片外觀
-         TabIndex        =   1
-         Top             =   600
-         Width           =   2295
       End
       Begin MSComCtl2.DTPicker dtpCurrentDate 
          Height          =   360
          Left            =   7320
-         TabIndex        =   17
+         TabIndex        =   15
          Top             =   120
          Width           =   1935
          _ExtentX        =   3413
@@ -229,28 +196,8 @@ Begin VB.Form frmPrice
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   96141315
+         Format          =   99352579
          CurrentDate     =   37058
-      End
-      Begin VB.Label lblEntry 
-         Alignment       =   1  '靠右對齊
-         BorderStyle     =   1  '單線固定
-         Caption         =   "底價"
-         BeginProperty Font 
-            Name            =   "新細明體"
-            Size            =   12
-            Charset         =   136
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   360
-         Index           =   2
-         Left            =   9360
-         TabIndex        =   20
-         Top             =   120
-         Width           =   1095
       End
       Begin VB.Label lblEntry 
          Alignment       =   1  '靠右對齊
@@ -266,16 +213,16 @@ Begin VB.Form frmPrice
             Strikethrough   =   0   'False
          EndProperty
          Height          =   360
-         Index           =   1
+         Index           =   0
          Left            =   6240
-         TabIndex        =   18
+         TabIndex        =   16
          Top             =   120
          Width           =   1095
       End
       Begin VB.Label lblEntry 
          Alignment       =   1  '靠右對齊
          BorderStyle     =   1  '單線固定
-         Caption         =   "購買價格"
+         Caption         =   "中獎數量"
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -286,9 +233,9 @@ Begin VB.Form frmPrice
             Strikethrough   =   0   'False
          EndProperty
          Height          =   360
-         Index           =   0
-         Left            =   3120
-         TabIndex        =   14
+         Index           =   1
+         Left            =   6240
+         TabIndex        =   12
          Top             =   600
          Width           =   1095
       End
@@ -311,14 +258,14 @@ Begin VB.Form frmPrice
          Height          =   375
          Index           =   0
          Left            =   120
-         TabIndex        =   11
+         TabIndex        =   8
          Top             =   120
          Width           =   5295
       End
       Begin VB.Label lblEntry 
          Alignment       =   1  '靠右對齊
          BorderStyle     =   1  '單線固定
-         Caption         =   "中獎金額"
+         Caption         =   "購買數量"
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -330,29 +277,9 @@ Begin VB.Form frmPrice
          EndProperty
          Height          =   360
          Index           =   23
-         Left            =   6240
-         TabIndex        =   8
+         Left            =   3120
+         TabIndex        =   5
          Top             =   600
-         Width           =   1095
-      End
-      Begin VB.Label lblEntry 
-         Alignment       =   1  '靠右對齊
-         BorderStyle     =   1  '單線固定
-         Caption         =   "檢查編號"
-         BeginProperty Font 
-            Name            =   "新細明體"
-            Size            =   12
-            Charset         =   136
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   360
-         Index           =   19
-         Left            =   120
-         TabIndex        =   7
-         Top             =   1680
          Width           =   1095
       End
       Begin VB.Label lblEntry 
@@ -371,7 +298,7 @@ Begin VB.Form frmPrice
          Height          =   360
          Index           =   7
          Left            =   120
-         TabIndex        =   6
+         TabIndex        =   4
          Top             =   600
          Width           =   1095
       End
@@ -379,7 +306,7 @@ Begin VB.Form frmPrice
    Begin Threed.SSPanel SSPanel1 
       Height          =   9255
       Left            =   0
-      TabIndex        =   12
+      TabIndex        =   9
       Top             =   1320
       Width           =   15015
       _Version        =   65536
@@ -401,7 +328,7 @@ Begin VB.Form frmPrice
       Begin MSDataGridLib.DataGrid DataGrid1 
          Height          =   9015
          Left            =   120
-         TabIndex        =   13
+         TabIndex        =   10
          Top             =   120
          Width           =   14775
          _ExtentX        =   26061
@@ -512,24 +439,50 @@ Begin VB.Form frmPrice
       _Version        =   393216
    End
 End
-Attribute VB_Name = "frmPrice"
+Attribute VB_Name = "frmOrderTemp"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Private Type BindData
+    SwiftCode As String
+    PName As String
+    CurrentDate As String
+    CurrentCount_Car As String
+    WinningCount_Car As String
+    CurrentCount_2K As String
+    WinningCount_2K As String
+    CurrentCount_3K As String
+    WinningCount_3K As String
+    CurrentCount_4K As String
+    WinningCount_4K As String
+    CurrentCount_Special As String
+    WinningCount_Special As String
+    AddMoney As String
+    BonusMoney As String
+    Note As String
+End Type
+
 Dim selectFields As String
+
+Private Sub cmdAppend_Click()
+    frmOrderAddNew.Show
+    'Me.Hide
+End Sub
 
 Private Sub cmdClear_Click()
     txtPName.Text = ""
     txtCurrentDate.Text = ""
-    txtCurrentPrice.Text = ""
-    txtWinningPrice.Text = ""
-    txtUpset.Text = ""
+    txtCurrentCount.Text = ""
+    txtWinningCount.Text = ""
 End Sub
 
 'add function to refresh database and datagrid
 Private Sub cmdRefresh_Click()
-    Dim condition As String
+    Dim condition As String, sql As String
+    Dim rex As RegExp
+    Dim rs As ADODB.Recordset
+    Dim recdata(365) As BindData, i As Integer, j As Integer
     
     condition = ""
 
@@ -539,22 +492,89 @@ Private Sub cmdRefresh_Click()
     If txtCurrentDate.Text <> "" Then
         condition = condition & IIf(condition = "", "", "and ") & "CurrentDate='" & txtCurrentDate.Text & "' "
     End If
-    If txtCurrentPrice.Text <> "" Then
-        condition = condition & IIf(condition = "", "", "and ") & "CurrentPrice='" & txtCurrentPrice.Text & "' "
+    If txtCurrentCount.Text <> "" Then
+        condition = condition & IIf(condition = "", "", "and ") & "CurrentCount='" & txtCurrentCount.Text & "' "
     End If
-    If txtWinningPrice.Text <> "" Then
-        condition = condition & IIf(condition = "", "", "and ") & "WinningPrice='" & txtWinningPrice.Text & "' "
-    End If
-    If txtUpset.Text <> "" Then
-        condition = condition & IIf(condition = "", "", "and ") & "Upset='" & txtUpset.Text & "' "
+    If txtWinningCount.Text <> "" Then
+        condition = condition & IIf(condition = "", "", "and ") & "WinningCount='" & txtWinningCount.Text & "' "
     End If
 
     If condition = "" Then
-        Adodc1.RecordSource = "select " & selectFields & " from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "' order by CurrentDate desc, CLng(product.PID);"
+        sql = "select " & selectFields & " from [order],product where [order].PID=product.PID and [order].CID='" & basVariable.SelectCID & "' order by CurrentDate desc, product.PName;"
     Else
-        Adodc1.RecordSource = "select " & selectFields & " from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "' and " & condition & " order by CurrentDate desc, CLng(product.PID);"
+        sql = "select " & selectFields & " from [order],product where [order].PID=product.PID and [order].CID='" & basVariable.SelectCID & "' and " & condition & " order by CurrentDate desc, product.PName;"
     End If
-    Adodc1.Refresh
+    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, basDataBase.Recordset)
+    
+    
+
+    Set rex = New RegExp
+    rex.Pattern = "_.*"
+    
+    'get the Grid's Recordset and add a new Record
+    Set rs = DataGrid1.DataSource
+         
+    'add data
+    i = 0
+    Do Until basDataBase.Recordset.EOF
+        If recdata(i).CurrentDate <> basDataBase.Recordset.Fields.Item("CurrentDate") Or rex.Replace(recdata(i).PName, "") <> rex.Replace(basDataBase.Recordset.Fields.Item("PName"), "") Then
+            i = i + 1
+            
+            recdata(i).SwiftCode = basDataBase.Recordset.Fields.Item("SwiftCode")
+            recdata(i).CurrentDate = basDataBase.Recordset.Fields.Item("CurrentDate")
+            recdata(i).PName = rex.Replace(basDataBase.Recordset.Fields.Item("PName"), "")
+            
+            recdata(i).AddMoney = basDataBase.Recordset.Fields.Item("AddMoney")
+            recdata(i).BonusMoney = basDataBase.Recordset.Fields.Item("BonusMoney")
+            recdata(i).Note = basDataBase.Recordset.Fields.Item("Note")
+         End If
+         
+        Select Case basDataBase.Recordset.Fields.Item("PName")
+        Case "539_車", "港號_車", "大樂透_車"
+            recdata(i).CurrentCount_Car = basDataBase.Recordset.Fields.Item("CurrentCount")
+            recdata(i).WinningCount_Car = basDataBase.Recordset.Fields.Item("WinningCount")
+        Case "539_2K", "港號_2K", "大樂透_2K"
+            recdata(i).CurrentCount_2K = basDataBase.Recordset.Fields.Item("CurrentCount")
+            recdata(i).WinningCount_2K = basDataBase.Recordset.Fields.Item("WinningCount")
+        Case "539_3K", "港號_3K", "大樂透_3K"
+            recdata(i).CurrentCount_3K = basDataBase.Recordset.Fields.Item("CurrentCount")
+            recdata(i).WinningCount_3K = basDataBase.Recordset.Fields.Item("WinningCount")
+        Case "539_4K", "港號_4K", "大樂透_4K"
+            recdata(i).CurrentCount_4K = basDataBase.Recordset.Fields.Item("CurrentCount")
+            recdata(i).WinningCount_4K = basDataBase.Recordset.Fields.Item("WinningCount")
+        Case "539_3包", "港號_特", "大樂透_特"
+            recdata(i).CurrentCount_Special = basDataBase.Recordset.Fields.Item("CurrentCount")
+            recdata(i).WinningCount_Special = basDataBase.Recordset.Fields.Item("WinningCount")
+        End Select
+        
+        basDataBase.Recordset.MoveNext
+    Loop
+    
+    For j = 1 To i
+        rs.AddNew
+        rs.Fields("SwiftCode").Value = recdata(j).SwiftCode
+        rs.Fields("CurrentDate").Value = recdata(j).CurrentDate
+        rs.Fields("PName").Value = recdata(j).PName
+        rs.Fields("CurrentCount_Car").Value = recdata(j).CurrentCount_Car
+        rs.Fields("WinningCount_Car").Value = recdata(j).WinningCount_Car
+        rs.Fields("CurrentCount_2K").Value = recdata(j).CurrentCount_2K
+        rs.Fields("WinningCount_2K").Value = recdata(j).WinningCount_2K
+        rs.Fields("CurrentCount_3K").Value = recdata(j).CurrentCount_3K
+        rs.Fields("WinningCount_3K").Value = recdata(j).WinningCount_3K
+        rs.Fields("CurrentCount_4K").Value = recdata(j).CurrentCount_4K
+        rs.Fields("WinningCount_4K").Value = recdata(j).WinningCount_4K
+        rs.Fields("CurrentCount_Special").Value = recdata(j).CurrentCount_Special
+        rs.Fields("WinningCount_Special").Value = recdata(j).WinningCount_Special
+        rs.Fields("AddMoney").Value = recdata(j).AddMoney
+        rs.Fields("BonusMoney").Value = recdata(j).BonusMoney
+        rs.Fields("Note").Value = recdata(j).Note
+    Next
+    
+    
+    'ReBind the Grid so the new record is visible
+    DataGrid1.ReBind
+    
+    
     RefreshDataGridHeader
 End Sub
 
@@ -567,127 +587,57 @@ Private Sub Form_Paint()
     Call cmdRefresh_Click
 End Sub
 
-Private Sub cmdModifyPrice_Click()
-    basVariable.Action = "ModifyPrice"
-    frmPriceUpdate.Show
-    'Me.Hide
-End Sub
-
 Private Sub cmdClose_Click()
     Call Form_Unload(0)
 End Sub
 
 'get something system needed when user click datagrid row
 Private Sub DataGrid1_RowColChange(LastRow As Variant, ByVal LastCol As Integer)
-    If Adodc1.Recordset.RecordCount > 0 Then
-        If DataGrid1.Columns("交易流水號") <> "" Then
-            cmdModifyPrice.Enabled = True
-            basVariable.Parameter = DataGrid1.Bookmark - 1 'don't use DataGrid1.Row, it's not real current row, just screen current row. @xieyinghua super tags
-            basVariable.CurrentSwiftCode = DataGrid1.Columns("交易流水號")
-            basVariable.SelectPID = DataGrid1.Columns("產品編號")
-            basVariable.SelectDate = DataGrid1.Columns("交易日期")
-        End If
-        
-        If DataGrid1.SelBookmarks.Count <> 0 Then Call DataGrid1.SelBookmarks.Remove(0)
+    If DataGrid1.SelBookmarks.Count <> 0 Then
+        Call DataGrid1.SelBookmarks.Remove(0)
         Call DataGrid1.SelBookmarks.Add(DataGrid1.Bookmark)
     End If
 End Sub
 
+'import database and export to datagrid when form load
 Private Sub Form_Load()
-    'fill price from 2015/10/10 to today.
-    Dim LastSwiftCode As String, LastCurrentPrice As String, LastWinningPrice As String, LastUpset As String
-    Dim SQL As String
-    Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset
-    
-    SQL = "select * from product order by CLng(PID);"
-    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
-    SQL = "select * from price where CID='" & basVariable.SelectCID & "' and CurrentDate='" & Format(DateTime.Now, "yyyy/MM/dd") & "';"
-    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
-    
-    If product_rec.RecordCount <> price_rec.RecordCount Then
-        'get lastest swift code
-        Call price_rec.Close
-        SQL = "select * from price order by SwiftCode desc;"
-        Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
-        LastSwiftCode = Val(price_rec.Fields.Item("SwiftCode")) + 1
-        
-        
-        Call price_rec.Close
-        Do Until product_rec.EOF
-            'check the product exist in current date or not
-            SQL = "select * from price where CID='" & basVariable.SelectCID & "' and PID='" & product_rec.Fields.Item("PID") & "' and CurrentDate='" & Format(DateTime.Now, "yyyy/MM/dd") & "' order by CurrentDate desc;"
-            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
-            
-            If price_rec.RecordCount = 0 Then
-                'get the product lastest one price
-                Call price_rec.Close
-                SQL = "select * from price where CID='" & basVariable.SelectCID & "' and PID='" & product_rec.Fields.Item("PID") & "' order by CurrentDate desc;"
-                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
-                
-                
-                If price_rec.RecordCount = 0 Then
-                    'if never exist
-                    SQL = "insert into price(SwiftCode,CID,PID,CurrentDate,CurrentPrice,WinningPrice,Upset) values("
-                    SQL = SQL & "'" & LastSwiftCode & "',"
-                    SQL = SQL & "'" & basVariable.SelectCID & "',"
-                    SQL = SQL & "'" & product_rec.Fields.Item("PID") & "',"
-                    SQL = SQL & "'" & Format(DateTime.Now, "yyyy/MM/dd") & "',"
-                    SQL = SQL & "'0',"
-                    SQL = SQL & "'0',"
-                    SQL = SQL & "'0'"
-                    SQL = SQL & ")"
-                    Call basDataBase.Connection.Execute(SQL)
-                Else
-                    'if has one or more, get the lastest one
-                    Call price_rec.Close
-                    SQL = "select * from price where CID='" & basVariable.SelectCID & "' and PID='" & product_rec.Fields.Item("PID") & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
-                    LastCurrentPrice = price_rec.Fields.Item("CurrentPrice")
-                    LastWinningPrice = price_rec.Fields.Item("WinningPrice")
-                    LastUpset = price_rec.Fields.Item("Upset")
-                    
-                    SQL = "insert into price(SwiftCode,CID,PID,CurrentDate,CurrentPrice,WinningPrice,Upset) values("
-                    SQL = SQL & "'" & LastSwiftCode & "',"
-                    SQL = SQL & "'" & basVariable.SelectCID & "',"
-                    SQL = SQL & "'" & product_rec.Fields.Item("PID") & "',"
-                    SQL = SQL & "'" & Format(DateTime.Now, "yyyy/MM/dd") & "',"
-                    SQL = SQL & "'" & LastCurrentPrice & "',"
-                    SQL = SQL & "'" & LastWinningPrice & "',"
-                    SQL = SQL & "'" & LastUpset & "'"
-                    SQL = SQL & ")"
-                    Call basDataBase.Connection.Execute(SQL)
-                End If
-                
-                LastSwiftCode = Val(LastSwiftCode) + 1
-                Call price_rec.Close
-            Else
-                Call price_rec.Close
-            End If
-            
-            product_rec.MoveNext
-        Loop
-        Call product_rec.Close
-    Else
-        Call product_rec.Close
-        Call price_rec.Close
-    End If
-    DoEvents
+    Dim rs As ADODB.Recordset
 
 
-    'import database and export to datagrid when form load
-    DataGrid1.AllowAddNew = False
-    DataGrid1.AllowUpdate = False
-    
     lblName(0).Caption = basVariable.SelectCName
-    selectFields = "SwiftCode,CID,price.PID,PName,CurrentDate,CurrentPrice,WinningPrice,Upset"
+    selectFields = "SwiftCode,CID,[order].PID,PName,CurrentDate,CurrentCount,WinningCount,AddMoney,BonusMoney,Note"
+      
+    'Don't allow user to modify data in grid directly.
+    With DataGrid1
+        .AllowAddNew = False
+        .AllowDelete = False
+        .AllowUpdate = False
+    End With
+    
+    'create an in-memory recordset with your required fields
+    Set rs = New ADODB.Recordset
 
-    Adodc1.ConnectionString = basDataBase.Connection_String
-    Adodc1.CommandType = adCmdText
-    Adodc1.RecordSource = "select " & selectFields & " from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "' order by CurrentDate desc, CLng(product.PID);" 'Adodc1.RecordSource = "select " & selectFields & " from price,product where price.PID=product.PID and CID='" & basVariable.SelectCID & "' order by CurrentDate desc,CLng(product.PID);"
-    
-    Set DataGrid1.DataSource = Adodc1
-    RefreshDataGridHeader
-    
+    rs.Fields.Append "SwiftCode", adVarChar, 15
+    rs.Fields.Append "CurrentDate", adVarChar, 15
+    rs.Fields.Append "PName", adVarChar, 15
+    rs.Fields.Append "CurrentCount_Car", adVarChar, 15
+    rs.Fields.Append "WinningCount_Car", adVarChar, 15
+    rs.Fields.Append "CurrentCount_2K", adVarChar, 15
+    rs.Fields.Append "WinningCount_2K", adVarChar, 15
+    rs.Fields.Append "CurrentCount_3K", adVarChar, 15
+    rs.Fields.Append "WinningCount_3K", adVarChar, 15
+    rs.Fields.Append "CurrentCount_4K", adVarChar, 15
+    rs.Fields.Append "WinningCount_4K", adVarChar, 15
+    rs.Fields.Append "CurrentCount_Special", adVarChar, 15
+    rs.Fields.Append "WinningCount_Special", adVarChar, 15
+    rs.Fields.Append "AddMoney", adVarChar, 15
+    rs.Fields.Append "BonusMoney", adVarChar, 15
+    rs.Fields.Append "Note", adVarChar, 150
+       
+    rs.Open
+
+    'bind recordset to Grid
+    Set DataGrid1.DataSource = rs
     
     dtpCurrentDate.Value = Format(DateTime.Now, "yyyy/MM/dd")
 End Sub
@@ -700,13 +650,22 @@ End Sub
 'a function to batch rename datagrid header
 Sub RefreshDataGridHeader()
     DataGrid1.Columns("SwiftCode").Caption = "交易流水號"
-    DataGrid1.Columns("CID").Caption = "客戶編號"
-    DataGrid1.Columns("PID").Caption = "產品編號"
     DataGrid1.Columns("CurrentDate").Caption = "交易日期"
-    DataGrid1.Columns("CurrentPrice").Caption = "交易價格"
-    DataGrid1.Columns("WinningPrice").Caption = "中獎金額"
-    DataGrid1.Columns("Upset").Caption = "價格底線"
-    
+    'DataGrid1.Columns("CID").Caption = "客戶編號"
+    'DataGrid1.Columns("PID").Caption = "產品編號"
     DataGrid1.Columns("PName").Caption = "產品名稱"
+    DataGrid1.Columns("CurrentCount_Car").Caption = "車交易數量"
+    DataGrid1.Columns("WinningCount_Car").Caption = "車中獎數量"
+    DataGrid1.Columns("CurrentCount_2K").Caption = "2K交易數量"
+    DataGrid1.Columns("WinningCount_2K").Caption = "2K中獎數量"
+    DataGrid1.Columns("CurrentCount_3K").Caption = "3K交易數量"
+    DataGrid1.Columns("WinningCount_3K").Caption = "3K中獎數量"
+    DataGrid1.Columns("CurrentCount_4K").Caption = "4K交易數量"
+    DataGrid1.Columns("WinningCount_4K").Caption = "4K中獎數量"
+    DataGrid1.Columns("CurrentCount_Special").Caption = "3包或特交易數量"
+    DataGrid1.Columns("WinningCount_Special").Caption = "3包或特中獎數量"
+    DataGrid1.Columns("AddMoney").Caption = "漲價"
+    DataGrid1.Columns("BonusMoney").Caption = "退水金額"
+    DataGrid1.Columns("Note").Caption = "備註"
 End Sub
 

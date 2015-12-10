@@ -4,8 +4,8 @@ Begin VB.Form frmProve
    BorderStyle     =   1  '單線固定
    Caption         =   "系統主頁面"
    ClientHeight    =   14250
-   ClientLeft      =   5610
-   ClientTop       =   825
+   ClientLeft      =   5055
+   ClientTop       =   525
    ClientWidth     =   6765
    Icon            =   "frmProve.frx":0000
    LinkTopic       =   "Form1"
@@ -58,6 +58,7 @@ Begin VB.Form frmProve
          Left            =   4680
          TabIndex        =   42
          Top             =   -120
+         Visible         =   0   'False
          Width           =   1215
       End
       Begin VB.CommandButton cmdCustromMonthTransaction 
@@ -66,6 +67,7 @@ Begin VB.Form frmProve
          Left            =   3240
          TabIndex        =   41
          Top             =   -120
+         Visible         =   0   'False
          Width           =   1215
       End
       Begin VB.CommandButton cmdCustromWeekTransaction 
@@ -74,6 +76,7 @@ Begin VB.Form frmProve
          Left            =   1680
          TabIndex        =   40
          Top             =   -120
+         Visible         =   0   'False
          Width           =   1215
       End
       Begin VB.CommandButton cmdCustromYearReport 

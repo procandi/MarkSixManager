@@ -6,25 +6,25 @@ Begin VB.Form frmOrderAddNew
    BackColor       =   &H00808080&
    BorderStyle     =   1  '單線固定
    Caption         =   "產品價格變更"
-   ClientHeight    =   5865
-   ClientLeft      =   5400
-   ClientTop       =   6675
-   ClientWidth     =   6495
+   ClientHeight    =   10215
+   ClientLeft      =   615
+   ClientTop       =   840
+   ClientWidth     =   5010
    Icon            =   "frmOrderAddNew.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   5865
-   ScaleWidth      =   6495
+   ScaleHeight     =   10215
+   ScaleWidth      =   5010
    Begin Threed.SSPanel pnlBasic 
-      Height          =   4935
+      Height          =   9375
       Left            =   240
       TabIndex        =   0
       Top             =   720
-      Width           =   5895
+      Width           =   4575
       _Version        =   65536
-      _ExtentX        =   10398
-      _ExtentY        =   8705
+      _ExtentX        =   8070
+      _ExtentY        =   16536
       _StockProps     =   15
       ForeColor       =   0
       BackColor       =   12632256
@@ -41,7 +41,14 @@ Begin VB.Form frmOrderAddNew
       BevelInner      =   1
       Outline         =   -1  'True
       Alignment       =   6
-      Begin VB.TextBox txtNote 
+      Begin VB.ComboBox cmbPName 
+         Height          =   300
+         Left            =   2640
+         TabIndex        =   36
+         Top             =   1080
+         Width           =   1455
+      End
+      Begin VB.TextBox txtWinningCount_Special 
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -52,10 +59,139 @@ Begin VB.Form frmOrderAddNew
             Strikethrough   =   0   'False
          EndProperty
          Height          =   375
-         Left            =   1560
+         Left            =   2640
+         TabIndex        =   12
+         Top             =   6000
+         Width           =   1455
+      End
+      Begin VB.TextBox txtCurrentCount_Special 
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   375
+         Left            =   2640
+         TabIndex        =   11
+         Top             =   5520
+         Width           =   1455
+      End
+      Begin VB.TextBox txtWinningCount_4K 
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   375
+         Left            =   2640
+         TabIndex        =   10
+         Top             =   5040
+         Width           =   1455
+      End
+      Begin VB.TextBox txtCurrentCount_4K 
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   375
+         Left            =   2640
+         TabIndex        =   9
+         Top             =   4560
+         Width           =   1455
+      End
+      Begin VB.TextBox txtWinningCount_3K 
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   375
+         Left            =   2640
          TabIndex        =   8
+         Top             =   4080
+         Width           =   1455
+      End
+      Begin VB.TextBox txtCurrentCount_3K 
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   375
+         Left            =   2640
+         TabIndex        =   7
          Top             =   3600
-         Width           =   4095
+         Width           =   1455
+      End
+      Begin VB.TextBox txtWinningCount_2K 
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   375
+         Left            =   2640
+         TabIndex        =   6
+         Top             =   3120
+         Width           =   1455
+      End
+      Begin VB.TextBox txtCurrentCount_2K 
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   375
+         Left            =   2640
+         TabIndex        =   5
+         Top             =   2640
+         Width           =   1455
+      End
+      Begin VB.TextBox txtNote 
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   855
+         Left            =   2640
+         MultiLine       =   -1  'True
+         TabIndex        =   15
+         Top             =   7440
+         Width           =   1455
       End
       Begin VB.TextBox txtBonusMoney 
          BeginProperty Font 
@@ -68,10 +204,10 @@ Begin VB.Form frmOrderAddNew
             Strikethrough   =   0   'False
          EndProperty
          Height          =   375
-         Left            =   1560
-         TabIndex        =   7
-         Top             =   3120
-         Width           =   4095
+         Left            =   2640
+         TabIndex        =   14
+         Top             =   6960
+         Width           =   1455
       End
       Begin VB.TextBox txtAddMoney 
          BeginProperty Font 
@@ -84,17 +220,10 @@ Begin VB.Form frmOrderAddNew
             Strikethrough   =   0   'False
          EndProperty
          Height          =   375
-         Left            =   1560
-         TabIndex        =   6
-         Top             =   2640
-         Width           =   4095
-      End
-      Begin VB.ComboBox cmbPName 
-         Height          =   300
-         Left            =   1560
-         TabIndex        =   1
-         Top             =   600
-         Width           =   4095
+         Left            =   2640
+         TabIndex        =   13
+         Top             =   6480
+         Width           =   1455
       End
       Begin VB.TextBox txtCurrentDate 
          Enabled         =   0   'False
@@ -108,13 +237,13 @@ Begin VB.Form frmOrderAddNew
             Strikethrough   =   0   'False
          EndProperty
          Height          =   360
-         Left            =   1560
+         Left            =   2640
          MaxLength       =   256
-         TabIndex        =   15
-         Top             =   1200
-         Width           =   3855
+         TabIndex        =   22
+         Top             =   600
+         Width           =   1215
       End
-      Begin VB.TextBox txtWinningCount 
+      Begin VB.TextBox txtWinningCount_Car 
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -125,10 +254,10 @@ Begin VB.Form frmOrderAddNew
             Strikethrough   =   0   'False
          EndProperty
          Height          =   375
-         Left            =   1560
-         TabIndex        =   5
+         Left            =   2640
+         TabIndex        =   4
          Top             =   2160
-         Width           =   4095
+         Width           =   1455
       End
       Begin VB.CommandButton cmdClose 
          BackColor       =   &H00FFC0C0&
@@ -143,10 +272,10 @@ Begin VB.Form frmOrderAddNew
             Strikethrough   =   0   'False
          EndProperty
          Height          =   495
-         Left            =   3120
+         Left            =   2880
          Style           =   1  '圖片外觀
-         TabIndex        =   10
-         Top             =   4200
+         TabIndex        =   17
+         Top             =   8520
          Width           =   1215
       End
       Begin VB.CommandButton cmdUpdate 
@@ -162,14 +291,14 @@ Begin VB.Form frmOrderAddNew
             Strikethrough   =   0   'False
          EndProperty
          Height          =   495
-         Left            =   1560
+         Left            =   720
          Style           =   1  '圖片外觀
-         TabIndex        =   9
+         TabIndex        =   16
          Tag             =   "Edit"
-         Top             =   4200
+         Top             =   8520
          Width           =   1335
       End
-      Begin VB.TextBox txtCurrentCount 
+      Begin VB.TextBox txtCurrentCount_Car 
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -180,18 +309,18 @@ Begin VB.Form frmOrderAddNew
             Strikethrough   =   0   'False
          EndProperty
          Height          =   375
-         Left            =   1560
-         TabIndex        =   4
+         Left            =   2640
+         TabIndex        =   3
          Top             =   1680
-         Width           =   4095
+         Width           =   1455
       End
       Begin MSComCtl2.DTPicker dtpCurrentDate 
          Height          =   375
-         Left            =   1560
-         TabIndex        =   16
-         Top             =   1200
-         Width           =   4095
-         _ExtentX        =   7223
+         Left            =   2640
+         TabIndex        =   23
+         Top             =   600
+         Width           =   1455
+         _ExtentX        =   2566
          _ExtentY        =   661
          _Version        =   393216
          Enabled         =   0   'False
@@ -205,8 +334,192 @@ Begin VB.Form frmOrderAddNew
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   108527619
+         Format          =   97255427
          CurrentDate     =   42267
+      End
+      Begin VB.Label lblBasic 
+         Alignment       =   1  '靠右對齊
+         BackColor       =   &H80000015&
+         BackStyle       =   0  '透明
+         BorderStyle     =   1  '單線固定
+         Caption         =   "3包或特交易數量"
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00000000&
+         Height          =   375
+         Index           =   18
+         Left            =   600
+         TabIndex        =   35
+         Top             =   5520
+         Width           =   2055
+      End
+      Begin VB.Label lblBasic 
+         Alignment       =   1  '靠右對齊
+         BackColor       =   &H80000015&
+         BackStyle       =   0  '透明
+         BorderStyle     =   1  '單線固定
+         Caption         =   "3包或特中獎數量"
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00000000&
+         Height          =   375
+         Index           =   17
+         Left            =   600
+         TabIndex        =   34
+         Top             =   6000
+         Width           =   2055
+      End
+      Begin VB.Label lblBasic 
+         Alignment       =   1  '靠右對齊
+         BackColor       =   &H80000015&
+         BackStyle       =   0  '透明
+         BorderStyle     =   1  '單線固定
+         Caption         =   "4K交易數量"
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00000000&
+         Height          =   375
+         Index           =   16
+         Left            =   600
+         TabIndex        =   33
+         Top             =   4560
+         Width           =   2055
+      End
+      Begin VB.Label lblBasic 
+         Alignment       =   1  '靠右對齊
+         BackColor       =   &H80000015&
+         BackStyle       =   0  '透明
+         BorderStyle     =   1  '單線固定
+         Caption         =   "4K中獎數量"
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00000000&
+         Height          =   375
+         Index           =   14
+         Left            =   600
+         TabIndex        =   32
+         Top             =   5040
+         Width           =   2055
+      End
+      Begin VB.Label lblBasic 
+         Alignment       =   1  '靠右對齊
+         BackColor       =   &H80000015&
+         BackStyle       =   0  '透明
+         BorderStyle     =   1  '單線固定
+         Caption         =   "3K交易數量"
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00000000&
+         Height          =   375
+         Index           =   13
+         Left            =   600
+         TabIndex        =   31
+         Top             =   3600
+         Width           =   2055
+      End
+      Begin VB.Label lblBasic 
+         Alignment       =   1  '靠右對齊
+         BackColor       =   &H80000015&
+         BackStyle       =   0  '透明
+         BorderStyle     =   1  '單線固定
+         Caption         =   "3K中獎數量"
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00000000&
+         Height          =   375
+         Index           =   12
+         Left            =   600
+         TabIndex        =   30
+         Top             =   4080
+         Width           =   2055
+      End
+      Begin VB.Label lblBasic 
+         Alignment       =   1  '靠右對齊
+         BackColor       =   &H80000015&
+         BackStyle       =   0  '透明
+         BorderStyle     =   1  '單線固定
+         Caption         =   "2K交易數量"
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00000000&
+         Height          =   375
+         Index           =   11
+         Left            =   600
+         TabIndex        =   29
+         Top             =   2640
+         Width           =   2055
+      End
+      Begin VB.Label lblBasic 
+         Alignment       =   1  '靠右對齊
+         BackColor       =   &H80000015&
+         BackStyle       =   0  '透明
+         BorderStyle     =   1  '單線固定
+         Caption         =   "2K中獎數量"
+         BeginProperty Font 
+            Name            =   "新細明體"
+            Size            =   12
+            Charset         =   136
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00000000&
+         Height          =   375
+         Index           =   10
+         Left            =   600
+         TabIndex        =   28
+         Top             =   3120
+         Width           =   2055
       End
       Begin VB.Label lblBasic 
          Alignment       =   1  '靠右對齊
@@ -226,10 +539,10 @@ Begin VB.Form frmOrderAddNew
          ForeColor       =   &H00000000&
          Height          =   375
          Index           =   6
-         Left            =   360
-         TabIndex        =   20
-         Top             =   3600
-         Width           =   1215
+         Left            =   600
+         TabIndex        =   27
+         Top             =   7440
+         Width           =   2055
       End
       Begin VB.Label lblBasic 
          Alignment       =   1  '靠右對齊
@@ -249,10 +562,10 @@ Begin VB.Form frmOrderAddNew
          ForeColor       =   &H00000000&
          Height          =   375
          Index           =   5
-         Left            =   360
-         TabIndex        =   19
-         Top             =   3120
-         Width           =   1215
+         Left            =   600
+         TabIndex        =   26
+         Top             =   6960
+         Width           =   2055
       End
       Begin VB.Label lblBasic 
          Alignment       =   1  '靠右對齊
@@ -272,10 +585,10 @@ Begin VB.Form frmOrderAddNew
          ForeColor       =   &H00000000&
          Height          =   375
          Index           =   2
-         Left            =   360
-         TabIndex        =   18
-         Top             =   2640
-         Width           =   1215
+         Left            =   600
+         TabIndex        =   25
+         Top             =   6480
+         Width           =   2055
       End
       Begin VB.Label lblBasic 
          Alignment       =   1  '靠右對齊
@@ -295,17 +608,17 @@ Begin VB.Form frmOrderAddNew
          ForeColor       =   &H00000000&
          Height          =   375
          Index           =   3
-         Left            =   360
-         TabIndex        =   14
-         Top             =   1200
-         Width           =   1215
+         Left            =   600
+         TabIndex        =   21
+         Top             =   600
+         Width           =   2055
       End
       Begin VB.Label lblBasic 
          Alignment       =   1  '靠右對齊
          BackColor       =   &H80000015&
          BackStyle       =   0  '透明
          BorderStyle     =   1  '單線固定
-         Caption         =   "中獎數量"
+         Caption         =   "車中獎數量"
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -318,10 +631,10 @@ Begin VB.Form frmOrderAddNew
          ForeColor       =   &H00000000&
          Height          =   375
          Index           =   0
-         Left            =   360
-         TabIndex        =   13
+         Left            =   600
+         TabIndex        =   20
          Top             =   2160
-         Width           =   1215
+         Width           =   2055
       End
       Begin VB.Label lblName 
          Alignment       =   2  '置中對齊
@@ -341,17 +654,17 @@ Begin VB.Form frmOrderAddNew
          ForeColor       =   &H00000000&
          Height          =   375
          Index           =   0
-         Left            =   360
-         TabIndex        =   12
+         Left            =   600
+         TabIndex        =   19
          Top             =   120
-         Width           =   5295
+         Width           =   3495
       End
       Begin VB.Label lblBasic 
          Alignment       =   1  '靠右對齊
          BackColor       =   &H80000015&
          BackStyle       =   0  '透明
          BorderStyle     =   1  '單線固定
-         Caption         =   "交易數量"
+         Caption         =   "車交易數量"
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   12
@@ -364,10 +677,10 @@ Begin VB.Form frmOrderAddNew
          ForeColor       =   &H00000000&
          Height          =   375
          Index           =   1
-         Left            =   360
-         TabIndex        =   11
+         Left            =   600
+         TabIndex        =   18
          Top             =   1680
-         Width           =   1215
+         Width           =   2055
       End
       Begin VB.Label lblBasic 
          Alignment       =   1  '靠右對齊
@@ -387,16 +700,16 @@ Begin VB.Form frmOrderAddNew
          ForeColor       =   &H00000000&
          Height          =   375
          Index           =   15
-         Left            =   360
-         TabIndex        =   3
-         Top             =   600
-         Width           =   1215
+         Left            =   600
+         TabIndex        =   2
+         Top             =   1080
+         Width           =   2055
       End
    End
    Begin MSAdodcLib.Adodc Adodc1 
       Height          =   330
-      Left            =   3720
-      Top             =   5520
+      Left            =   6960
+      Top             =   9840
       Visible         =   0   'False
       Width           =   2775
       _ExtentX        =   4895
@@ -457,7 +770,7 @@ Begin VB.Form frmOrderAddNew
       ForeColor       =   &H000000FF&
       Height          =   495
       Left            =   240
-      TabIndex        =   17
+      TabIndex        =   24
       Top             =   360
       Width           =   1815
    End
@@ -478,8 +791,8 @@ Begin VB.Form frmOrderAddNew
       ForeColor       =   &H00FFFFFF&
       Height          =   615
       Index           =   0
-      Left            =   3120
-      TabIndex        =   2
+      Left            =   1920
+      TabIndex        =   1
       Top             =   240
       Width           =   3015
    End
@@ -491,17 +804,39 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Dim addCount As Integer
 Dim selectFields As String
+Private Enum PArray
+    P539Car = 0
+    P5392K = 1
+    P5393K = 2
+    P5394K = 3
+    P539Package = 4
+    PHKNCar = 5
+    PHKN2K = 6
+    PHKN3K = 7
+    PHKN4K = 8
+    PHKNSpecial = 9
+    PLottoCar = 10
+    PLotto2K = 11
+    PLotto3K = 12
+    PLotto4K = 13
+    PLottoSpecial = 14
+End Enum
 
 Private Sub cmdClose_Click()
     Call Form_Unload(0)
 End Sub
 
 Private Sub cmdUpdate_Click()
-On Error GoTo errout:
-    Dim PID As String, LastSwiftCode As String
+'On Error GoTo errout:
+
+    Dim flag As Boolean, n As Integer
+    Dim PID(100) As String
+    Dim LastSwiftCode As String
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim BonusTarget As String
+    
+    flag = False
     
     SQL = "select * from [order] order by SwiftCode desc;"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
@@ -512,44 +847,205 @@ On Error GoTo errout:
     End If
     order_rec.Close
     
-    SQL = "select * from product where PName='" & cmbPName.Text & "';"
+    SQL = "select * from product';"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
-    PID = product_rec("PID")
+    Do Until product_rec.EOF
+        Select Case product_rec("PName")
+        Case "539_車"
+            PID(0) = product_rec("PID")
+        Case "539_2K"
+            PID(1) = product_rec("PID")
+        Case "539_3K"
+            PID(2) = product_rec("PID")
+        Case "539_4K"
+            PID(3) = product_rec("PID")
+        Case "539_3包"
+            PID(4) = product_rec("PID")
+        Case "港號_車"
+            PID(5) = product_rec("PID")
+        Case "港號_2K"
+            PID(6) = product_rec("PID")
+        Case "港號_3K"
+            PID(7) = product_rec("PID")
+        Case "港號_4K"
+            PID(8) = product_rec("PID")
+        Case "港號_特"
+            PID(9) = product_rec("PID")
+        Case "大樂透_車"
+            PID(10) = product_rec("PID")
+        Case "大樂透_2K"
+            PID(11) = product_rec("PID")
+        Case "大樂透_3K"
+            PID(12) = product_rec("PID")
+        Case "大樂透_4K"
+            PID(13) = product_rec("PID")
+        Case "大樂透_特"
+            PID(14) = product_rec("PID")
+        End Select
+        product_rec.MoveNext
+    Loop
     product_rec.Close
     
     
-    Adodc1.Recordset.Fields.Item("SwiftCode").Value = Val(LastSwiftCode) + 1
-    Adodc1.Recordset.Fields.Item("PID").Value = PID
-    'Adodc1.Recordset.Fields.Item("PName").Value = txtPName.Text
-    Adodc1.Recordset.Fields.Item("CID").Value = basVariable.SelectCID
-    Adodc1.Recordset.Fields.Item("CurrentDate").Value = txtCurrentDate.Text
-    Adodc1.Recordset.Fields.Item("CurrentCount").Value = txtCurrentCount.Text
-    If txtWinningCount.Text = "" Then
-        Adodc1.Recordset.Fields.Item("WinningCount").Value = "0"
+    If cmbPName.Text = "" Then
+        flag = False
     Else
-        Adodc1.Recordset.Fields.Item("WinningCount").Value = txtWinningCount.Text
+        Select Case cmbPName.Text
+        Case "100 539_全"
+            n = 0
+        Case "110 港號_全"
+            n = 5
+        Case "120 大樂透_全"
+            n = 10
+        Case Else
+            n = -99   'goto errout
+        End Select
+    
+        'update all data from UI
+        If txtCurrentCount_Car.Text <> "" Then
+            Adodc1.Recordset.Fields.Item("CID").Value = basVariable.SelectCID
+            Adodc1.Recordset.Fields.Item("CurrentDate").Value = txtCurrentDate.Text
+            Adodc1.Recordset.Fields.Item("Note").Value = txtNote.Text
+        
+            LastSwiftCode = Val(LastSwiftCode) + 1
+            Adodc1.Recordset.Fields.Item("SwiftCode").Value = LastSwiftCode
+            Adodc1.Recordset.Fields.Item("PID").Value = PID(n)
+            Adodc1.Recordset.Fields.Item("CurrentCount").Value = txtCurrentCount_Car.Text
+            If txtWinningCount_Car.Text = "" Then
+                Adodc1.Recordset.Fields.Item("WinningCount").Value = "0"
+            Else
+                Adodc1.Recordset.Fields.Item("WinningCount").Value = txtWinningCount_Car.Text
+            End If
+            Adodc1.Recordset.Fields.Item("AddMoney").Value = txtAddMoney.Text
+            Adodc1.Recordset.Fields.Item("BonusMoney").Value = txtBonusMoney.Text
+        
+            Call Adodc1.Recordset.Update
+            Call Adodc1.Recordset.AddNew    'Call Form_Unload(0)
+            
+            flag = True
+        End If
+        If txtCurrentCount_2K.Text <> "" Then
+            Adodc1.Recordset.Fields.Item("CID").Value = basVariable.SelectCID
+            Adodc1.Recordset.Fields.Item("CurrentDate").Value = txtCurrentDate.Text
+            Adodc1.Recordset.Fields.Item("Note").Value = txtNote.Text
+            
+            LastSwiftCode = Val(LastSwiftCode) + 1
+            Adodc1.Recordset.Fields.Item("SwiftCode").Value = LastSwiftCode
+            Adodc1.Recordset.Fields.Item("PID").Value = PID(n + 1)
+            Adodc1.Recordset.Fields.Item("CurrentCount").Value = txtCurrentCount_2K.Text
+            If txtWinningCount_2K.Text = "" Then
+                Adodc1.Recordset.Fields.Item("WinningCount").Value = "0"
+            Else
+                Adodc1.Recordset.Fields.Item("WinningCount").Value = txtWinningCount_2K.Text
+            End If
+            Adodc1.Recordset.Fields.Item("AddMoney").Value = txtAddMoney.Text
+            Adodc1.Recordset.Fields.Item("BonusMoney").Value = txtBonusMoney.Text
+        
+            Call Adodc1.Recordset.Update
+            Call Adodc1.Recordset.AddNew    'Call Form_Unload(0)
+            
+            flag = True
+        End If
+        If txtCurrentCount_3K.Text <> "" Then
+            Adodc1.Recordset.Fields.Item("CID").Value = basVariable.SelectCID
+            Adodc1.Recordset.Fields.Item("CurrentDate").Value = txtCurrentDate.Text
+            Adodc1.Recordset.Fields.Item("Note").Value = txtNote.Text
+            
+            LastSwiftCode = Val(LastSwiftCode) + 1
+            Adodc1.Recordset.Fields.Item("SwiftCode").Value = LastSwiftCode
+            Adodc1.Recordset.Fields.Item("PID").Value = PID(n + 2)
+            Adodc1.Recordset.Fields.Item("CurrentCount").Value = txtCurrentCount_3K.Text
+            If txtWinningCount_3K.Text = "" Then
+                Adodc1.Recordset.Fields.Item("WinningCount").Value = "0"
+            Else
+                Adodc1.Recordset.Fields.Item("WinningCount").Value = txtWinningCount_3K.Text
+            End If
+            Adodc1.Recordset.Fields.Item("AddMoney").Value = txtAddMoney.Text
+            Adodc1.Recordset.Fields.Item("BonusMoney").Value = txtBonusMoney.Text
+        
+            Call Adodc1.Recordset.Update
+            Call Adodc1.Recordset.AddNew    'Call Form_Unload(0)
+            
+            flag = True
+        End If
+        If txtCurrentCount_4K.Text <> "" Then
+            Adodc1.Recordset.Fields.Item("CID").Value = basVariable.SelectCID
+            Adodc1.Recordset.Fields.Item("CurrentDate").Value = txtCurrentDate.Text
+            Adodc1.Recordset.Fields.Item("Note").Value = txtNote.Text
+            
+            LastSwiftCode = Val(LastSwiftCode) + 1
+            Adodc1.Recordset.Fields.Item("SwiftCode").Value = LastSwiftCode
+            Adodc1.Recordset.Fields.Item("PID").Value = PID(n + 3)
+            Adodc1.Recordset.Fields.Item("CurrentCount").Value = txtCurrentCount_4K.Text
+            If txtWinningCount_4K.Text = "" Then
+                Adodc1.Recordset.Fields.Item("WinningCount").Value = "0"
+            Else
+                Adodc1.Recordset.Fields.Item("WinningCount").Value = txtWinningCount_4K.Text
+            End If
+            Adodc1.Recordset.Fields.Item("AddMoney").Value = txtAddMoney.Text
+            Adodc1.Recordset.Fields.Item("BonusMoney").Value = txtBonusMoney.Text
+        
+            Call Adodc1.Recordset.Update
+            Call Adodc1.Recordset.AddNew    'Call Form_Unload(0)
+            
+            flag = True
+        End If
+        If txtCurrentCount_Special.Text <> "" Then
+            Adodc1.Recordset.Fields.Item("CID").Value = basVariable.SelectCID
+            Adodc1.Recordset.Fields.Item("CurrentDate").Value = txtCurrentDate.Text
+            Adodc1.Recordset.Fields.Item("Note").Value = txtNote.Text
+            
+            LastSwiftCode = Val(LastSwiftCode) + 1
+            Adodc1.Recordset.Fields.Item("SwiftCode").Value = LastSwiftCode
+            Adodc1.Recordset.Fields.Item("PID").Value = PID(n + 4)
+            Adodc1.Recordset.Fields.Item("CurrentCount").Value = txtCurrentCount_Special.Text
+            If txtWinningCount_Special.Text = "" Then
+                Adodc1.Recordset.Fields.Item("WinningCount").Value = "0"
+            Else
+                Adodc1.Recordset.Fields.Item("WinningCount").Value = txtWinningCount_Special.Text
+            End If
+            Adodc1.Recordset.Fields.Item("AddMoney").Value = txtAddMoney.Text
+            Adodc1.Recordset.Fields.Item("BonusMoney").Value = txtBonusMoney.Text
+        
+            Call Adodc1.Recordset.Update
+            Call Adodc1.Recordset.AddNew    'Call Form_Unload(0)
+            
+            flag = True
+        End If
+        
+        
+        'clear all old data
+        If flag Then
+            dtpCurrentDate.Value = Format(DateTime.Now, "yyyy/MM/dd")
+            txtCurrentDate.Text = Format(DateTime.Now, "yyyy/MM/dd")
+            txtNote.Text = ""
+            
+            'clear all old data from ui
+            txtCurrentCount_Car.Text = ""
+            txtWinningCount_Car.Text = ""
+            txtCurrentCount_2K.Text = ""
+            txtWinningCount_2K.Text = ""
+            txtCurrentCount_3K.Text = ""
+            txtWinningCount_3K.Text = ""
+            txtCurrentCount_4K.Text = ""
+            txtWinningCount_4K.Text = ""
+            txtCurrentCount_Special.Text = ""
+            txtWinningCount_Special.Text = ""
+            txtAddMoney.Text = ""
+            txtBonusMoney.Text = ""
+            
+            addCount = addCount + 1
+            lblAddCount.Caption = "已新增" & addCount & "筆"
+        End If
     End If
-    Adodc1.Recordset.Fields.Item("AddMoney").Value = txtAddMoney.Text
-    Adodc1.Recordset.Fields.Item("BonusMoney").Value = txtBonusMoney.Text
-    Adodc1.Recordset.Fields.Item("Note").Value = txtNote.Text
-    Call Adodc1.Recordset.Update
-    Call Adodc1.Recordset.AddNew    'Call Form_Unload(0)
     
     
-    cmbPName.Text = ""
-    dtpCurrentDate.Value = Format(DateTime.Now, "yyyy/MM/dd")
-    txtCurrentDate.Text = Format(DateTime.Now, "yyyy/MM/dd")
-    txtCurrentCount.Text = ""
-    txtWinningCount.Text = ""
-    txtAddMoney.Text = ""
-    txtBonusMoney.Text = ""
-    txtNote.Text = ""
-    addCount = addCount + 1
-    lblAddCount.Caption = "已新增" & addCount & "筆"
+    Call txtCurrentDate.SetFocus
     
-    If False Then
+    
+    If Not flag Then
 errout:
-        MsgBox "輸入的資料有問題，或產品名稱、交易日期、交易數量、中獎數量未填寫！"
+        MsgBox "輸入的資料有問題，或產品名稱、交易日期、交易數量未填寫！"
     End If
 End Sub
 
@@ -559,7 +1055,6 @@ End Sub
 
 'import database and export to datagrid when form load
 Private Sub Form_Load()
-    cmbPName.Enabled = True
     txtCurrentDate.Enabled = True
     dtpCurrentDate.Enabled = True
     
@@ -576,9 +1071,11 @@ Private Sub Form_Load()
     
     'Set txtPName.DataSource = Adodc1
     Set txtCurrentDate.DataSource = Adodc1
-    Set txtCurrentCount.DataSource = Adodc1
-    Set txtWinningCount.DataSource = Adodc1
-    Set txtAddMoney.DataSource = Adodc1
+    'Set txtCurrentCount.DataSource = Adodc1
+    'Set txtWinningCount.DataSource = Adodc1
+    'Set txtAddMoney.DataSource = Adodc1
+    'Set txtBonusMoney.DataSource = Adodc1
+    'Set txtNote.DataSource = Adodc1
 
 
     'add new
@@ -586,7 +1083,10 @@ Private Sub Form_Load()
     Call Adodc1.Recordset.AddNew
     
     
-    Call ComboBox_LoadFrom_DataBase_ByFile(cmbPName, "PName", "product", "", "", "")
+    Call cmbPName.AddItem("100 539_全")
+    Call cmbPName.AddItem("110 港號_全")
+    Call cmbPName.AddItem("120 大樂透_全")
+
     
     dtpCurrentDate.Value = Format(DateTime.Now, "yyyy/MM/dd")
     txtCurrentDate.Text = Format(DateTime.Now, "yyyy/MM/dd")
@@ -602,45 +1102,79 @@ Private Sub Form_Unload(Cancel As Integer)
 End Sub
 
 
-Private Sub cmbPName_KeyUp(KeyCode As Integer, Shift As Integer)
-    If KeyCode = vbKeyReturn Then
-        Call txtCurrentDate.SetFocus
-    End If
-End Sub
-
+'KeyUp
 Private Sub txtCurrentDate_KeyUp(KeyCode As Integer, Shift As Integer)
     If KeyCode = vbKeyReturn Then
-        Call txtCurrentCount.SetFocus
+        Call cmbPName.SetFocus
     End If
 End Sub
-
-Private Sub txtCurrentCount_KeyUp(KeyCode As Integer, Shift As Integer)
+Private Sub cmbPName_KeyUp(KeyCode As Integer, Shift As Integer)
     If KeyCode = vbKeyReturn Then
-        Call txtWinningCount.SetFocus
+        Call txtCurrentCount_Car.SetFocus
     End If
 End Sub
-
-Private Sub txtWinningCount_KeyUp(KeyCode As Integer, Shift As Integer)
+Private Sub txtCurrentCount_Car_KeyUp(KeyCode As Integer, Shift As Integer)
+    If KeyCode = vbKeyReturn Then
+        Call txtWinningCount_Car.SetFocus
+    End If
+End Sub
+Private Sub txtWinningCount_Car_KeyUp(KeyCode As Integer, Shift As Integer)
+    If KeyCode = vbKeyReturn Then
+        Call txtCurrentCount_2K.SetFocus
+    End If
+End Sub
+Private Sub txtCurrentCount_2K_KeyUp(KeyCode As Integer, Shift As Integer)
+    If KeyCode = vbKeyReturn Then
+        Call txtWinningCount_2K.SetFocus
+    End If
+End Sub
+Private Sub txtWinningCount_2K_KeyUp(KeyCode As Integer, Shift As Integer)
+    If KeyCode = vbKeyReturn Then
+        Call txtCurrentCount_3K.SetFocus
+    End If
+End Sub
+Private Sub txtCurrentCount_3K_KeyUp(KeyCode As Integer, Shift As Integer)
+    If KeyCode = vbKeyReturn Then
+        Call txtWinningCount_3K.SetFocus
+    End If
+End Sub
+Private Sub txtWinningCount_3K_KeyUp(KeyCode As Integer, Shift As Integer)
+    If KeyCode = vbKeyReturn Then
+        Call txtCurrentCount_4K.SetFocus
+    End If
+End Sub
+Private Sub txtCurrentCount_4K_KeyUp(KeyCode As Integer, Shift As Integer)
+    If KeyCode = vbKeyReturn Then
+        Call txtWinningCount_4K.SetFocus
+    End If
+End Sub
+Private Sub txtWinningCount_4K_KeyUp(KeyCode As Integer, Shift As Integer)
+    If KeyCode = vbKeyReturn Then
+        Call txtCurrentCount_Special.SetFocus
+    End If
+End Sub
+Private Sub txtCurrentCount_Special_KeyUp(KeyCode As Integer, Shift As Integer)
+    If KeyCode = vbKeyReturn Then
+        Call txtWinningCount_Special.SetFocus
+    End If
+End Sub
+Private Sub txtWinningCount_Special_KeyUp(KeyCode As Integer, Shift As Integer)
     If KeyCode = vbKeyReturn Then
         Call txtAddMoney.SetFocus
     End If
 End Sub
-
 Private Sub txtAddMoney_KeyUp(KeyCode As Integer, Shift As Integer)
     If KeyCode = vbKeyReturn Then
         Call txtBonusMoney.SetFocus
     End If
 End Sub
-
 Private Sub txtBonusMoney_KeyUp(KeyCode As Integer, Shift As Integer)
     If KeyCode = vbKeyReturn Then
         Call txtNote.SetFocus
     End If
 End Sub
-
 Private Sub txtNote_KeyUp(KeyCode As Integer, Shift As Integer)
     If KeyCode = vbKeyReturn Then
         Call cmdUpdate_Click
     End If
 End Sub
-
