@@ -13,12 +13,28 @@ Begin VB.Form frmProve
    MinButton       =   0   'False
    ScaleHeight     =   14250
    ScaleWidth      =   6765
+   Begin VB.Frame Frame6 
+      Caption         =   "不分客別、分產品的總表"
+      Height          =   975
+      Left            =   240
+      TabIndex        =   46
+      Top             =   11760
+      Width           =   6135
+      Begin VB.CommandButton cmdProductWeekTransaction 
+         Caption         =   "週交易金額表"
+         Height          =   615
+         Left            =   1680
+         TabIndex        =   47
+         Top             =   240
+         Width           =   1215
+      End
+   End
    Begin VB.Frame Frame5 
-      Caption         =   "不分客別產品的總表"
+      Caption         =   "不分客別、不分產品的總表"
       Height          =   975
       Left            =   240
       TabIndex        =   39
-      Top             =   12240
+      Top             =   12840
       Width           =   6135
       Begin VB.CommandButton cmdYearTransaction 
          Caption         =   "年交易金額表"
@@ -26,6 +42,7 @@ Begin VB.Form frmProve
          Left            =   4680
          TabIndex        =   45
          Top             =   240
+         Visible         =   0   'False
          Width           =   1215
       End
       Begin VB.CommandButton cmdMonthTransaction 
@@ -34,6 +51,7 @@ Begin VB.Form frmProve
          Left            =   3240
          TabIndex        =   44
          Top             =   240
+         Visible         =   0   'False
          Width           =   1215
       End
       Begin VB.CommandButton cmdWeekTransaction 
@@ -46,14 +64,14 @@ Begin VB.Form frmProve
       End
    End
    Begin VB.Frame Frame4 
-      Caption         =   "客別不分產品報表"
+      Caption         =   "分客別、不分產品報表"
       Height          =   975
       Left            =   240
       TabIndex        =   34
-      Top             =   11160
+      Top             =   10680
       Width           =   6135
-      Begin VB.CommandButton cmdCustromYearTransaction 
-         Caption         =   "客別不分產品年交易金額表"
+      Begin VB.CommandButton cmdCustomYearTransaction 
+         Caption         =   "年交易金額表"
          Height          =   615
          Left            =   4680
          TabIndex        =   42
@@ -61,8 +79,8 @@ Begin VB.Form frmProve
          Visible         =   0   'False
          Width           =   1215
       End
-      Begin VB.CommandButton cmdCustromMonthTransaction 
-         Caption         =   "客別不分產品月交易金額表"
+      Begin VB.CommandButton cmdCustomMonthTransaction 
+         Caption         =   "月交易金額表"
          Height          =   615
          Left            =   3240
          TabIndex        =   41
@@ -70,8 +88,8 @@ Begin VB.Form frmProve
          Visible         =   0   'False
          Width           =   1215
       End
-      Begin VB.CommandButton cmdCustromWeekTransaction 
-         Caption         =   "客別不分產品週交易金額表"
+      Begin VB.CommandButton cmdCustomWeekTransaction 
+         Caption         =   "週交易金額表"
          Height          =   615
          Left            =   1680
          TabIndex        =   40
@@ -79,24 +97,24 @@ Begin VB.Form frmProve
          Visible         =   0   'False
          Width           =   1215
       End
-      Begin VB.CommandButton cmdCustromYearReport 
-         Caption         =   "客別不分產品年報表"
+      Begin VB.CommandButton cmdCustomYearReport 
+         Caption         =   "年報表"
          Height          =   615
          Left            =   4680
          TabIndex        =   37
          Top             =   240
          Width           =   1215
       End
-      Begin VB.CommandButton cmdCustromMonthReport 
-         Caption         =   "客別不分產品月報表"
+      Begin VB.CommandButton cmdCustomMonthReport 
+         Caption         =   "月報表"
          Height          =   615
          Left            =   3240
          TabIndex        =   36
          Top             =   240
          Width           =   1215
       End
-      Begin VB.CommandButton cmdCustromWeekReport 
-         Caption         =   "客別不分產品週報表"
+      Begin VB.CommandButton cmdCustomWeekReport 
+         Caption         =   "週報表"
          Height          =   615
          Left            =   1680
          TabIndex        =   35
@@ -105,30 +123,48 @@ Begin VB.Form frmProve
       End
    End
    Begin VB.Frame Frame3 
-      Caption         =   "客別分產品報表"
+      Caption         =   "分客別、分產品報表"
       Height          =   1695
       Left            =   240
       TabIndex        =   31
-      Top             =   9360
+      Top             =   8880
       Width           =   6135
-      Begin VB.CommandButton cmdCustromProductWeekTransaction 
-         Caption         =   "客別分產品週交易金額表"
+      Begin VB.CommandButton cmdCustomProductDayReportDetail 
+         Caption         =   "日明細表"
+         Height          =   615
+         Left            =   240
+         TabIndex        =   49
+         Top             =   0
+         Visible         =   0   'False
+         Width           =   1215
+      End
+      Begin VB.CommandButton cmdCustomProductWeekReportDetail 
+         Caption         =   "週明細表"
+         Height          =   615
+         Left            =   1680
+         TabIndex        =   48
+         Top             =   0
+         Visible         =   0   'False
+         Width           =   1215
+      End
+      Begin VB.CommandButton cmdCustomProductWeekTransaction 
+         Caption         =   "週交易金額表"
          Height          =   615
          Left            =   1680
          TabIndex        =   38
          Top             =   960
          Width           =   1215
       End
-      Begin VB.CommandButton cmdCustromProductWeekReport 
-         Caption         =   "客別分產品週報表"
+      Begin VB.CommandButton cmdCustomProductWeekReport 
+         Caption         =   "週報表"
          Height          =   615
          Left            =   1680
          TabIndex        =   33
          Top             =   240
          Width           =   1215
       End
-      Begin VB.CommandButton cmdCustromProductDayReport 
-         Caption         =   "客別分產品日報表"
+      Begin VB.CommandButton cmdCustomProductDayReport 
+         Caption         =   "日報表"
          Height          =   615
          Left            =   240
          TabIndex        =   32
@@ -141,7 +177,7 @@ Begin VB.Form frmProve
       Height          =   1695
       Left            =   240
       TabIndex        =   22
-      Top             =   7440
+      Top             =   7080
       Width           =   6135
       Begin VB.CommandButton cmdFourKYearReport 
          Caption         =   "4K年報表"
@@ -213,7 +249,7 @@ Begin VB.Form frmProve
       Height          =   1695
       Left            =   240
       TabIndex        =   13
-      Top             =   5520
+      Top             =   5280
       Width           =   6135
       Begin VB.CommandButton cmdDayAccount 
          Caption         =   "日總帳"
@@ -285,7 +321,7 @@ Begin VB.Form frmProve
       Height          =   615
       Left            =   4080
       TabIndex        =   12
-      Top             =   4800
+      Top             =   4560
       Width           =   1215
    End
    Begin VB.CommandButton cmdCustom 
@@ -293,7 +329,7 @@ Begin VB.Form frmProve
       Height          =   615
       Left            =   1320
       TabIndex        =   11
-      Top             =   4800
+      Top             =   4560
       Width           =   1215
    End
    Begin VB.TextBox txtUpdateNote 
@@ -313,14 +349,14 @@ Begin VB.Form frmProve
       MultiLine       =   -1  'True
       ScrollBars      =   2  '垂直捲軸
       TabIndex        =   10
-      Top             =   3720
+      Top             =   3360
       Width           =   6465
    End
    Begin VB.PictureBox Picture1 
       BackColor       =   &H00FFC0C0&
-      Height          =   3255
+      Height          =   2775
       Left            =   120
-      ScaleHeight     =   3195
+      ScaleHeight     =   2715
       ScaleWidth      =   6375
       TabIndex        =   5
       Top             =   120
@@ -354,8 +390,8 @@ Begin VB.Form frmProve
          Left            =   240
          TabIndex        =   8
          Tag             =   "1052"
-         Top             =   1320
-         Width           =   5760
+         Top             =   1200
+         Width           =   5745
       End
       Begin VB.Label Label1 
          Alignment       =   2  '置中對齊
@@ -374,9 +410,9 @@ Begin VB.Form frmProve
          EndProperty
          ForeColor       =   &H00FFFFFF&
          Height          =   375
-         Left            =   4440
+         Left            =   4560
          TabIndex        =   7
-         Top             =   2880
+         Top             =   2400
          Visible         =   0   'False
          Width           =   1935
       End
@@ -396,7 +432,7 @@ Begin VB.Form frmProve
          Height          =   735
          Left            =   360
          TabIndex        =   6
-         Top             =   2280
+         Top             =   1920
          Width           =   5775
       End
    End
@@ -460,7 +496,7 @@ Begin VB.Form frmProve
    Begin VB.Label lblVersion 
       BackColor       =   &H00808080&
       BorderStyle     =   1  '單線固定
-      Caption         =   "Version 20151111"
+      Caption         =   "Version 20151216"
       BeginProperty Font 
          Name            =   "新細明體"
          Size            =   12
@@ -474,7 +510,7 @@ Begin VB.Form frmProve
       Height          =   375
       Left            =   120
       TabIndex        =   9
-      Top             =   3360
+      Top             =   3000
       Width           =   1935
    End
    Begin VB.Line Line1 
@@ -483,8 +519,8 @@ Begin VB.Form frmProve
       Index           =   1
       X1              =   240
       X2              =   6459
-      Y1              =   4680
-      Y2              =   4680
+      Y1              =   4440
+      Y2              =   4440
    End
    Begin VB.Label lblLabels 
       Appearance      =   0  '平面
@@ -505,7 +541,7 @@ Begin VB.Form frmProve
       Index           =   6
       Left            =   240
       TabIndex        =   4
-      Top             =   4320
+      Top             =   4080
       Width           =   6120
    End
    Begin VB.Label lblLabels 
@@ -520,11 +556,11 @@ Begin VB.Form frmProve
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Height          =   9135
+      Height          =   10095
       Index           =   5
       Left            =   120
       TabIndex        =   3
-      Top             =   4320
+      Top             =   3960
       Width           =   6465
    End
 End
@@ -539,57 +575,69 @@ Private Sub cmdCustom_Click()
     Me.Hide
 End Sub
 
-Private Sub cmdCustromMonthTransaction_Click()
+Private Sub cmdCustomMonthTransaction_Click()
     basVariable.Action = "PrintReport"
-    basVariable.Parameter = "CustromMonthTransaction"
+    basVariable.Parameter = "CustomMonthTransaction"
     frmConfirm.Show
 End Sub
 
-Private Sub cmdCustromProductDayReport_Click()
+Private Sub cmdCustomProductDayReport_Click()
     basVariable.Action = "PrintReport"
-    basVariable.Parameter = "CustromProductDayReport"
+    basVariable.Parameter = "CustomProductDayReport"
     frmConfirm.Show
 End Sub
 
-Private Sub cmdCustromProductWeekReport_Click()
+Private Sub cmdCustomProductDayReportDetail_Click()
     basVariable.Action = "PrintReport"
-    basVariable.Parameter = "CustromProductWeekReport"
+    basVariable.Parameter = "CustomProductDayReportDetail"
     frmConfirm.Show
 End Sub
 
-Private Sub cmdCustromProductWeekTransaction_Click()
+Private Sub cmdCustomProductWeekReport_Click()
     basVariable.Action = "PrintReport"
-    basVariable.Parameter = "CustromProductWeekTransaction"
+    basVariable.Parameter = "CustomProductWeekReport"
     frmConfirm.Show
 End Sub
 
-Private Sub cmdCustromWeekReport_Click()
+Private Sub cmdCustomProductWeekReportDetail_Click()
     basVariable.Action = "PrintReport"
-    basVariable.Parameter = "CustromWeekReport"
+    basVariable.Parameter = "CustomProductWeekReportDetail"
     frmConfirm.Show
 End Sub
 
-Private Sub cmdCustromMonthReport_Click()
+Private Sub cmdCustomProductWeekTransaction_Click()
     basVariable.Action = "PrintReport"
-    basVariable.Parameter = "CustromMonthReport"
+    basVariable.Parameter = "CustomProductWeekTransaction"
     frmConfirm.Show
 End Sub
 
-Private Sub cmdCustromWeekTransaction_Click()
+Private Sub cmdCustomWeekReport_Click()
     basVariable.Action = "PrintReport"
-    basVariable.Parameter = "CustromWeekTransaction"
+    basVariable.Parameter = "CustomWeekReport"
     frmConfirm.Show
 End Sub
 
-Private Sub cmdCustromYearReport_Click()
+Private Sub cmdCustomMonthReport_Click()
     basVariable.Action = "PrintReport"
-    basVariable.Parameter = "CustromYearReport"
+    basVariable.Parameter = "CustomMonthReport"
     frmConfirm.Show
 End Sub
 
-Private Sub cmdCustromYearTransaction_Click()
+Private Sub cmdCustomWeekTransaction_Click()
     basVariable.Action = "PrintReport"
-    basVariable.Parameter = "CustromYearTransaction"
+    basVariable.Parameter = "CustomWeekTransaction"
+    frmConfirm.Show
+End Sub
+
+Private Sub cmdCustomYearReport_Click()
+    basVariable.Action = "PrintReport"
+    basVariable.Parameter = "CustomYearReport"
+    frmConfirm.Show
+End Sub
+
+Private Sub cmdCustomYearTransaction_Click()
+    basVariable.Action = "PrintReport"
+    basVariable.Parameter = "CustomYearTransaction"
     frmConfirm.Show
 End Sub
 
@@ -675,6 +723,12 @@ Private Sub cmdProduct_Click()
     basVariable.Action = "ProductDetail"
     frmProduct.Show
     Me.Hide
+End Sub
+
+Private Sub cmdProductWeekTransaction_Click()
+    basVariable.Action = "PrintReport"
+    basVariable.Parameter = "ProductWeekTransaction"
+    frmConfirm.Show
 End Sub
 
 Private Sub cmdWeekAccount_Click()

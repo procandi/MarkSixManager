@@ -104,7 +104,7 @@ Begin VB.Form frmConfirm
          Strikethrough   =   0   'False
       EndProperty
       CustomFormat    =   "yyyy/MM/dd"
-      Format          =   96206851
+      Format          =   100597763
       CurrentDate     =   37058
    End
    Begin VB.Label lblEntry 
@@ -249,7 +249,7 @@ Sub DayReport(ByVal TargetPath As String)
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
     Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
-    Dim sql As String
+    Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
     Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
@@ -269,11 +269,11 @@ Sub DayReport(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    sql = "select * from product order by CLng(PID);"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, product_rec)
+    SQL = "select * from product order by CLng(PID);"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
-    sql = "select * from custom;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, custom_rec)
+    SQL = "select * from custom;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
 
     
     Open TargetPath For Output As #1
@@ -311,8 +311,8 @@ Sub DayReport(ByVal TargetPath As String)
             For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount,CurrentDate"
-                sql = "select " & selectFields & " from [order] where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate='" & txtCurrentDate.Text & "' order by PID;"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+                SQL = "select " & selectFields & " from [order] where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate='" & txtCurrentDate.Text & "' order by PID;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
                 
                 'enum custom every product order count
                 CurrentCount = 0
@@ -323,8 +323,8 @@ Sub DayReport(ByVal TargetPath As String)
                     'search price, and addition to variable
                     OrderDate = rec1.Fields.Item("CurrentDate")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
                     CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
                     WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
@@ -402,7 +402,7 @@ Sub WeekReport(ByVal TargetPath As String)
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
     Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
-    Dim sql As String
+    Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
     Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
@@ -422,11 +422,11 @@ Sub WeekReport(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    sql = "select * from product order by CLng(PID);"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, product_rec)
+    SQL = "select * from product order by CLng(PID);"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
-    sql = "select * from custom;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, custom_rec)
+    SQL = "select * from custom;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
     
     Open TargetPath For Output As #1
@@ -466,8 +466,8 @@ Sub WeekReport(ByVal TargetPath As String)
             For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount,CurrentDate"
-                sql = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by [order].PID;"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+                SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by [order].PID;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
                 
                 'enum custom every product order count
                 CurrentCount = 0
@@ -478,8 +478,8 @@ Sub WeekReport(ByVal TargetPath As String)
                     'search price, and addition to variable
                     OrderDate = rec1.Fields.Item("CurrentDate")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
                     CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
                     WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
@@ -509,23 +509,23 @@ Sub WeekReport(ByVal TargetPath As String)
             
             
             'add proportion
-            sql = "select * from custom where BonusTarget='" & CID & " " & CName & "';"
-            Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+            SQL = "select * from custom where BonusTarget='" & CID & " " & CName & "';"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
             Do Until rec1.EOF
                 BonusTarget = rec1.Fields.Item("CID")
                 Proportion = rec1.Fields.Item("Proportion")
                 
                 'search the bonus fromer order count.
                 BonusMoney = 0
-                sql = "select * from [order] where CID='" & BonusTarget & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "');"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec2)
+                SQL = "select * from [order] where CID='" & BonusTarget & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "');"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec2)
                 Do Until rec2.EOF
                     'search price, and addition to variable
                     OrderDate = rec2.Fields.Item("CurrentDate")
                     BonusProduct = rec2.Fields.Item("PID")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & BonusProduct & "' and CID='" & BonusTarget & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & BonusProduct & "' and CID='" & BonusTarget & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                     
                     If Not price_rec.EOF Then
                         BonusMoney = BonusMoney + (Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
@@ -588,7 +588,7 @@ Sub MonthReport(ByVal TargetPath As String)
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
     Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
-    Dim sql As String
+    Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
     Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
@@ -608,11 +608,11 @@ Sub MonthReport(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    sql = "select * from product order by CLng(PID);"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, product_rec)
+    SQL = "select * from product order by CLng(PID);"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
-    sql = "select * from custom;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, custom_rec)
+    SQL = "select * from custom;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
     
     Open TargetPath For Output As #1
@@ -651,8 +651,8 @@ Sub MonthReport(ByVal TargetPath As String)
             For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount,CurrentDate"
-                sql = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/MM/") & "01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/MM/") & Date_Is_28_29_30_31(txtCurrentDate.Text) & "') order by [order].PID;"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+                SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/MM/") & "01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/MM/") & Date_Is_28_29_30_31(txtCurrentDate.Text) & "') order by [order].PID;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
                 
                 'enum custom every product order count
                 CurrentCount = 0
@@ -663,8 +663,8 @@ Sub MonthReport(ByVal TargetPath As String)
                     'search price, and addition to variable
                     OrderDate = rec1.Fields.Item("CurrentDate")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
                     CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
                     WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
@@ -693,23 +693,23 @@ Sub MonthReport(ByVal TargetPath As String)
             Next
             
             'add proportion
-            sql = "select * from custom where BonusTarget='" & CID & " " & CName & "';"
-            Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+            SQL = "select * from custom where BonusTarget='" & CID & " " & CName & "';"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
             Do Until rec1.EOF
                 BonusTarget = rec1.Fields.Item("CID")
                 Proportion = rec1.Fields.Item("Proportion")
                 
                 'search the bonus fromer order count.
                 BonusMoney = 0
-                sql = "select * from [order] where CID='" & BonusTarget & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/MM/") & "01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/MM/") & Date_Is_28_29_30_31(txtCurrentDate.Text) & "');"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec2)
+                SQL = "select * from [order] where CID='" & BonusTarget & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/MM/") & "01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/MM/") & Date_Is_28_29_30_31(txtCurrentDate.Text) & "');"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec2)
                 Do Until rec2.EOF
                     'search price, and addition to variable
                     OrderDate = rec2.Fields.Item("CurrentDate")
                     BonusProduct = rec2.Fields.Item("PID")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & BonusProduct & "' and CID='" & BonusTarget & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & BonusProduct & "' and CID='" & BonusTarget & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                     
                     If Not price_rec.EOF Then
                         BonusMoney = BonusMoney + (Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
@@ -772,7 +772,7 @@ Sub YearReport(ByVal TargetPath As String)
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
     Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
-    Dim sql As String
+    Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
     Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
@@ -792,11 +792,11 @@ Sub YearReport(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    sql = "select * from product order by CLng(PID);"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, product_rec)
+    SQL = "select * from product order by CLng(PID);"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
-    sql = "select * from custom;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, custom_rec)
+    SQL = "select * from custom;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
 
     Open TargetPath For Output As #1
@@ -835,13 +835,13 @@ Sub YearReport(ByVal TargetPath As String)
             For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount,CurrentDate"
-                sql = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31') order by [order].PID;"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+                SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31') order by [order].PID;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
                 
                 'search price
                 selectFields = "CurrentPrice,WinningPrice,Upset"
-                sql = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & txtCurrentDate.Text & "' order by CurrentDate desc;"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & txtCurrentDate.Text & "' order by CurrentDate desc;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
                 'enum custom every product order count
                 CurrentCount = 0
@@ -852,8 +852,8 @@ Sub YearReport(ByVal TargetPath As String)
                     'search price, and addition to variable
                     OrderDate = rec1.Fields.Item("CurrentDate")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
                     CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
                     WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
@@ -882,23 +882,23 @@ Sub YearReport(ByVal TargetPath As String)
             Next
             
             'add proportion
-            sql = "select * from custom where BonusTarget='" & CID & " " & CName & "';"
-            Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+            SQL = "select * from custom where BonusTarget='" & CID & " " & CName & "';"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
             Do Until rec1.EOF
                 BonusTarget = rec1.Fields.Item("CID")
                 Proportion = rec1.Fields.Item("Proportion")
                 
                 'search the bonus fromer order count.
                 BonusMoney = 0
-                sql = "select * from [order] where CID='" & BonusTarget & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31');"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec2)
+                SQL = "select * from [order] where CID='" & BonusTarget & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31');"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec2)
                 Do Until rec2.EOF
                     'search price, and addition to variable
                     OrderDate = rec2.Fields.Item("CurrentDate")
                     BonusProduct = rec2.Fields.Item("PID")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & BonusProduct & "' and CID='" & BonusTarget & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & BonusProduct & "' and CID='" & BonusTarget & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                     
                     If Not price_rec.EOF Then
                         BonusMoney = BonusMoney + (Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
@@ -962,7 +962,7 @@ Sub DayAccount(ByVal TargetPath As String)
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
     Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
     Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
-    Dim sql As String
+    Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
     Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
@@ -982,11 +982,11 @@ Sub DayAccount(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    sql = "select * from product order by CLng(PID);"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, product_rec)
+    SQL = "select * from product order by CLng(PID);"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
-    sql = "select * from custom;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, custom_rec)
+    SQL = "select * from custom;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
 
     Open TargetPath For Output As #1
@@ -1026,8 +1026,8 @@ Sub DayAccount(ByVal TargetPath As String)
             For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount,CurrentDate"
-                sql = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate='" & txtCurrentDate.Text & "' order by [order].PID;"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+                SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate='" & txtCurrentDate.Text & "' order by [order].PID;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
                 
                 'enum custom every product order count
                 CurrentCount = 0
@@ -1038,8 +1038,8 @@ Sub DayAccount(ByVal TargetPath As String)
                     'search price, and addition to variable
                     OrderDate = rec1.Fields.Item("CurrentDate")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
                     CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
                     WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
@@ -1133,7 +1133,7 @@ Sub WeekAccount(ByVal TargetPath As String)
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
     Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
     Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
-    Dim sql As String
+    Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
     Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
@@ -1153,11 +1153,11 @@ Sub WeekAccount(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    sql = "select * from product order by CLng(PID);"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, product_rec)
+    SQL = "select * from product order by CLng(PID);"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
-    sql = "select * from custom;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, custom_rec)
+    SQL = "select * from custom;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
     
     Open TargetPath For Output As #1
@@ -1199,8 +1199,8 @@ Sub WeekAccount(ByVal TargetPath As String)
             For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount,CurrentDate"
-                sql = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by [order].PID;"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+                SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by [order].PID;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
                 
                 'enum custom every product order count
                 CurrentCount = 0
@@ -1211,8 +1211,8 @@ Sub WeekAccount(ByVal TargetPath As String)
                     'search price, and addition to variable
                     OrderDate = rec1.Fields.Item("CurrentDate")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
                     CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
                     WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
@@ -1247,23 +1247,23 @@ Sub WeekAccount(ByVal TargetPath As String)
             Next
             
             'add proportion
-            sql = "select * from custom where BonusTarget='" & CID & " " & CName & "';"
-            Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+            SQL = "select * from custom where BonusTarget='" & CID & " " & CName & "';"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
             Do Until rec1.EOF
                 BonusTarget = rec1.Fields.Item("CID")
                 Proportion = rec1.Fields.Item("Proportion")
                 
                 'search the bonus fromer order count.
                 BonusMoney = 0
-                sql = "select * from [order] where CID='" & BonusTarget & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "');"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec2)
+                SQL = "select * from [order] where CID='" & BonusTarget & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "');"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec2)
                 Do Until rec2.EOF
                     'search price, and addition to variable
                     OrderDate = rec2.Fields.Item("CurrentDate")
                     BonusProduct = rec2.Fields.Item("PID")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & BonusProduct & "' and CID='" & BonusTarget & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & BonusProduct & "' and CID='" & BonusTarget & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                     
                     If Not price_rec.EOF Then
                         BonusMoney = BonusMoney + (Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
@@ -1336,7 +1336,7 @@ Sub MonthAccount(ByVal TargetPath As String)
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
     Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
     Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
-    Dim sql As String
+    Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
     Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
@@ -1356,11 +1356,11 @@ Sub MonthAccount(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    sql = "select * from product order by CLng(PID);"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, product_rec)
+    SQL = "select * from product order by CLng(PID);"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
-    sql = "select * from custom;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, custom_rec)
+    SQL = "select * from custom;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
     
     Open TargetPath For Output As #1
@@ -1401,8 +1401,8 @@ Sub MonthAccount(ByVal TargetPath As String)
             For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount,CurrentDate"
-                sql = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/MM/") & "01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/MM/") & Date_Is_28_29_30_31(txtCurrentDate.Text) & "') order by [order].PID;"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+                SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/MM/") & "01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/MM/") & Date_Is_28_29_30_31(txtCurrentDate.Text) & "') order by [order].PID;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
 
                 'enum custom every product order count
                 CurrentCount = 0
@@ -1413,8 +1413,8 @@ Sub MonthAccount(ByVal TargetPath As String)
                     'search price, and addition to variable
                     OrderDate = rec1.Fields.Item("CurrentDate")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
                     CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
                     WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
@@ -1449,23 +1449,23 @@ Sub MonthAccount(ByVal TargetPath As String)
             Next
             
             'add proportion
-            sql = "select * from custom where BonusTarget='" & CID & " " & CName & "';"
-            Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+            SQL = "select * from custom where BonusTarget='" & CID & " " & CName & "';"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
             Do Until rec1.EOF
                 BonusTarget = rec1.Fields.Item("CID")
                 Proportion = rec1.Fields.Item("Proportion")
                 
                 'search the bonus fromer order count.
                 BonusMoney = 0
-                sql = "select * from [order] where CID='" & BonusTarget & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/MM/") & "01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/MM/") & Date_Is_28_29_30_31(txtCurrentDate.Text) & "');"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec2)
+                SQL = "select * from [order] where CID='" & BonusTarget & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/MM/") & "01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/MM/") & Date_Is_28_29_30_31(txtCurrentDate.Text) & "');"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec2)
                 Do Until rec2.EOF
                     'search price, and addition to variable
                     OrderDate = rec2.Fields.Item("CurrentDate")
                     BonusProduct = rec2.Fields.Item("PID")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & BonusProduct & "' and CID='" & BonusTarget & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & BonusProduct & "' and CID='" & BonusTarget & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                     
                     If Not price_rec.EOF Then
                         BonusMoney = BonusMoney + (Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
@@ -1538,7 +1538,7 @@ Sub YearAccount(ByVal TargetPath As String)
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
     Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
     Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
-    Dim sql As String
+    Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
     Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
@@ -1558,11 +1558,11 @@ Sub YearAccount(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    sql = "select * from product order by CLng(PID);"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, product_rec)
+    SQL = "select * from product order by CLng(PID);"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
-    sql = "select * from custom;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, custom_rec)
+    SQL = "select * from custom;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
     
     Open TargetPath For Output As #1
@@ -1603,8 +1603,8 @@ Sub YearAccount(ByVal TargetPath As String)
             For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount,CurrentDate"
-                sql = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31') order by [order].PID;"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+                SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31') order by [order].PID;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
                 
                 'enum custom every product order count
                 CurrentCount = 0
@@ -1615,8 +1615,8 @@ Sub YearAccount(ByVal TargetPath As String)
                     'search price, and addition to variable
                     OrderDate = rec1.Fields.Item("CurrentDate")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
                     CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
                     WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
@@ -1651,23 +1651,23 @@ Sub YearAccount(ByVal TargetPath As String)
             Next
             
             'add proportion
-            sql = "select * from custom where BonusTarget='" & CID & " " & CName & "';"
-            Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+            SQL = "select * from custom where BonusTarget='" & CID & " " & CName & "';"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
             Do Until rec1.EOF
                 BonusTarget = rec1.Fields.Item("CID")
                 Proportion = rec1.Fields.Item("Proportion")
                 
                 'search the bonus fromer order count.
                 BonusMoney = 0
-                sql = "select * from [order] where CID='" & BonusTarget & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31');"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec2)
+                SQL = "select * from [order] where CID='" & BonusTarget & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31');"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec2)
                 Do Until rec2.EOF
                     'search price, and addition to variable
                     OrderDate = rec2.Fields.Item("CurrentDate")
                     BonusProduct = rec2.Fields.Item("PID")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & BonusProduct & "' and CID='" & BonusTarget & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & BonusProduct & "' and CID='" & BonusTarget & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                     
                     If Not price_rec.EOF Then
                         BonusMoney = BonusMoney + (Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
@@ -1740,7 +1740,7 @@ Sub FourKDayReport(ByVal TargetPath As String)
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
     Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
-    Dim sql As String
+    Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
     Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
@@ -1760,11 +1760,11 @@ Sub FourKDayReport(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    sql = "select * from product where PName like '539_4K' order by CLng(PID);" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, product_rec)
+    SQL = "select * from product where PName like '539_4K' order by CLng(PID);" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
-    sql = "select * from custom;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, custom_rec)
+    SQL = "select * from custom;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
     
     Open TargetPath For Output As #1
@@ -1802,8 +1802,8 @@ Sub FourKDayReport(ByVal TargetPath As String)
             For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount,CurrentDate"
-                sql = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate='" & txtCurrentDate.Text & "' order by [order].PID;"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+                SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate='" & txtCurrentDate.Text & "' order by [order].PID;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
 
                 'enum custom every product order count
                 CurrentCount = 0
@@ -1814,8 +1814,8 @@ Sub FourKDayReport(ByVal TargetPath As String)
                     'search price, and addition to variable
                     OrderDate = rec1.Fields.Item("CurrentDate")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
                     CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
                     WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
@@ -1893,7 +1893,7 @@ Sub FourKWeekReport(ByVal TargetPath As String)
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
     Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
-    Dim sql As String
+    Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
     Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
@@ -1913,11 +1913,11 @@ Sub FourKWeekReport(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    sql = "select * from product where PName like '539_4K' order by CLng(PID);" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, product_rec)
+    SQL = "select * from product where PName like '539_4K' order by CLng(PID);" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
-    sql = "select * from custom;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, custom_rec)
+    SQL = "select * from custom;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
     
     Open TargetPath For Output As #1
@@ -1957,8 +1957,8 @@ Sub FourKWeekReport(ByVal TargetPath As String)
             For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount,CurrentDate"
-                sql = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by [order].PID;"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+                SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by [order].PID;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
                 
                 'enum custom every product order count
                 CurrentCount = 0
@@ -1969,8 +1969,8 @@ Sub FourKWeekReport(ByVal TargetPath As String)
                     'search price, and addition to variable
                     OrderDate = rec1.Fields.Item("CurrentDate")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
                     CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
                     WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
@@ -1999,23 +1999,23 @@ Sub FourKWeekReport(ByVal TargetPath As String)
             Next
             
             'add proportion
-            sql = "select * from custom where BonusTarget='" & CID & " " & CName & "';"
-            Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+            SQL = "select * from custom where BonusTarget='" & CID & " " & CName & "';"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
             Do Until rec1.EOF
                 BonusTarget = rec1.Fields.Item("CID")
                 Proportion = rec1.Fields.Item("Proportion")
                 
                 'search the bonus fromer order count.
                 BonusMoney = 0
-                sql = "select * from [order] where CID='" & BonusTarget & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "');"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec2)
+                SQL = "select * from [order] where CID='" & BonusTarget & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "');"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec2)
                 Do Until rec2.EOF
                     'search price, and addition to variable
                     OrderDate = rec2.Fields.Item("CurrentDate")
                     BonusProduct = rec2.Fields.Item("PID")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & BonusProduct & "' and CID='" & BonusTarget & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & BonusProduct & "' and CID='" & BonusTarget & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                     
                     If Not price_rec.EOF Then
                         BonusMoney = BonusMoney + (Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
@@ -2078,7 +2078,7 @@ Sub FourKMonthReport(ByVal TargetPath As String)
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
     Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
-    Dim sql As String
+    Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
     Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
@@ -2098,11 +2098,11 @@ Sub FourKMonthReport(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    sql = "select * from product where PName like '539_4K' order by CLng(PID);" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, product_rec)
+    SQL = "select * from product where PName like '539_4K' order by CLng(PID);" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
-    sql = "select * from custom;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, custom_rec)
+    SQL = "select * from custom;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
 
     
@@ -2143,8 +2143,8 @@ Sub FourKMonthReport(ByVal TargetPath As String)
             For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount,CurrentDate"
-                sql = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/MM/") & "01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/MM/") & Date_Is_28_29_30_31(txtCurrentDate.Text) & "') order by [order].PID;"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+                SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/MM/") & "01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/MM/") & Date_Is_28_29_30_31(txtCurrentDate.Text) & "') order by [order].PID;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
 
                 'enum custom every product order count
                 CurrentCount = 0
@@ -2155,8 +2155,8 @@ Sub FourKMonthReport(ByVal TargetPath As String)
                     'search price, and addition to variable
                     OrderDate = rec1.Fields.Item("CurrentDate")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
                     CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
                     WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
@@ -2185,23 +2185,23 @@ Sub FourKMonthReport(ByVal TargetPath As String)
             Next
             
             'add proportion
-            sql = "select * from custom where BonusTarget='" & CID & " " & CName & "';"
-            Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+            SQL = "select * from custom where BonusTarget='" & CID & " " & CName & "';"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
             Do Until rec1.EOF
                 BonusTarget = rec1.Fields.Item("CID")
                 Proportion = rec1.Fields.Item("Proportion")
                 
                 'search the bonus fromer order count.
                 BonusMoney = 0
-                sql = "select * from [order] where CID='" & BonusTarget & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/MM/") & "01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/MM/") & Date_Is_28_29_30_31(txtCurrentDate.Text) & "');"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec2)
+                SQL = "select * from [order] where CID='" & BonusTarget & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/MM/") & "01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/MM/") & Date_Is_28_29_30_31(txtCurrentDate.Text) & "');"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec2)
                 Do Until rec2.EOF
                     'search price, and addition to variable
                     OrderDate = rec2.Fields.Item("CurrentDate")
                     BonusProduct = rec2.Fields.Item("PID")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & BonusProduct & "' and CID='" & BonusTarget & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & BonusProduct & "' and CID='" & BonusTarget & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                     
                     If Not price_rec.EOF Then
                         BonusMoney = BonusMoney + (Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
@@ -2264,7 +2264,7 @@ Sub FourKYearReport(ByVal TargetPath As String)
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
     Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
-    Dim sql As String
+    Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
     Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
@@ -2284,11 +2284,11 @@ Sub FourKYearReport(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    sql = "select * from product where PName like '539_4K' order by CLng(PID);" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, product_rec)
+    SQL = "select * from product where PName like '539_4K' order by CLng(PID);" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
-    sql = "select * from custom;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, custom_rec)
+    SQL = "select * from custom;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
 
     
@@ -2329,8 +2329,8 @@ Sub FourKYearReport(ByVal TargetPath As String)
             For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount,CurrentDate"
-                sql = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31') order by [order].PID;"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+                SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31') order by [order].PID;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
 
                 'enum custom every product order count
                 CurrentCount = 0
@@ -2341,8 +2341,8 @@ Sub FourKYearReport(ByVal TargetPath As String)
                     'search price, and addition to variable
                     OrderDate = rec1.Fields.Item("CurrentDate")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
                     CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
                     WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
@@ -2371,23 +2371,23 @@ Sub FourKYearReport(ByVal TargetPath As String)
             Next
             
             'add proportion
-            sql = "select * from custom where BonusTarget='" & CID & " " & CName & "';"
-            Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+            SQL = "select * from custom where BonusTarget='" & CID & " " & CName & "';"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
             Do Until rec1.EOF
                 BonusTarget = rec1.Fields.Item("CID")
                 Proportion = rec1.Fields.Item("Proportion")
                 
                 'search the bonus fromer order count.
                 BonusMoney = 0
-                sql = "select * from [order] where CID='" & BonusTarget & "' and and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31');"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec2)
+                SQL = "select * from [order] where CID='" & BonusTarget & "' and and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31');"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec2)
                 Do Until rec2.EOF
                     'search price, and addition to variable
                     OrderDate = rec2.Fields.Item("CurrentDate")
                     BonusProduct = rec2.Fields.Item("PID")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & BonusProduct & "' and CID='" & BonusTarget & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & BonusProduct & "' and CID='" & BonusTarget & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                     
                     If Not price_rec.EOF Then
                         BonusMoney = BonusMoney + (Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
@@ -2451,7 +2451,7 @@ Sub FourKDayAccount(ByVal TargetPath As String)
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
     Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
     Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
-    Dim sql As String
+    Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
     Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
@@ -2471,11 +2471,11 @@ Sub FourKDayAccount(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    sql = "select * from product where PName like '539_4K' order by CLng(PID);" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, product_rec)
+    SQL = "select * from product where PName like '539_4K' order by CLng(PID);" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
-    sql = "select * from custom;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, custom_rec)
+    SQL = "select * from custom;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
     
     Open TargetPath For Output As #1
@@ -2515,8 +2515,8 @@ Sub FourKDayAccount(ByVal TargetPath As String)
             For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount,CurrentDate"
-                sql = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate='" & txtCurrentDate.Text & "' order by [order].PID;"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+                SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate='" & txtCurrentDate.Text & "' order by [order].PID;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
                  
                 'enum custom every product order count
                 CurrentCount = 0
@@ -2527,8 +2527,8 @@ Sub FourKDayAccount(ByVal TargetPath As String)
                     'search price, and addition to variable
                     OrderDate = rec1.Fields.Item("CurrentDate")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
                     CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
                     WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
@@ -2622,7 +2622,7 @@ Sub FourKWeekAccount(ByVal TargetPath As String)
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
     Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
     Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
-    Dim sql As String
+    Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
     Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
@@ -2642,11 +2642,11 @@ Sub FourKWeekAccount(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    sql = "select * from product where PName like '539_4K' order by CLng(PID);" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, product_rec)
+    SQL = "select * from product where PName like '539_4K' order by CLng(PID);" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
-    sql = "select * from custom;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, custom_rec)
+    SQL = "select * from custom;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
 
     
@@ -2690,8 +2690,8 @@ Sub FourKWeekAccount(ByVal TargetPath As String)
             For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount,CurrentDate"
-                sql = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by [order].PID;"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+                SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by [order].PID;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
 
                 'enum custom every product order count
                 CurrentCount = 0
@@ -2702,8 +2702,8 @@ Sub FourKWeekAccount(ByVal TargetPath As String)
                     'search price, and addition to variable
                     OrderDate = rec1.Fields.Item("CurrentDate")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
                     CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
                     WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
@@ -2738,23 +2738,23 @@ Sub FourKWeekAccount(ByVal TargetPath As String)
             Next
             
             'add proportion
-            sql = "select * from custom where BonusTarget='" & CID & " " & CName & "';"
-            Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+            SQL = "select * from custom where BonusTarget='" & CID & " " & CName & "';"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
             Do Until rec1.EOF
                 BonusTarget = rec1.Fields.Item("CID")
                 Proportion = rec1.Fields.Item("Proportion")
                 
                 'search the bonus fromer order count.
                 BonusMoney = 0
-                sql = "select * from [order] where CID='" & BonusTarget & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "');"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec2)
+                SQL = "select * from [order] where CID='" & BonusTarget & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "');"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec2)
                 Do Until rec2.EOF
                     'search price, and addition to variable
                     OrderDate = rec2.Fields.Item("CurrentDate")
                     BonusProduct = rec2.Fields.Item("PID")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & BonusProduct & "' and CID='" & BonusTarget & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & BonusProduct & "' and CID='" & BonusTarget & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                     
                     If Not price_rec.EOF Then
                         BonusMoney = BonusMoney + (Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
@@ -2827,7 +2827,7 @@ Sub FourKMonthAccount(ByVal TargetPath As String)
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
     Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
     Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
-    Dim sql As String
+    Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
     Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
@@ -2847,11 +2847,11 @@ Sub FourKMonthAccount(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    sql = "select * from product where PName like '539_4K' order by CLng(PID);" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, product_rec)
+    SQL = "select * from product where PName like '539_4K' order by CLng(PID);" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
-    sql = "select * from custom;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, custom_rec)
+    SQL = "select * from custom;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
 
     Open TargetPath For Output As #1
@@ -2892,8 +2892,8 @@ Sub FourKMonthAccount(ByVal TargetPath As String)
             For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount,CurrentDate"
-                sql = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/MM/") & "01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/MM/") & Date_Is_28_29_30_31(txtCurrentDate.Text) & "') order by [order].PID;"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+                SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/MM/") & "01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/MM/") & Date_Is_28_29_30_31(txtCurrentDate.Text) & "') order by [order].PID;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
                 
                 'enum custom every product order count
                 CurrentCount = 0
@@ -2904,8 +2904,8 @@ Sub FourKMonthAccount(ByVal TargetPath As String)
                     'search price, and addition to variable
                     OrderDate = rec1.Fields.Item("CurrentDate")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
                     CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
                     WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
@@ -2940,23 +2940,23 @@ Sub FourKMonthAccount(ByVal TargetPath As String)
             Next
             
             'add proportion
-            sql = "select * from custom where BonusTarget='" & CID & " " & CName & "';"
-            Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+            SQL = "select * from custom where BonusTarget='" & CID & " " & CName & "';"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
             Do Until rec1.EOF
                 BonusTarget = rec1.Fields.Item("CID")
                 Proportion = rec1.Fields.Item("Proportion")
                 
                 'search the bonus fromer order count.
                 BonusMoney = 0
-                sql = "select * from [order] where CID='" & BonusTarget & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/MM/") & "01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/MM/") & Date_Is_28_29_30_31(txtCurrentDate.Text) & "');"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec2)
+                SQL = "select * from [order] where CID='" & BonusTarget & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/MM/") & "01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/MM/") & Date_Is_28_29_30_31(txtCurrentDate.Text) & "');"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec2)
                 Do Until rec2.EOF
                     'search price, and addition to variable
                     OrderDate = rec2.Fields.Item("CurrentDate")
                     BonusProduct = rec2.Fields.Item("PID")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & BonusProduct & "' and CID='" & BonusTarget & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & BonusProduct & "' and CID='" & BonusTarget & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                     
                     If Not price_rec.EOF Then
                         BonusMoney = BonusMoney + (Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
@@ -3029,7 +3029,7 @@ Sub FourKYearAccount(ByVal TargetPath As String)
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
     Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
     Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
-    Dim sql As String
+    Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
     Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
@@ -3049,11 +3049,11 @@ Sub FourKYearAccount(ByVal TargetPath As String)
     SellWinningPrice = 0
     
     
-    sql = "select * from product where PName like '539_4K' order by CLng(PID);" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, product_rec)
+    SQL = "select * from product where PName like '539_4K' order by CLng(PID);" '只要顯示539的4K 'SQL = "select * from product where PName like '%4K%' order by PID;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     
-    sql = "select * from custom;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, custom_rec)
+    SQL = "select * from custom;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
     
     Open TargetPath For Output As #1
@@ -3094,8 +3094,8 @@ Sub FourKYearAccount(ByVal TargetPath As String)
             For i = 0 To Count - 1
                 'query a new custom order
                 selectFields = "CurrentCount,WinningCount,CurrentDate"
-                sql = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31') order by [order].PID;"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+                SQL = "select " & selectFields & " from [order] where [order].PID='" & PIDArray(i) & "' and CID='" & CID & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31') order by [order].PID;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
                 
                 'enum custom every product order count
                 CurrentCount = 0
@@ -3106,8 +3106,8 @@ Sub FourKYearAccount(ByVal TargetPath As String)
                     'search price, and addition to variable
                     OrderDate = rec1.Fields.Item("CurrentDate")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
                     CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
                     WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
@@ -3142,23 +3142,23 @@ Sub FourKYearAccount(ByVal TargetPath As String)
             Next
             
             'add proportion
-            sql = "select * from custom where BonusTarget='" & CID & " " & CName & "';"
-            Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec1)
+            SQL = "select * from custom where BonusTarget='" & CID & " " & CName & "';"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
             Do Until rec1.EOF
                 BonusTarget = rec1.Fields.Item("CID")
                 Proportion = rec1.Fields.Item("Proportion")
                 
                 'search the bonus fromer order count.
                 BonusMoney = 0
-                sql = "select * from [order] where CID='" & BonusTarget & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31');"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, rec2)
+                SQL = "select * from [order] where CID='" & BonusTarget & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31');"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec2)
                 Do Until rec2.EOF
                     'search price, and addition to variable
                     OrderDate = rec2.Fields.Item("CurrentDate")
                     BonusProduct = rec2.Fields.Item("PID")
                     selectFields = "CurrentPrice,WinningPrice,Upset"
-                    sql = "select * from price where PID='" & BonusProduct & "' and CID='" & BonusTarget & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                    SQL = "select * from price where PID='" & BonusProduct & "' and CID='" & BonusTarget & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                     
                     If Not price_rec.EOF Then
                         BonusMoney = BonusMoney + (Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
@@ -3227,11 +3227,11 @@ Sub FourKYearAccount(ByVal TargetPath As String)
 End Sub
 
 
-Sub CustromProductDayReport(ByVal TargetPath As String)
+Sub CustomProductDayReportDetail(ByVal TargetPath As String)
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer
     Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
-    Dim sql As String
+    Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
     Dim CData() As String
@@ -3249,11 +3249,11 @@ Sub CustromProductDayReport(ByVal TargetPath As String)
         beginv = Mid(PData(0), 2, 1)
         endv = beginv & "9"
         beginv = beginv & "0"
-        sql = "select * from [order] where cint(PID)>=" & beginv & " and cint(PID)<=" & endv & " and CID='" & CData(0) & "' and CurrentDate='" & txtCurrentDate.Text & "' order by CurrentDate;"
+        SQL = "select * from [order] where cint(PID)>=" & beginv & " and cint(PID)<=" & endv & " and CID='" & CData(0) & "' and CurrentDate='" & txtCurrentDate.Text & "' order by CurrentDate;"
     Else
-        sql = "select * from [order] where PID='" & PData(0) & "' and CID='" & CData(0) & "' and CurrentDate='" & txtCurrentDate.Text & "' order by CurrentDate;"
+        SQL = "select * from [order] where PID='" & PData(0) & "' and CID='" & CData(0) & "' and CurrentDate='" & txtCurrentDate.Text & "' order by CurrentDate;"
     End If
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, order_rec)
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
        
     
     Open TargetPath For Output As #1
@@ -3280,12 +3280,12 @@ Sub CustromProductDayReport(ByVal TargetPath As String)
             OrderDate = order_rec.Fields.Item("CurrentDate")
             ProductID = order_rec.Fields.Item("PID")
             selectFields = "CurrentPrice,WinningPrice,Upset"
-            sql = "select * from price where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-            Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+            SQL = "select * from price where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
             
             'search product
-            sql = "select * from product where PID='" & ProductID & "';"
-            Call basDataBase.OpenRecordset(sql, basDataBase.Connection, product_rec)
+            SQL = "select * from product where PID='" & ProductID & "';"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
             ProductName = product_rec.Fields.Item("PName")
 
             'mark custom name
@@ -3335,11 +3335,11 @@ Sub CustromProductDayReport(ByVal TargetPath As String)
     order_rec.Close
 End Sub
 
-Sub CustromProductWeekReport(ByVal TargetPath As String)
+Sub CustomProductWeekReportDetail(ByVal TargetPath As String)
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer
     Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
-    Dim sql As String
+    Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
     Dim CData() As String
@@ -3357,11 +3357,11 @@ Sub CustromProductWeekReport(ByVal TargetPath As String)
         beginv = Mid(PData(0), 2, 1)
         endv = beginv & "9"
         beginv = beginv & "0"
-        sql = "select * from [order] where cint(PID)>=" & beginv & " and cint(PID)<=" & endv & " and CID='" & CData(0) & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by CurrentDate;"
+        SQL = "select * from [order] where cint(PID)>=" & beginv & " and cint(PID)<=" & endv & " and CID='" & CData(0) & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by CurrentDate;"
     Else
-        sql = "select * from [order] where PID='" & PData(0) & "' and CID='" & CData(0) & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by CurrentDate;"
+        SQL = "select * from [order] where PID='" & PData(0) & "' and CID='" & CData(0) & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by CurrentDate;"
     End If
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, order_rec)
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
   
     
     Open TargetPath For Output As #1
@@ -3388,12 +3388,12 @@ Sub CustromProductWeekReport(ByVal TargetPath As String)
             OrderDate = order_rec.Fields.Item("CurrentDate")
             ProductID = order_rec.Fields.Item("PID")
             selectFields = "CurrentPrice,WinningPrice,Upset"
-            sql = "select * from price where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-            Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+            SQL = "select * from price where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
             
             'search product
-            sql = "select * from product where PID='" & ProductID & "';"
-            Call basDataBase.OpenRecordset(sql, basDataBase.Connection, product_rec)
+            SQL = "select * from product where PID='" & ProductID & "';"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
             ProductName = product_rec.Fields.Item("PName")
         
             'mark custom name
@@ -3443,11 +3443,237 @@ Sub CustromProductWeekReport(ByVal TargetPath As String)
     order_rec.Close
 End Sub
 
-Sub CustromProductWeekTransaction(ByVal TargetPath As String)
+
+Sub CustomProductDayReport(ByVal TargetPath As String)
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer
     Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
-    Dim sql As String
+    Dim SQL As String
+    Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
+    Dim rec1 As New adoDB.Recordset
+    Dim CData() As String
+    Dim PData() As String
+    Dim beginv As Integer
+    Dim endv As Integer
+    Dim OrderDate As String, ProductID As String, ProductName As String
+    Dim PriceCount As Double
+    
+        
+    'search order and product
+    CData = Split(cmbCName.Text, " ")
+    PData = Split(cmbPName.Text, " ")
+    If Val(PData(0)) >= 100 Then
+        beginv = Mid(PData(0), 2, 1)
+        endv = beginv & "9"
+        beginv = beginv & "0"
+        
+        SQL = "select * from [order] where cint(PID)>=" & beginv & " and cint(PID)<=" & endv & " and CID='" & CData(0) & "' and CurrentDate='" & txtCurrentDate.Text & "' order by CurrentDate;"
+        Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
+        
+        SQL = "select * from product where cint(PID)>=" & beginv & " and cint(PID)<=" & endv & " order by PID;"
+        Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
+    Else
+        SQL = "select * from [order] where PID='" & PData(0) & "' and CID='" & CData(0) & "' and CurrentDate='" & txtCurrentDate.Text & "' order by CurrentDate;"
+        Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
+        
+        SQL = "select * from product where PID='" & PData(0) & "' order by PID;"
+        Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
+    End If
+       
+    
+    Open TargetPath For Output As #1
+        
+        Print #1, "<table>"
+    
+        'show report datetime
+        Body = "<tr><td>日期</td><td colspan=10>" & txtCurrentDate.Text & "</td></tr>"
+        Print #1, Body
+        
+        'show custom name and product name
+        Body = "<tr><td>客戶名稱</td><td colspan=10>" & CData(1) & "</td></tr>"
+        Print #1, Body
+        Body = "<tr><td>產品名稱</td><td colspan=10>" & PData(1) & "</td></tr>"
+        Print #1, Body
+        Body = "<tr><td>數量</td><td>價格</td><td>數量總計</td><td>金額總計</td></tr>"
+        Print #1, Body
+        
+        'show every order with current date
+        PriceCount = 0
+        'order_rec.MoveFirst
+        Do Until order_rec.EOF
+            'search price
+            OrderDate = order_rec.Fields.Item("CurrentDate")
+            ProductID = order_rec.Fields.Item("PID")
+            selectFields = "CurrentPrice,WinningPrice,Upset"
+            SQL = "select * from price where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
+            
+            'search product
+            SQL = "select * from product where PID='" & ProductID & "';"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
+            ProductName = product_rec.Fields.Item("PName")
+
+            'mark custom name
+            Body = "<tr>"
+            Body = Body & "<td>" & order_rec.Fields.Item("SwiftCode") & "</td>"
+            Body = Body & "<td>" & OrderDate & "</td>"
+            Body = Body & "<td>" & ProductName & "</td>"
+            
+            Body = Body & "<td>" & order_rec.Fields.Item("CurrentCount") & "</td>"
+            If price_rec.EOF Then
+                Body = Body & "<td>0</td>"
+            Else
+                Body = Body & "<td>" & order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")) & "</td>"
+                PriceCount = PriceCount + (order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")))
+            End If
+            
+            Body = Body & "<td>" & order_rec.Fields.Item("WinningCount") & "</td>"
+            If price_rec.EOF Then
+                Body = Body & "<td>0</td>"
+            Else
+                Body = Body & "<td>" & order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")) & "</td>"
+                PriceCount = PriceCount - (order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")))
+            End If
+            
+            Body = Body & "<td>" & order_rec.Fields.Item("AddMoney") & "</td>"
+            If Not IsNull(order_rec.Fields.Item("AddMoney")) Then PriceCount = PriceCount + Val(order_rec.Fields.Item("AddMoney"))
+            
+            Body = Body & "<td>" & order_rec.Fields.Item("BonusMoney") & "</td>"
+            '不計退水金額 'If Not IsNull(order_rec.Fields.Item("BonusMoney")) Then PriceCount = PriceCount - order_rec.Fields.Item("BonusMoney")
+            
+            Body = Body & "<td>" & order_rec.Fields.Item("Note") & "</td>"
+              
+
+            Body = Body & "</tr>"
+            Print #1, Body
+            
+            order_rec.MoveNext
+        Loop
+        
+        'show price count
+        Body = "<tr><td>應收</td><td>" & PriceCount & "</td></tr>"
+        Print #1, Body
+        
+        Print #1, "</table>"
+    Close #1
+    
+    order_rec.Close
+End Sub
+
+Sub CustomProductWeekReport(ByVal TargetPath As String)
+    Dim selectFields As String
+    Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer
+    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
+    Dim SQL As String
+    Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
+    Dim rec1 As New adoDB.Recordset
+    Dim CData() As String
+    Dim PData() As String
+    Dim beginv As Integer
+    Dim endv As Integer
+    Dim OrderDate As String, ProductID As String, ProductName As String
+    Dim PriceCount As Double
+    
+       
+    'search order
+    CData = Split(cmbCName.Text, " ")
+    PData = Split(cmbPName.Text, " ")
+    If Val(PData(0)) >= 100 Then
+        beginv = Mid(PData(0), 2, 1)
+        endv = beginv & "9"
+        beginv = beginv & "0"
+        SQL = "select * from [order] where cint(PID)>=" & beginv & " and cint(PID)<=" & endv & " and CID='" & CData(0) & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by CurrentDate;"
+    Else
+        SQL = "select * from [order] where PID='" & PData(0) & "' and CID='" & CData(0) & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by CurrentDate;"
+    End If
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
+  
+    
+    Open TargetPath For Output As #1
+        
+        Print #1, "<table>"
+    
+        'show report datetime
+        Body = "<tr><td>日期</td><td colspan=10>" & DateTime.DateAdd("d", -6, txtCurrentDate.Text) & "至" & txtCurrentDate.Text & "</td></tr>"
+        Print #1, Body
+        
+        'show custom name and product name
+        Body = "<tr><td>客戶名稱</td><td colspan=10>" & CData(1) & "</td></tr>"
+        Print #1, Body
+        Body = "<tr><td>產品名稱</td><td colspan=10>" & PData(1) & "</td></tr>"
+        Print #1, Body
+        Body = "<tr><td>交易流水號</td><td>交易日期</td><td>產品名稱</td><td>交易數量</td><td>交易金額</td><td>中獎數量</td><td>中獎金額</td><td>漲價</td><td>退水金額</td><td>備註</td></tr>"
+        Print #1, Body
+        
+        'show every order with current date
+        PriceCount = 0
+        'order_rec.MoveFirst
+        Do Until order_rec.EOF
+            'search price
+            OrderDate = order_rec.Fields.Item("CurrentDate")
+            ProductID = order_rec.Fields.Item("PID")
+            selectFields = "CurrentPrice,WinningPrice,Upset"
+            SQL = "select * from price where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
+            
+            'search product
+            SQL = "select * from product where PID='" & ProductID & "';"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
+            ProductName = product_rec.Fields.Item("PName")
+        
+            'mark custom name
+            Body = "<tr>"
+            Body = Body & "<td>" & order_rec.Fields.Item("SwiftCode") & "</td>"
+            Body = Body & "<td>" & OrderDate & "</td>"
+            Body = Body & "<td>" & ProductName & "</td>"
+            
+            Body = Body & "<td>" & order_rec.Fields.Item("CurrentCount") & "</td>"
+            If price_rec.EOF Then
+                Body = Body & "<td>0</td>"
+            Else
+                Body = Body & "<td>" & order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")) & "</td>"
+                PriceCount = PriceCount + (order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")))
+            End If
+            
+            Body = Body & "<td>" & order_rec.Fields.Item("WinningCount") & "</td>"
+            If price_rec.EOF Then
+                Body = Body & "<td>0</td>"
+            Else
+                Body = Body & "<td>" & order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")) & "</td>"
+                PriceCount = PriceCount - (order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")))
+            End If
+            
+            Body = Body & "<td>" & order_rec.Fields.Item("AddMoney") & "</td>"
+            If Not IsNull(order_rec.Fields.Item("AddMoney")) Then PriceCount = PriceCount + Val(order_rec.Fields.Item("AddMoney"))
+            
+            Body = Body & "<td>" & order_rec.Fields.Item("BonusMoney") & "</td>"
+            '不計退水金額 'If Not IsNull(order_rec.Fields.Item("BonusMoney")) Then PriceCount = PriceCount - order_rec.Fields.Item("BonusMoney")
+            
+            Body = Body & "<td>" & order_rec.Fields.Item("Note") & "</td>"
+              
+
+            Body = Body & "</tr>"
+            Print #1, Body
+            
+            order_rec.MoveNext
+        Loop
+        
+        'show price count
+        Body = "<tr><td>應收</td><td>" & PriceCount & "</td></tr>"
+        Print #1, Body
+        
+        Print #1, "</table>"
+    Close #1
+    
+    order_rec.Close
+End Sub
+
+
+Sub CustomProductWeekTransaction(ByVal TargetPath As String)
+    Dim selectFields As String
+    Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer
+    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
+    Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
     Dim CData() As String
@@ -3467,11 +3693,11 @@ Sub CustromProductWeekTransaction(ByVal TargetPath As String)
         beginv = Mid(PData(0), 2, 1)
         endv = beginv & "9"
         beginv = beginv & "0"
-        sql = "select * from [order] where cint(PID)>=" & beginv & " and cint(PID)<=" & endv & " and CID='" & CData(0) & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by CurrentDate;"
+        SQL = "select * from [order] where cint(PID)>=" & beginv & " and cint(PID)<=" & endv & " and CID='" & CData(0) & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by CurrentDate;"
     Else
-        sql = "select * from [order] where PID='" & PData(0) & "' and CID='" & CData(0) & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by CurrentDate;"
+        SQL = "select * from [order] where PID='" & PData(0) & "' and CID='" & CData(0) & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by CurrentDate;"
     End If
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, order_rec)
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
   
     
     Open TargetPath For Output As #1
@@ -3502,8 +3728,8 @@ Sub CustromProductWeekTransaction(ByVal TargetPath As String)
             OrderDate = order_rec.Fields.Item("CurrentDate")
             ProductID = order_rec.Fields.Item("PID")
             selectFields = "CurrentPrice,WinningPrice,Upset"
-            sql = "select * from price where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-            Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+            SQL = "select * from price where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
             
             
             If OldOrderDate = OrderDate Or OldOrderDate = "" Then
@@ -3611,11 +3837,11 @@ Sub CustromProductWeekTransaction(ByVal TargetPath As String)
     order_rec.Close
 End Sub
 
-Sub CustromWeekReport(ByVal TargetPath As String)
+Sub CustomWeekReport(ByVal TargetPath As String)
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer
     Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
-    Dim sql As String
+    Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
     Dim CData() As String
@@ -3628,8 +3854,8 @@ Sub CustromWeekReport(ByVal TargetPath As String)
     
     'search order
     CData = Split(cmbCName.Text, " ")
-    sql = "select * from [order] where CID='" & CData(0) & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by CurrentDate;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, order_rec)
+    SQL = "select * from [order] where CID='" & CData(0) & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by CurrentDate;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
   
     
     Open TargetPath For Output As #1
@@ -3654,12 +3880,12 @@ Sub CustromWeekReport(ByVal TargetPath As String)
             OrderDate = order_rec.Fields.Item("CurrentDate")
             ProductID = order_rec.Fields.Item("PID")
             selectFields = "CurrentPrice,WinningPrice,Upset"
-            sql = "select * from price where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-            Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+            SQL = "select * from price where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
             
             'search product
-            sql = "select * from product where PID='" & ProductID & "';"
-            Call basDataBase.OpenRecordset(sql, basDataBase.Connection, product_rec)
+            SQL = "select * from product where PID='" & ProductID & "';"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
             ProductName = product_rec.Fields.Item("PName")
         
             'mark custom name
@@ -3709,11 +3935,11 @@ Sub CustromWeekReport(ByVal TargetPath As String)
     order_rec.Close
 End Sub
 
-Sub CustromMonthReport(ByVal TargetPath As String)
+Sub CustomMonthReport(ByVal TargetPath As String)
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer
     Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
-    Dim sql As String
+    Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
     Dim CData() As String
@@ -3726,8 +3952,8 @@ Sub CustromMonthReport(ByVal TargetPath As String)
     
     'search order
     CData = Split(cmbCName.Text, " ")
-    sql = "select * from [order] where CID='" & CData(0) & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/MM/") & "01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/MM/") & Date_Is_28_29_30_31(txtCurrentDate.Text) & "') order by CurrentDate;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, order_rec)
+    SQL = "select * from [order] where CID='" & CData(0) & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/MM/") & "01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/MM/") & Date_Is_28_29_30_31(txtCurrentDate.Text) & "') order by CurrentDate;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
   
     
     Open TargetPath For Output As #1
@@ -3752,12 +3978,12 @@ Sub CustromMonthReport(ByVal TargetPath As String)
             OrderDate = order_rec.Fields.Item("CurrentDate")
             ProductID = order_rec.Fields.Item("PID")
             selectFields = "CurrentPrice,WinningPrice,Upset"
-            sql = "select * from price where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-            Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+            SQL = "select * from price where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
             
             'search product
-            sql = "select * from product where PID='" & ProductID & "';"
-            Call basDataBase.OpenRecordset(sql, basDataBase.Connection, product_rec)
+            SQL = "select * from product where PID='" & ProductID & "';"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
             ProductName = product_rec.Fields.Item("PName")
         
             'mark custom name
@@ -3807,11 +4033,11 @@ Sub CustromMonthReport(ByVal TargetPath As String)
     order_rec.Close
 End Sub
 
-Sub CustromYearReport(ByVal TargetPath As String)
+Sub CustomYearReport(ByVal TargetPath As String)
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer
     Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
-    Dim sql As String
+    Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
     Dim CData() As String
@@ -3824,8 +4050,8 @@ Sub CustromYearReport(ByVal TargetPath As String)
     
     'search order
     CData = Split(cmbCName.Text, " ")
-    sql = "select * from [order] where CID='" & CData(0) & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31') order by CurrentDate;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, order_rec)
+    SQL = "select * from [order] where CID='" & CData(0) & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31') order by CurrentDate;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
   
     
     Open TargetPath For Output As #1
@@ -3850,12 +4076,12 @@ Sub CustromYearReport(ByVal TargetPath As String)
             OrderDate = order_rec.Fields.Item("CurrentDate")
             ProductID = order_rec.Fields.Item("PID")
             selectFields = "CurrentPrice,WinningPrice,Upset"
-            sql = "select * from price where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-            Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+            SQL = "select * from price where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
             
             'search product
-            sql = "select * from product where PID='" & ProductID & "';"
-            Call basDataBase.OpenRecordset(sql, basDataBase.Connection, product_rec)
+            SQL = "select * from product where PID='" & ProductID & "';"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
             ProductName = product_rec.Fields.Item("PName")
         
             'mark custom name
@@ -3905,11 +4131,11 @@ Sub CustromYearReport(ByVal TargetPath As String)
     order_rec.Close
 End Sub
 
-Sub CustromWeekTransaction(ByVal TargetPath As String)
+Sub CustomWeekTransaction(ByVal TargetPath As String)
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer
     Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
-    Dim sql As String
+    Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
     Dim CData() As String
@@ -3924,8 +4150,8 @@ Sub CustromWeekTransaction(ByVal TargetPath As String)
        
     'search order
     CData = Split(cmbCName.Text, " ")
-    sql = "select * from [order] where CID='" & CData(0) & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by CurrentDate;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, order_rec)
+    SQL = "select * from [order] where CID='" & CData(0) & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by CurrentDate;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
   
     
     Open TargetPath For Output As #1
@@ -3954,8 +4180,8 @@ Sub CustromWeekTransaction(ByVal TargetPath As String)
             OrderDate = order_rec.Fields.Item("CurrentDate")
             ProductID = order_rec.Fields.Item("PID")
             selectFields = "CurrentPrice,WinningPrice,Upset"
-            sql = "select * from price where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-            Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+            SQL = "select * from price where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
             
             
             If OldOrderDate = OrderDate Or OldOrderDate = "" Then
@@ -4063,11 +4289,11 @@ Sub CustromWeekTransaction(ByVal TargetPath As String)
 End Sub
 
 
-Sub CustromMonthTransaction(ByVal TargetPath As String)
+Sub CustomMonthTransaction(ByVal TargetPath As String)
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer
     Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
-    Dim sql As String
+    Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
     Dim CData() As String
@@ -4082,8 +4308,8 @@ Sub CustromMonthTransaction(ByVal TargetPath As String)
        
     'search order
     CData = Split(cmbCName.Text, " ")
-    sql = "select * from [order] where CID='" & CData(0) & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/MM/") & "01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/MM/") & Date_Is_28_29_30_31(txtCurrentDate.Text) & "') order by CurrentDate;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, order_rec)
+    SQL = "select * from [order] where CID='" & CData(0) & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/MM/") & "01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/MM/") & Date_Is_28_29_30_31(txtCurrentDate.Text) & "') order by CurrentDate;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
   
     
     Open TargetPath For Output As #1
@@ -4112,8 +4338,8 @@ Sub CustromMonthTransaction(ByVal TargetPath As String)
             OrderDate = order_rec.Fields.Item("CurrentDate")
             ProductID = order_rec.Fields.Item("PID")
             selectFields = "CurrentPrice,WinningPrice,Upset"
-            sql = "select * from price where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-            Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+            SQL = "select * from price where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
             
             
             If OldOrderDate = OrderDate Or OldOrderDate = "" Then
@@ -4221,11 +4447,11 @@ Sub CustromMonthTransaction(ByVal TargetPath As String)
 End Sub
 
 
-Sub CustromYearTransaction(ByVal TargetPath As String)
+Sub CustomYearTransaction(ByVal TargetPath As String)
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer
     Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
-    Dim sql As String
+    Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
     Dim CData() As String
@@ -4240,8 +4466,8 @@ Sub CustromYearTransaction(ByVal TargetPath As String)
        
     'search order
     CData = Split(cmbCName.Text, " ")
-    sql = "select * from [order] where CID='" & CData(0) & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31') order by CurrentDate;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, order_rec)
+    SQL = "select * from [order] where CID='" & CData(0) & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31') order by CurrentDate;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
   
     
     Open TargetPath For Output As #1
@@ -4270,8 +4496,8 @@ Sub CustromYearTransaction(ByVal TargetPath As String)
             OrderDate = order_rec.Fields.Item("CurrentDate")
             ProductID = order_rec.Fields.Item("PID")
             selectFields = "CurrentPrice,WinningPrice,Upset"
-            sql = "select * from price where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-            Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+            SQL = "select * from price where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
             
             
             If OldOrderDate = OrderDate Or OldOrderDate = "" Then
@@ -4379,12 +4605,150 @@ Sub CustromYearTransaction(ByVal TargetPath As String)
 End Sub
 
 
+
+Sub ProductWeekTransaction(ByVal TargetPath As String)
+    Const Day As Integer = 6
+    
+    Dim selectFields As String
+    Dim Body As String, i As Integer, n As Integer
+    Dim SQL As String
+    Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
+    Dim rec1 As New adoDB.Recordset
+    Dim PData() As String
+    Dim beginv As Integer
+    Dim endv As Integer
+    Dim OrderDate As String, ProductID As String, ProductName As String
+    Dim PriceCount As Double
+    Dim OldOrderDate As String, CurrentPriceCount(Day) As Double, WinningPriceCount(Day) As Double, AddMoney As Double, BonusMoney As Double
+    Dim DayDiff As Integer
+    Dim SaveOrderDate(Day) As String
+    
+    
+    PData = Split(cmbPName.Text, " ")
+    
+    
+    'list all custom
+    SQL = "select * from custom;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
+  
+    
+    Open TargetPath For Output As #1
+        
+        Print #1, "<table>"
+    
+        'show report datetime
+        Body = "<tr><td>日期</td><td colspan=10>" & DateTime.DateAdd("d", -6, txtCurrentDate.Text) & "至" & txtCurrentDate.Text & "</td></tr>"
+        Print #1, Body
+        Body = "<tr><td>產品名稱</td><td colspan=10>" & PData(1) & "</td></tr>"
+        Print #1, Body
+        
+        'list all day
+        Body = "<tr><td>客戶名稱</td>"
+        For i = 6 To 0 Step -1
+            Body = Body & "<td>" & DateTime.DateAdd("d", -i, txtCurrentDate.Text) & "</td>"
+        Next
+        Body = Body & "<td>小計</td></tr>"
+        Print #1, Body
+        
+       
+        'list all custom again
+        custom_rec.MoveFirst
+        Do Until custom_rec.EOF
+            'search order
+            If Val(PData(0)) >= 100 Then
+                beginv = Mid(PData(0), 2, 1)
+                endv = beginv & "9"
+                beginv = beginv & "0"
+                SQL = "select * from [order] where cint(PID)>=" & beginv & " and cint(PID)<=" & endv & " and CID='" & custom_rec.Fields.Item("CID") & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by CurrentDate;"
+            Else
+                SQL = "select * from [order] where PID='" & PData(0) & "' and CID='" & custom_rec.Fields.Item("CID") & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by CurrentDate;" ''SQL = "select * from [order] where CID='" & custom_rec.Fields.Item("CID") & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by CurrentDate;"
+            End If
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
+            
+            
+            'show every order with current date
+            n = -1
+            OldOrderDate = ""
+            'order_rec.MoveFirst
+            Do Until order_rec.EOF
+            
+                'search price
+                OrderDate = order_rec.Fields.Item("CurrentDate")
+                ProductID = order_rec.Fields.Item("PID")
+                selectFields = "CurrentPrice,WinningPrice,Upset"
+                SQL = "select * from price where PID='" & ProductID & "' and CID='" & custom_rec.Fields.Item("CID") & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
+                
+                
+                If OldOrderDate = OrderDate Then
+                    'save data per same data
+                    If Not price_rec.EOF Then
+                        CurrentPriceCount(n) = CurrentPriceCount(n) + (order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")))
+                        'WinningPriceCount(n) = WinningPriceCount(n) + (order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")))
+                    End If
+                Else
+                    n = n + 1
+                    SaveOrderDate(n) = OrderDate
+                    OldOrderDate = OrderDate
+                    
+                    'save data per new day
+                    If Not price_rec.EOF Then
+                        CurrentPriceCount(n) = (order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")))
+                        'WinningPriceCount(i) =  (order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")))
+                    Else
+                        CurrentPriceCount(n) = 0
+                        'WinningPriceCount(i) =  0
+                    End If
+                End If
+
+
+                order_rec.MoveNext
+            Loop
+            
+          
+            'list all custom name
+            n = 0
+            PriceCount = 0
+            Body = "<tr><td>" & custom_rec.Fields.Item("CName") & "</td>"
+            For i = 6 To 0 Step -1
+                If SaveOrderDate(n) = Format(DateTime.DateAdd("d", -i, txtCurrentDate.Text), "yyyy/MM/dd") Then
+                    PriceCount = PriceCount + CurrentPriceCount(n)
+                    
+                    Body = Body & "<td>" & CurrentPriceCount(n) & "</td>"
+                    'Body = Body & "<td>" & WinningPriceCount(n) & "</td>"
+                    
+                    CurrentPriceCount(n) = 0
+                    'WinningPriceCount(n) =  0
+                    
+                    n = n + 1
+                Else
+                    Body = Body & "<td>0</td>"
+                    'Body = Body & "<td>0</td>"
+                End If
+            Next
+            Body = Body & "<td>" & PriceCount & "</td></tr>"
+            Print #1, Body
+            
+            
+            
+            custom_rec.MoveNext
+        Loop
+        
+        
+        
+        Print #1, "</table>"
+    Close #1
+    
+    order_rec.Close
+End Sub
+
+
 Sub WeekTransaction(ByVal TargetPath As String)
     Const Day As Integer = 6
     
     Dim selectFields As String
     Dim Body As String, i As Integer, n As Integer
-    Dim sql As String
+    Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
     Dim beginv As Integer
@@ -4396,8 +4760,8 @@ Sub WeekTransaction(ByVal TargetPath As String)
     Dim SaveOrderDate(Day) As String
        
     'list all custom
-    sql = "select * from custom;"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, custom_rec)
+    SQL = "select * from custom;"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
   
     
     Open TargetPath For Output As #1
@@ -4421,8 +4785,8 @@ Sub WeekTransaction(ByVal TargetPath As String)
         custom_rec.MoveFirst
         Do Until custom_rec.EOF
             'search order
-            sql = "select * from [order] where CID='" & custom_rec.Fields.Item("CID") & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by CurrentDate;"
-            Call basDataBase.OpenRecordset(sql, basDataBase.Connection, order_rec)
+            SQL = "select * from [order] where CID='" & custom_rec.Fields.Item("CID") & "' and (CurrentDate>='" & Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd") & "' and CurrentDate<='" & txtCurrentDate.Text & "') order by CurrentDate;"
+            Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
             
             
             'show every order with current date
@@ -4435,8 +4799,8 @@ Sub WeekTransaction(ByVal TargetPath As String)
                 OrderDate = order_rec.Fields.Item("CurrentDate")
                 ProductID = order_rec.Fields.Item("PID")
                 selectFields = "CurrentPrice,WinningPrice,Upset"
-                sql = "select * from price where PID='" & ProductID & "' and CID='" & custom_rec.Fields.Item("CID") & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
-                Call basDataBase.OpenRecordset(sql, basDataBase.Connection, price_rec)
+                SQL = "select * from price where PID='" & ProductID & "' and CID='" & custom_rec.Fields.Item("CID") & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
                 
                 If OldOrderDate = OrderDate Then
@@ -4508,9 +4872,9 @@ Private Sub cmdConfirm_Click()
 'On Error GoTo errout:
     If txtCurrentDate.Text = "" Then
         MsgBox "請先選擇要列印的時間！"
-    ElseIf (basVariable.Parameter = "CustromProductDayReport" Or basVariable.Parameter = "CustromProductWeekReport") And cmbCName.Text = "" And cmbPName.Text = "" Then
+    ElseIf (basVariable.Parameter = "CustomProductDayReport" Or basVariable.Parameter = "CustomProductWeekReport") And cmbCName.Text = "" And cmbPName.Text = "" Then
         MsgBox "尚未選擇客戶或產品！"
-    ElseIf (basVariable.Parameter = "CustromWeekReport" Or basVariable.Parameter = "CustromMonthReport" Or basVariable.Parameter = "CustromYearReport") And cmbCName.Text = "" Then
+    ElseIf (basVariable.Parameter = "CustomWeekReport" Or basVariable.Parameter = "CustomMonthReport" Or basVariable.Parameter = "CustomYearReport") And cmbCName.Text = "" Then
         MsgBox "尚未選擇客戶！"
     Else
         Dim TargetPath As String
@@ -4574,59 +4938,72 @@ Private Sub cmdConfirm_Click()
         Case "FourKYearAccount"
             TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyy") & "_4K年總帳.xls"
             Call FourKYearAccount(TargetPath)
-        Case "CustromProductDayReport"
+        Case "CustomProductDayReportDetail"
             CData = Split(cmbCName.Text, " ")
             PData = Split(cmbPName.Text, " ")
-            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_" & CData(1) & "_" & PData(1) & "_客別分產品日報表.xls"
-            Call CustromProductDayReport(TargetPath)
-        Case "CustromProductWeekReport"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_" & CData(1) & "_" & PData(1) & "_分客別、分產品日明細表.xls"
+            Call CustomProductDayReportDetail(TargetPath)
+        Case "CustomProductWeekReportDetail"
             CData = Split(cmbCName.Text, " ")
             PData = Split(cmbPName.Text, " ")
-            TargetPath = TargetPath & Format(DateTime.DateAdd("d", -6, txtCurrentDate.Text), "yyyyMMdd") & "至" & Format(txtCurrentDate.Text, "yyyyMMdd") & "_" & CData(1) & "_" & PData(1) & "_客別分產品週報表.xls"
-            Call CustromProductWeekReport(TargetPath)
-        Case "CustromProductWeekTransaction"
+            TargetPath = TargetPath & Format(DateTime.DateAdd("d", -6, txtCurrentDate.Text), "yyyyMMdd") & "至" & Format(txtCurrentDate.Text, "yyyyMMdd") & "_" & CData(1) & "_" & PData(1) & "_分客別、分產品週明細表.xls"
+            Call CustomProductWeekReportDetail(TargetPath)
+        Case "CustomProductDayReport"
             CData = Split(cmbCName.Text, " ")
             PData = Split(cmbPName.Text, " ")
-            TargetPath = TargetPath & Format(DateTime.DateAdd("d", -6, txtCurrentDate.Text), "yyyyMMdd") & "至" & Format(txtCurrentDate.Text, "yyyyMMdd") & "_" & CData(1) & "_" & PData(1) & "_客別分產品週交易金額表.xls"
-            Call CustromProductWeekTransaction(TargetPath)
-        Case "CustromWeekReport"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMMdd") & "_" & CData(1) & "_" & PData(1) & "_分客別、分產品日報表.xls"
+            Call CustomProductDayReport(TargetPath)
+        Case "CustomProductWeekReport"
             CData = Split(cmbCName.Text, " ")
             PData = Split(cmbPName.Text, " ")
-            TargetPath = TargetPath & Format(DateTime.DateAdd("d", -6, txtCurrentDate.Text), "yyyyMMdd") & "至" & Format(txtCurrentDate.Text, "yyyyMMdd") & "_" & CData(1) & "_客別不分產品週報表.xls"
-            Call CustromWeekReport(TargetPath)
-        Case "CustromMonthReport"
+            TargetPath = TargetPath & Format(DateTime.DateAdd("d", -6, txtCurrentDate.Text), "yyyyMMdd") & "至" & Format(txtCurrentDate.Text, "yyyyMMdd") & "_" & CData(1) & "_" & PData(1) & "_分客別、分產品週報表.xls"
+            Call CustomProductWeekReport(TargetPath)
+        Case "CustomProductWeekTransaction"
             CData = Split(cmbCName.Text, " ")
             PData = Split(cmbPName.Text, " ")
-            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMM") & "_" & CData(1) & "_客別不分產品月報表.xls"
-            Call CustromMonthReport(TargetPath)
-        Case "CustromYearReport"
+            TargetPath = TargetPath & Format(DateTime.DateAdd("d", -6, txtCurrentDate.Text), "yyyyMMdd") & "至" & Format(txtCurrentDate.Text, "yyyyMMdd") & "_" & CData(1) & "_" & PData(1) & "_分客別、分產品週交易金額表.xls"
+            Call CustomProductWeekTransaction(TargetPath)
+        Case "CustomWeekReport"
             CData = Split(cmbCName.Text, " ")
             PData = Split(cmbPName.Text, " ")
-            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyy") & "_" & CData(1) & "_客別不分產品年報表.xls"
-            Call CustromYearReport(TargetPath)
-        Case "CustromWeekTransaction"
+            TargetPath = TargetPath & Format(DateTime.DateAdd("d", -6, txtCurrentDate.Text), "yyyyMMdd") & "至" & Format(txtCurrentDate.Text, "yyyyMMdd") & "_" & CData(1) & "_分客別、不分產品週報表.xls"
+            Call CustomWeekReport(TargetPath)
+        Case "CustomMonthReport"
             CData = Split(cmbCName.Text, " ")
             PData = Split(cmbPName.Text, " ")
-            TargetPath = TargetPath & Format(DateTime.DateAdd("d", -6, txtCurrentDate.Text), "yyyyMMdd") & "至" & Format(txtCurrentDate.Text, "yyyyMMdd") & "_" & CData(1) & "_客別不分產品週交易金額表.xls"
-            Call CustromWeekTransaction(TargetPath)
-        Case "CustromMonthTransaction"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMM") & "_" & CData(1) & "_分客別、不分產品月報表.xls"
+            Call CustomMonthReport(TargetPath)
+        Case "CustomYearReport"
             CData = Split(cmbCName.Text, " ")
             PData = Split(cmbPName.Text, " ")
-            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMM") & "_" & CData(1) & "_客別不分產品月交易金額表.xls"
-            Call CustromMonthTransaction(TargetPath)
-        Case "CustromYearTransaction"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyy") & "_" & CData(1) & "_分客別、不分產品年報表.xls"
+            Call CustomYearReport(TargetPath)
+        Case "CustomWeekTransaction"
             CData = Split(cmbCName.Text, " ")
             PData = Split(cmbPName.Text, " ")
-            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyy") & "_" & CData(1) & "_客別不分產品年交易金額表.xls"
-            Call CustromYearTransaction(TargetPath)
+            TargetPath = TargetPath & Format(DateTime.DateAdd("d", -6, txtCurrentDate.Text), "yyyyMMdd") & "至" & Format(txtCurrentDate.Text, "yyyyMMdd") & "_" & CData(1) & "_分客別、不分產品週交易金額表.xls"
+            Call CustomWeekTransaction(TargetPath)
+        Case "CustomMonthTransaction"
+            CData = Split(cmbCName.Text, " ")
+            PData = Split(cmbPName.Text, " ")
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMM") & "_" & CData(1) & "_分客別、不分產品月交易金額表.xls"
+            Call CustomMonthTransaction(TargetPath)
+        Case "CustomYearTransaction"
+            CData = Split(cmbCName.Text, " ")
+            PData = Split(cmbPName.Text, " ")
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyy") & "_" & CData(1) & "_分客別、不分產品年交易金額表.xls"
+            Call CustomYearTransaction(TargetPath)
+        Case "ProductWeekTransaction"
+            TargetPath = TargetPath & Format(DateTime.DateAdd("d", -6, txtCurrentDate.Text), "yyyyMMdd") & "至" & Format(txtCurrentDate.Text, "yyyyMMdd") & "_不分客別、分產品週交易金額表.xls"
+            Call ProductWeekTransaction(TargetPath)
         Case "WeekTransaction"
-            TargetPath = TargetPath & Format(DateTime.DateAdd("d", -6, txtCurrentDate.Text), "yyyyMMdd") & "至" & Format(txtCurrentDate.Text, "yyyyMMdd") & "_週交易金額表.xls"
+            TargetPath = TargetPath & Format(DateTime.DateAdd("d", -6, txtCurrentDate.Text), "yyyyMMdd") & "至" & Format(txtCurrentDate.Text, "yyyyMMdd") & "_不分客別、不分產品週交易金額表.xls"
             Call WeekTransaction(TargetPath)
         Case "MonthTransaction"
-            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMM") & "_月交易金額表.xls"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyyMM") & "_不分客別、不分產品月交易金額表.xls"
             'Call MonthTransaction(TargetPath)
         Case "YearTransaction"
-            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyy") & "_年交易金額表.xls"
+            TargetPath = TargetPath & Format(txtCurrentDate.Text, "yyyy") & "_不分客別、不分產品年交易金額表.xls"
             'Call YearTransaction(TargetPath)
         End Select
         
@@ -4677,8 +5054,8 @@ Private Sub Form_Load()
         Label1(0).Caption = "4K月總帳列印"
     Case "FourKYearAccount"
         Label1(0).Caption = "4K年總帳列印"
-    Case "CustromProductDayReport"
-        Label1(0).Caption = "客別分產品日報表列印"
+    Case "CustomProductDayReportDetail"
+        Label1(0).Caption = "分客別、分產品日明細表列印"
         lblEntry(0).Visible = True
         lblEntry(2).Visible = True
         cmbCName.Visible = True
@@ -4689,8 +5066,8 @@ Private Sub Form_Load()
         Call cmbPName.AddItem("100 539_全")
         Call cmbPName.AddItem("110 港號_全")
         Call cmbPName.AddItem("120 大樂透_全")
-    Case "CustromProductWeekReport"
-        Label1(0).Caption = "客別分產品週報表列印"
+    Case "CustomProductWeekReportDetail"
+        Label1(0).Caption = "分客別、分產品週明細表列印"
         lblEntry(0).Visible = True
         lblEntry(2).Visible = True
         cmbCName.Visible = True
@@ -4701,8 +5078,8 @@ Private Sub Form_Load()
         Call cmbPName.AddItem("100 539_全")
         Call cmbPName.AddItem("110 港號_全")
         Call cmbPName.AddItem("120 大樂透_全")
-    Case "CustromProductWeekTransaction"
-        Label1(0).Caption = "客別分產品週交易金額表列印"
+    Case "CustomProductDayReport"
+        Label1(0).Caption = "分客別、分產品日報表列印"
         lblEntry(0).Visible = True
         lblEntry(2).Visible = True
         cmbCName.Visible = True
@@ -4713,42 +5090,75 @@ Private Sub Form_Load()
         Call cmbPName.AddItem("100 539_全")
         Call cmbPName.AddItem("110 港號_全")
         Call cmbPName.AddItem("120 大樂透_全")
-    Case "CustromWeekReport"
-        Label1(0).Caption = "客別不分產品週報表列印"
+    Case "CustomProductWeekReport"
+        Label1(0).Caption = "分客別、分產品週報表列印"
+        lblEntry(0).Visible = True
+        lblEntry(2).Visible = True
+        cmbCName.Visible = True
+        cmbPName.Visible = True
+        Call ComboBox_LoadFrom_DataBase_ByFile(cmbCName, "CID,CName", "custom", "", "", "")
+        Call ComboBox_LoadFrom_DataBase_ByFile(cmbPName, "PID,PName", "product", "", "", "")
+        
+        Call cmbPName.AddItem("100 539_全")
+        Call cmbPName.AddItem("110 港號_全")
+        Call cmbPName.AddItem("120 大樂透_全")
+    Case "CustomProductWeekTransaction"
+        Label1(0).Caption = "分客別、分產品週交易金額表列印"
+        lblEntry(0).Visible = True
+        lblEntry(2).Visible = True
+        cmbCName.Visible = True
+        cmbPName.Visible = True
+        Call ComboBox_LoadFrom_DataBase_ByFile(cmbCName, "CID,CName", "custom", "", "", "")
+        Call ComboBox_LoadFrom_DataBase_ByFile(cmbPName, "PID,PName", "product", "", "", "")
+        
+        Call cmbPName.AddItem("100 539_全")
+        Call cmbPName.AddItem("110 港號_全")
+        Call cmbPName.AddItem("120 大樂透_全")
+    Case "CustomWeekReport"
+        Label1(0).Caption = "分客別、不分產品週報表列印"
         lblEntry(0).Visible = True
         cmbCName.Visible = True
         Call ComboBox_LoadFrom_DataBase_ByFile(cmbCName, "CID,CName", "custom", "", "", "")
-    Case "CustromMonthReport"
-        Label1(0).Caption = "客別不分產品月報表列印"
+    Case "CustomMonthReport"
+        Label1(0).Caption = "分客別、不分產品月報表列印"
         lblEntry(0).Visible = True
         cmbCName.Visible = True
         Call ComboBox_LoadFrom_DataBase_ByFile(cmbCName, "CID,CName", "custom", "", "", "")
-    Case "CustromYearReport"
-        Label1(0).Caption = "客別不分產品年報表列印"
+    Case "CustomYearReport"
+        Label1(0).Caption = "分客別、不分產品年報表列印"
         lblEntry(0).Visible = True
         cmbCName.Visible = True
         Call ComboBox_LoadFrom_DataBase_ByFile(cmbCName, "CID,CName", "custom", "", "", "")
-    Case "CustromWeekTransaction"
-        Label1(0).Caption = "客別不分產品週交易金額表列印"
+    Case "CustomWeekTransaction"
+        Label1(0).Caption = "分客別、不分產品週交易金額表列印"
         lblEntry(0).Visible = True
         cmbCName.Visible = True
         Call ComboBox_LoadFrom_DataBase_ByFile(cmbCName, "CID,CName", "custom", "", "", "")
-    Case "CustromMonthTransaction"
-        Label1(0).Caption = "客別不分產品月交易金額表列印"
+    Case "CustomMonthTransaction"
+        Label1(0).Caption = "分客別、不分產品月交易金額表列印"
         lblEntry(0).Visible = True
         cmbCName.Visible = True
         Call ComboBox_LoadFrom_DataBase_ByFile(cmbCName, "CID,CName", "custom", "", "", "")
-    Case "CustromYearTransaction"
-        Label1(0).Caption = "客別不分產品年交易金額表列印"
+    Case "CustomYearTransaction"
+        Label1(0).Caption = "分客別、不分產品年交易金額表列印"
         lblEntry(0).Visible = True
         cmbCName.Visible = True
         Call ComboBox_LoadFrom_DataBase_ByFile(cmbCName, "CID,CName", "custom", "", "", "")
+    Case "ProductWeekTransaction"
+        Label1(0).Caption = "不分客別、分產品週交易金額表列印"
+        lblEntry(2).Visible = True
+        cmbPName.Visible = True
+        Call ComboBox_LoadFrom_DataBase_ByFile(cmbPName, "PID,PName", "product", "", "", "")
+        
+        Call cmbPName.AddItem("100 539_全")
+        Call cmbPName.AddItem("110 港號_全")
+        Call cmbPName.AddItem("120 大樂透_全")
     Case "WeekTransaction"
-        Label1(0).Caption = "週交易金額表列印"
+        Label1(0).Caption = "不分客別、不分產品週交易金額表列印"
     Case "MonthTransaction"
-        Label1(0).Caption = "月交易金額表列印"
+        Label1(0).Caption = "不分客別、不分產品月交易金額表列印"
     Case "YearTransaction"
-        Label1(0).Caption = "年交易金額表列印"
+        Label1(0).Caption = "不分客別、不分產品年交易金額表列印"
     End Select
     
     
