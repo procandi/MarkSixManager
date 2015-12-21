@@ -161,6 +161,7 @@ Begin VB.Form frmProve
          Left            =   1680
          TabIndex        =   33
          Top             =   240
+         Visible         =   0   'False
          Width           =   1215
       End
       Begin VB.CommandButton cmdCustomProductDayReport 
