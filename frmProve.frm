@@ -14,7 +14,7 @@ Begin VB.Form frmProve
    ScaleHeight     =   14250
    ScaleWidth      =   6765
    Begin VB.Frame Frame6 
-      Caption         =   "不分客別、分產品的總表"
+      Caption         =   "不分客別、分產品的報表"
       Height          =   975
       Left            =   240
       TabIndex        =   46
@@ -30,7 +30,7 @@ Begin VB.Form frmProve
       End
    End
    Begin VB.Frame Frame5 
-      Caption         =   "不分客別、不分產品的總表"
+      Caption         =   "不分客別、不分產品的報表"
       Height          =   975
       Left            =   240
       TabIndex        =   39
@@ -174,7 +174,7 @@ Begin VB.Form frmProve
       End
    End
    Begin VB.Frame Frame2 
-      Caption         =   "4K總表"
+      Caption         =   "4K報表"
       Height          =   1695
       Left            =   240
       TabIndex        =   22
@@ -246,7 +246,7 @@ Begin VB.Form frmProve
       End
    End
    Begin VB.Frame Frame1 
-      Caption         =   "一般總表"
+      Caption         =   "一般報表"
       Height          =   1695
       Left            =   240
       TabIndex        =   13
