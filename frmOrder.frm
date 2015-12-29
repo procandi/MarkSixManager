@@ -215,7 +215,7 @@ Begin VB.Form frmOrder
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   96206851
+         Format          =   3407875
          CurrentDate     =   37058
       End
       Begin VB.Label lblEntry 
@@ -518,12 +518,12 @@ Private Sub cmdClear_Click()
 End Sub
 
 Private Sub cmdDelete_Click()
-    Dim condition As String, sql As String
+    Dim condition As String, SQL As String
     Dim PID(15) As String
     Dim product_rec As New adoDB.Recordset
     
-    sql = "select * from product';"
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, product_rec)
+    SQL = "select * from product';"
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     Do Until product_rec.EOF
         Select Case product_rec("PName")
         Case "539_ио"
@@ -580,8 +580,8 @@ Private Sub cmdDelete_Click()
         Next
     End Select
     
-    sql = "delete from [order] where CurrentDate='" & basVariable.SelectDate & "' and PID in (" & condition & ")"
-    basDataBase.Connection.Execute sql
+    SQL = "delete from [order] where CurrentDate='" & basVariable.SelectDate & "' and PID in (" & condition & ")"
+    basDataBase.Connection.Execute SQL
     
 
     cmdDelete.Enabled = False
@@ -591,7 +591,7 @@ End Sub
 
 'add function to refresh database and datagrid
 Private Sub cmdRefresh_Click()
-    Dim condition As String, sql As String
+    Dim condition As String, SQL As String
     Dim recdata(365) As BindData, i As Integer, n As Integer
     Dim rs As adoDB.Recordset
     Dim rex As RegExp
@@ -616,30 +616,30 @@ Private Sub cmdRefresh_Click()
     End If
 
     If condition = "" Then
-        sql = "select " & selectFields & " from [order],product where [order].PID=product.PID and [order].CID='" & basVariable.SelectCID & "' order by CurrentDate desc, product.PName;"
+        SQL = "select " & selectFields & " from [order],product where [order].PID=product.PID and [order].CID='" & basVariable.SelectCID & "' order by CurrentDate desc, product.PName;"
     Else
-        sql = "select " & selectFields & " from [order],product where [order].PID=product.PID and [order].CID='" & basVariable.SelectCID & "' and " & condition & " order by CurrentDate desc, product.PName;"
+        SQL = "select " & selectFields & " from [order],product where [order].PID=product.PID and [order].CID='" & basVariable.SelectCID & "' and " & condition & " order by CurrentDate desc, product.PName;"
     End If
-    Call basDataBase.OpenRecordset(sql, basDataBase.Connection, basDataBase.Recordset)
+    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, basDataBase.Recordset)
     
        
     
-    'get the Grid's Recordset and add a new Record
+    'get the Grid's Recordset and add a new Record. the limit number between -9999.9999 to 9999.9999
     rs.Fields.Append "SwiftCode", adVarChar, 10
     rs.Fields.Append "CurrentDate", adVarChar, 10
     rs.Fields.Append "PName", adVarChar, 6
-    rs.Fields.Append "CurrentCount_Car", adVarChar, 5
-    rs.Fields.Append "WinningCount_Car", adVarChar, 5
-    rs.Fields.Append "CurrentCount_2K", adVarChar, 5
-    rs.Fields.Append "WinningCount_2K", adVarChar, 5
-    rs.Fields.Append "CurrentCount_3K", adVarChar, 5
-    rs.Fields.Append "WinningCount_3K", adVarChar, 5
-    rs.Fields.Append "CurrentCount_4K", adVarChar, 5
-    rs.Fields.Append "WinningCount_4K", adVarChar, 5
-    rs.Fields.Append "CurrentCount_Special", adVarChar, 5
-    rs.Fields.Append "WinningCount_Special", adVarChar, 5
-    rs.Fields.Append "AddMoney", adVarChar, 5
-    rs.Fields.Append "BonusMoney", adVarChar, 5
+    rs.Fields.Append "CurrentCount_Car", adVarChar, 10
+    rs.Fields.Append "WinningCount_Car", adVarChar, 10
+    rs.Fields.Append "CurrentCount_2K", adVarChar, 10
+    rs.Fields.Append "WinningCount_2K", adVarChar, 10
+    rs.Fields.Append "CurrentCount_3K", adVarChar, 10
+    rs.Fields.Append "WinningCount_3K", adVarChar, 10
+    rs.Fields.Append "CurrentCount_4K", adVarChar, 10
+    rs.Fields.Append "WinningCount_4K", adVarChar, 10
+    rs.Fields.Append "CurrentCount_Special", adVarChar, 10
+    rs.Fields.Append "WinningCount_Special", adVarChar, 10
+    rs.Fields.Append "AddMoney", adVarChar, 15
+    rs.Fields.Append "BonusMoney", adVarChar, 15
     rs.Fields.Append "Note", adVarChar, 150
     rs.Open
     
@@ -698,18 +698,18 @@ Private Sub cmdRefresh_Click()
         rs.Fields("SwiftCode").Value = recdata(i).SwiftCode
         rs.Fields("CurrentDate").Value = recdata(i).CurrentDate
         rs.Fields("PName").Value = recdata(i).PName
-        rs.Fields("CurrentCount_Car").Value = recdata(i).CurrentCount_Car
-        rs.Fields("WinningCount_Car").Value = recdata(i).WinningCount_Car
-        rs.Fields("CurrentCount_2K").Value = recdata(i).CurrentCount_2K
-        rs.Fields("WinningCount_2K").Value = recdata(i).WinningCount_2K
-        rs.Fields("CurrentCount_3K").Value = recdata(i).CurrentCount_3K
-        rs.Fields("WinningCount_3K").Value = recdata(i).WinningCount_3K
-        rs.Fields("CurrentCount_4K").Value = recdata(i).CurrentCount_4K
-        rs.Fields("WinningCount_4K").Value = recdata(i).WinningCount_4K
-        rs.Fields("CurrentCount_Special").Value = recdata(i).CurrentCount_Special
-        rs.Fields("WinningCount_Special").Value = recdata(i).WinningCount_Special
-        rs.Fields("AddMoney").Value = recdata(i).AddMoney
-        rs.Fields("BonusMoney").Value = recdata(i).BonusMoney
+        rs.Fields("CurrentCount_Car").Value = Format(recdata(i).CurrentCount_Car, "0.0000")
+        rs.Fields("WinningCount_Car").Value = Format(recdata(i).WinningCount_Car, "0.0000")
+        rs.Fields("CurrentCount_2K").Value = Format(recdata(i).CurrentCount_2K, "0.0000")
+        rs.Fields("WinningCount_2K").Value = Format(recdata(i).WinningCount_2K, "0.0000")
+        rs.Fields("CurrentCount_3K").Value = Format(recdata(i).CurrentCount_3K, "0.0000")
+        rs.Fields("WinningCount_3K").Value = Format(recdata(i).WinningCount_3K, "0.0000")
+        rs.Fields("CurrentCount_4K").Value = Format(recdata(i).CurrentCount_4K, "0.0000")
+        rs.Fields("WinningCount_4K").Value = Format(recdata(i).WinningCount_4K, "0.0000")
+        rs.Fields("CurrentCount_Special").Value = Format(recdata(i).CurrentCount_Special, "0.0000")
+        rs.Fields("WinningCount_Special").Value = Format(recdata(i).WinningCount_Special, "0.0000")
+        rs.Fields("AddMoney").Value = Format(recdata(i).AddMoney, "0.0000")
+        rs.Fields("BonusMoney").Value = Format(recdata(i).BonusMoney, "0.0000")
         rs.Fields("Note").Value = recdata(i).Note
     Next
     

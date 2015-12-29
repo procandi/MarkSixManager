@@ -104,7 +104,7 @@ Begin VB.Form frmConfirm
          Strikethrough   =   0   'False
       EndProperty
       CustomFormat    =   "yyyy/MM/dd"
-      Format          =   94044163
+      Format          =   3407875
       CurrentDate     =   37058
    End
    Begin VB.Label lblEntry 
@@ -4559,7 +4559,7 @@ Sub ProductWeekTransaction(ByVal TargetPath As String)
     
     
     'list all custom
-    SQL = "select * from custom;"
+    SQL = "select * from custom order by CLng(CID);"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
   
     
@@ -4691,7 +4691,7 @@ Sub WeekTransaction(ByVal TargetPath As String)
     Dim SaveOrderDate(Day) As String
        
     'list all custom
-    SQL = "select * from custom;"
+    SQL = "select * from custom order by CLng(CID);"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
   
     
@@ -4763,7 +4763,7 @@ Sub WeekTransaction(ByVal TargetPath As String)
             'list all custom name
             n = 0
             PriceCount = 0
-            Body = "<tr><td>" & custom_rec.Fields.Item("CName") & "</td>"
+            Body = "<tr><td>" & custom_rec.Fields.Item("CID") & "</td>"
             For i = 6 To 0 Step -1
                 If SaveOrderDate(n) = Format(DateTime.DateAdd("d", -i, txtCurrentDate.Text), "yyyy/MM/dd") Then
                     PriceCount = PriceCount + CurrentPriceCount(n)
