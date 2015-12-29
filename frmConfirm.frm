@@ -104,7 +104,7 @@ Begin VB.Form frmConfirm
          Strikethrough   =   0   'False
       EndProperty
       CustomFormat    =   "yyyy/MM/dd"
-      Format          =   102367235
+      Format          =   96993283
       CurrentDate     =   37058
    End
    Begin VB.Label lblEntry 
@@ -1782,6 +1782,8 @@ Sub FourKDayReport(ByVal TargetPath As String)
             PIDArray(Count) = product_rec.Fields.Item("PID")
             Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
             Body = Body & "<td>" & product_rec.Fields.Item("PName") & "交易金額</td>"
+            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
+            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中獎金額</td>"
             Count = Count + 1
             product_rec.MoveNext
         Loop
@@ -1828,6 +1830,8 @@ Sub FourKDayReport(ByVal TargetPath As String)
                 Loop
                 Body = Body & "<td>" & CurrentCount & "</td>"
                 Body = Body & "<td>" & CurrentPrice & "</td>"
+                Body = Body & "<td>" & WinningCount & "</td>"
+                Body = Body & "<td>" & WinningCount & "</td>"
                 
                 'a new variable to account buy and sell
                 If CurrentCount >= 0 Then
