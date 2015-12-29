@@ -1,7 +1,7 @@
 frmCustomAddNew = 0, 0, 0, 0, C, 300, 300, 1633, 946, C
 frmPriceUpdate = 250, 250, 1583, 896, C, 0, 0, 1333, 646, C
 frmProve = 25, 25, 1450, 609, C, 275, 275, 1608, 921, C
-frmConfirm = 75, 75, 1500, 659, , 100, 100, 1433, 746, C
+frmConfirm = 75, 75, 1500, 659, Z, 100, 100, 1433, 746, C
 basDataBase = 0, 0, 0, 0, C
 basFunction = 0, 0, 0, 0, C
 basINI = 0, 0, 0, 0, C

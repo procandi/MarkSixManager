@@ -334,7 +334,7 @@ Begin VB.Form frmOrderAddNew
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   102432771
+         Format          =   96141315
          CurrentDate     =   42267
       End
       Begin VB.Label lblBasic 
@@ -906,12 +906,17 @@ Private Sub cmdUpdate_Click()
         
         
         'get LastGroup
-        SQL = "select * from [order] order where CurrentDate='" & Format(txtCurrentDate.Text, "yyyy/MM/dd") & "' and PID>=" & PID(n) & "' and PID<=" & PID(n + 4) & " by Group desc;"
+        SQL = "select * from [order] where CID='" & basVariable.SelectCID & "' and CurrentDate='" & Format(txtCurrentDate.Text, "yyyy/MM/dd") & "' and CLng(PID)>=" & PID(n) & " and CLng(PID)<=" & PID(n + 4) & " order by Group desc;"
         Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
         If order_rec.EOF Then
             LastGroup = -1
         Else
-            LastGroup = Val(order_rec("Group"))
+            If order_rec("Group") = Null Then
+                'this solution is use for handle old data
+                LastGroup = -1
+            Else
+                LastGroup = Val(order_rec("Group"))
+            End If
         End If
         order_rec.Close
         

@@ -104,7 +104,7 @@ Begin VB.Form frmConfirm
          Strikethrough   =   0   'False
       EndProperty
       CustomFormat    =   "yyyy/MM/dd"
-      Format          =   96993283
+      Format          =   96141315
       CurrentDate     =   37058
    End
    Begin VB.Label lblEntry 
@@ -3449,7 +3449,6 @@ End Sub
 
 
 Sub CustomProductDayReport(ByVal TargetPath As String)
-    Dim i As Integer
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer
     Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
@@ -3464,6 +3463,7 @@ Sub CustomProductDayReport(ByVal TargetPath As String)
     Dim OrderDate As String, ProductID As String, ProductName As String
     Dim PriceCount As Double
     Dim GroupFlag As Integer, GroupMax As Integer
+    Dim Current(100) As Double, Winning(100) As Double
     
         
     'search order and product
@@ -3478,14 +3478,14 @@ Sub CustomProductDayReport(ByVal TargetPath As String)
         Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
         
         'get the highest group, and setting for row count
-        SQL = "select top 1 MAX(Group) AS HighestGroup from product where cint(PID)>=" & beginv & " and cint(PID)<=" & endv & ";"
+        SQL = "select top 1 MAX(Group) AS HighestGroup from [order] where cint(PID)>=" & beginv & " and cint(PID)<=" & endv & ";"
         Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
     Else
         SQL = "select * from product where PID='" & PData(0) & "' order by CLng(PID);"
         Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
         
         'get the highest group, and setting for row count
-        SQL = "select top 1 MAX(Group) AS HighestGroup from product where PID='" & PData(0) & "';"
+        SQL = "select top 1 MAX(Group) AS HighestGroup from [order] where PID='" & PData(0) & "';"
         Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
     End If
     GroupMax = Val(rec1.Fields.Item("HighestGroup"))
@@ -3520,11 +3520,6 @@ Sub CustomProductDayReport(ByVal TargetPath As String)
         Do Until product_rec.EOF
             'get product ID
             ProductID = product_rec.Fields.Item("PID")
-            
-            
-            'write to xml
-            Body = "<tr>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
             
             
             'search order
@@ -3567,19 +3562,23 @@ Sub CustomProductDayReport(ByVal TargetPath As String)
                 Note = Note & order_rec.Fields.Item("Note")
                 
                 
-                'write to xml for count
+                Debug.Print order_rec.Fields.Item("pid") & " ";
+                Debug.Print order_rec.Fields.Item("currentcount");
+                Debug.Print order_rec.Fields.Item("Group");
+                Debug.Print GroupFlag
+                
+                
+                'save count
                 If Val(order_rec.Fields.Item("Group")) <> GroupFlag Then
                     For i = GroupFlag To Val(order_rec.Fields.Item("Group")) - 1
-                        Body = Body & "<td></td>"
+                        Current(i) = 0
+                        Winning(i) = 0
                     Next
                     GroupFlag = Val(order_rec.Fields.Item("Group"))
                 End If
-                Body = Body & "<td>" & order_rec.Fields.Item("CurrentCount") & "</td>"
-                
+                Current(GroupFlag) = order_rec.Fields.Item("CurrentCount")
+                Winning(GroupFlag) = order_rec.Fields.Item("WinningCount")
                 GroupFlag = GroupFlag + 1
-                If GroupFlag >= GroupMax Then
-                    GroupFlag = 0
-                End If
                 
                             
                 'move to next record
@@ -3587,9 +3586,20 @@ Sub CustomProductDayReport(ByVal TargetPath As String)
             Loop
             
             
+            'fill data to last
+            For i = GroupFlag To GroupMax
+                Current(i) = 0
+                Winning(i) = 0
+            Next
+            
             
             'write to xml
             PriceCount = 0
+            Body = "<tr>"
+            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
+            For i = 0 To GroupMax
+                Body = Body & "<td>" & Current(i) & "</td>"
+            Next
             Body = Body & "<td>" & CurrentCount & "</td>"
             Body = Body & "<td>" & CurrentPrice & "</td>"
             Body = Body & "</tr>"
@@ -3598,6 +3608,9 @@ Sub CustomProductDayReport(ByVal TargetPath As String)
             
             Body = "<tr>"
             Body = Body & "<td>" & product_rec.Fields.Item("PName") & "¤¤</td>"
+            For i = 0 To GroupMax
+                Body = Body & "<td>" & Winning(i) & "</td>"
+            Next
             Body = Body & "<td>" & WinningCount & "</td>"
             Body = Body & "<td>" & WinningPrice & "</td>"
             Body = Body & "</tr>"
