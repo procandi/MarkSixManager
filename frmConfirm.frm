@@ -104,7 +104,7 @@ Begin VB.Form frmConfirm
          Strikethrough   =   0   'False
       EndProperty
       CustomFormat    =   "yyyy/MM/dd"
-      Format          =   3407875
+      Format          =   102367235
       CurrentDate     =   37058
    End
    Begin VB.Label lblEntry 
@@ -3445,6 +3445,7 @@ End Sub
 
 
 Sub CustomProductDayReport(ByVal TargetPath As String)
+    Dim i As Integer
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer
     Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
@@ -3458,6 +3459,7 @@ Sub CustomProductDayReport(ByVal TargetPath As String)
     Dim endv As Integer
     Dim OrderDate As String, ProductID As String, ProductName As String
     Dim PriceCount As Double
+    Dim GroupFlag As Integer, GroupMax As Integer
     
         
     'search order and product
@@ -3468,12 +3470,21 @@ Sub CustomProductDayReport(ByVal TargetPath As String)
         endv = beginv & "9"
         beginv = beginv & "0"
                
-        SQL = "select * from product where cint(PID)>=" & beginv & " and cint(PID)<=" & endv & " order by PID;"
+        SQL = "select * from product where cint(PID)>=" & beginv & " and cint(PID)<=" & endv & " order by CLng(PID);"
         Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
+        
+        'get the highest group, and setting for row count
+        SQL = "select top 1 MAX(Group) AS HighestGroup from product where cint(PID)>=" & beginv & " and cint(PID)<=" & endv & ";"
+        Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
     Else
-        SQL = "select * from product where PID='" & PData(0) & "' order by PID;"
+        SQL = "select * from product where PID='" & PData(0) & "' order by CLng(PID);"
         Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
+        
+        'get the highest group, and setting for row count
+        SQL = "select top 1 MAX(Group) AS HighestGroup from product where PID='" & PData(0) & "';"
+        Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
     End If
+    GroupMax = Val(rec1.Fields.Item("HighestGroup"))
        
     
     Open TargetPath For Output As #1
@@ -3489,7 +3500,11 @@ Sub CustomProductDayReport(ByVal TargetPath As String)
         Print #1, Body
         Body = "<tr><td>產品名稱</td><td colspan=10>" & PData(1) & "</td></tr>"
         Print #1, Body
-        Body = "<tr><td>明細</td><td>數量總計</td><td>金額總計</td></tr>"
+        Body = "<tr><td>明細</td>"
+        For i = 0 To GroupMax
+            Body = Body & "<td>" & (i + 1) & "</td>"
+        Next
+        Body = Body & "<td>數量總計</td><td>金額總計</td></tr>"
         Print #1, Body
         
         
@@ -3503,13 +3518,19 @@ Sub CustomProductDayReport(ByVal TargetPath As String)
             ProductID = product_rec.Fields.Item("PID")
             
             
+            'write to xml
+            Body = "<tr>"
+            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
+            
+            
             'search order
-            SQL = "select * from [order] where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate='" & txtCurrentDate.Text & "' order by CurrentDate,PID;"
+            SQL = "select * from [order] where PID='" & ProductID & "' and CID='" & CData(0) & "' and CurrentDate='" & txtCurrentDate.Text & "' order by CurrentDate,CLng(PID),Group;"
             Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
             
             
             
             'show every order with current date
+            GroupFlag = 0
             CurrentCount = 0
             CurrentPrice = 0
             WinningCount = 0
@@ -3541,6 +3562,23 @@ Sub CustomProductDayReport(ByVal TargetPath As String)
                 
                 Note = Note & order_rec.Fields.Item("Note")
                 
+                
+                'write to xml for count
+                If Val(order_rec.Fields.Item("Group")) <> GroupFlag Then
+                    For i = GroupFlag To Val(order_rec.Fields.Item("Group")) - 1
+                        Body = Body & "<td></td>"
+                    Next
+                    GroupFlag = Val(order_rec.Fields.Item("Group"))
+                End If
+                Body = Body & "<td>" & order_rec.Fields.Item("CurrentCount") & "</td>"
+                
+                GroupFlag = GroupFlag + 1
+                If GroupFlag >= GroupMax Then
+                    GroupFlag = 0
+                End If
+                
+                            
+                'move to next record
                 order_rec.MoveNext
             Loop
             
@@ -3548,8 +3586,6 @@ Sub CustomProductDayReport(ByVal TargetPath As String)
             
             'write to xml
             PriceCount = 0
-            Body = "<tr>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
             Body = Body & "<td>" & CurrentCount & "</td>"
             Body = Body & "<td>" & CurrentPrice & "</td>"
             Body = Body & "</tr>"
@@ -4607,7 +4643,7 @@ Sub ProductWeekTransaction(ByVal TargetPath As String)
                 OrderDate = order_rec.Fields.Item("CurrentDate")
                 ProductID = order_rec.Fields.Item("PID")
                 selectFields = "CurrentPrice,WinningPrice,Upset"
-                SQL = "select * from price where PID='" & ProductID & "' and CID='" & custom_rec.Fields.Item("CID") & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
+                SQL = "select * from price where PID='" & ProductID & "' and CID='" & custom_rec.Fields.Item("CID") & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc,CLng(SwiftCode);"
                 Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
                 
@@ -4631,7 +4667,7 @@ Sub ProductWeekTransaction(ByVal TargetPath As String)
                         'WinningPriceCount(i) =  0
                     End If
                 End If
-
+                
 
                 order_rec.MoveNext
             Loop

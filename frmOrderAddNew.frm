@@ -334,7 +334,7 @@ Begin VB.Form frmOrderAddNew
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   97255427
+         Format          =   102432771
          CurrentDate     =   42267
       End
       Begin VB.Label lblBasic 
@@ -831,13 +831,15 @@ Private Sub cmdUpdate_Click()
 
     Dim flag As Boolean, n As Integer
     Dim PID(100) As String
-    Dim LastSwiftCode As String
+    Dim LastSwiftCode As String, LastGroup As Integer
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim BonusTarget As String
     
     flag = False
     
+    
+    'get LastSwiftCode
     SQL = "select * from [order] order by SwiftCode desc;"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
     If order_rec.EOF Then
@@ -847,7 +849,8 @@ Private Sub cmdUpdate_Click()
     End If
     order_rec.Close
     
-    SQL = "select * from product';"
+    
+    SQL = "select * from product;"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
     Do Until product_rec.EOF
         Select Case product_rec("PName")
@@ -900,12 +903,25 @@ Private Sub cmdUpdate_Click()
         Case Else
             n = -99   'goto errout
         End Select
+        
+        
+        'get LastGroup
+        SQL = "select * from [order] order where CurrentDate='" & Format(txtCurrentDate.Text, "yyyy/MM/dd") & "' and PID>=" & PID(n) & "' and PID<=" & PID(n + 4) & " by Group desc;"
+        Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
+        If order_rec.EOF Then
+            LastGroup = -1
+        Else
+            LastGroup = Val(order_rec("Group"))
+        End If
+        order_rec.Close
+        
     
         'update all data from UI
         If txtCurrentCount_Car.Text <> "" Then
             Adodc1.Recordset.Fields.Item("CID").Value = basVariable.SelectCID
             Adodc1.Recordset.Fields.Item("CurrentDate").Value = txtCurrentDate.Text
             Adodc1.Recordset.Fields.Item("Note").Value = txtNote.Text
+            Adodc1.Recordset.Fields.Item("Group").Value = LastGroup + 1
         
             LastSwiftCode = Val(LastSwiftCode) + 1
             Adodc1.Recordset.Fields.Item("SwiftCode").Value = LastSwiftCode
@@ -928,6 +944,7 @@ Private Sub cmdUpdate_Click()
             Adodc1.Recordset.Fields.Item("CID").Value = basVariable.SelectCID
             Adodc1.Recordset.Fields.Item("CurrentDate").Value = txtCurrentDate.Text
             Adodc1.Recordset.Fields.Item("Note").Value = txtNote.Text
+            Adodc1.Recordset.Fields.Item("Group").Value = LastGroup + 1
             
             LastSwiftCode = Val(LastSwiftCode) + 1
             Adodc1.Recordset.Fields.Item("SwiftCode").Value = LastSwiftCode
@@ -950,6 +967,7 @@ Private Sub cmdUpdate_Click()
             Adodc1.Recordset.Fields.Item("CID").Value = basVariable.SelectCID
             Adodc1.Recordset.Fields.Item("CurrentDate").Value = txtCurrentDate.Text
             Adodc1.Recordset.Fields.Item("Note").Value = txtNote.Text
+            Adodc1.Recordset.Fields.Item("Group").Value = LastGroup + 1
             
             LastSwiftCode = Val(LastSwiftCode) + 1
             Adodc1.Recordset.Fields.Item("SwiftCode").Value = LastSwiftCode
@@ -972,6 +990,7 @@ Private Sub cmdUpdate_Click()
             Adodc1.Recordset.Fields.Item("CID").Value = basVariable.SelectCID
             Adodc1.Recordset.Fields.Item("CurrentDate").Value = txtCurrentDate.Text
             Adodc1.Recordset.Fields.Item("Note").Value = txtNote.Text
+            Adodc1.Recordset.Fields.Item("Group").Value = LastGroup + 1
             
             LastSwiftCode = Val(LastSwiftCode) + 1
             Adodc1.Recordset.Fields.Item("SwiftCode").Value = LastSwiftCode
@@ -994,6 +1013,7 @@ Private Sub cmdUpdate_Click()
             Adodc1.Recordset.Fields.Item("CID").Value = basVariable.SelectCID
             Adodc1.Recordset.Fields.Item("CurrentDate").Value = txtCurrentDate.Text
             Adodc1.Recordset.Fields.Item("Note").Value = txtNote.Text
+            Adodc1.Recordset.Fields.Item("Group").Value = LastGroup + 1
             
             LastSwiftCode = Val(LastSwiftCode) + 1
             Adodc1.Recordset.Fields.Item("SwiftCode").Value = LastSwiftCode
