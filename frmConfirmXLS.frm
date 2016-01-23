@@ -1,13 +1,13 @@
 VERSION 5.00
 Object = "{86CF1D34-0C5F-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCT2.OCX"
-Begin VB.Form frmConfirm 
+Begin VB.Form frmConfirmXLS 
    BorderStyle     =   1  '單線固定
    Caption         =   "Report Confirm"
    ClientHeight    =   3990
    ClientLeft      =   6315
    ClientTop       =   7785
    ClientWidth     =   4680
-   Icon            =   "frmConfirm.frx":0000
+   Icon            =   "frmConfirmXLS.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
@@ -104,7 +104,7 @@ Begin VB.Form frmConfirm
          Strikethrough   =   0   'False
       EndProperty
       CustomFormat    =   "yyyy/MM/dd"
-      Format          =   108920835
+      Format          =   98631683
       CurrentDate     =   37058
    End
    Begin VB.Label lblEntry 
@@ -234,7 +234,7 @@ Begin VB.Form frmConfirm
       Width           =   4455
    End
 End
-Attribute VB_Name = "frmConfirm"
+Attribute VB_Name = "frmConfirmXLS"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
@@ -246,20 +246,29 @@ Private Sub cmdCancel_Click()
 End Sub
 
 Sub DayReport(ByVal TargetPath As String)
+    Dim exap As Excel.Application
+    Dim exwb As Excel.Workbook
+    Dim exsh As Excel.Worksheet
+    Dim row As Integer, col As Integer
+    Set exap = New Excel.Application
+    Set exwb = exap.Workbooks.Add
+    Set exsh = exwb.Sheets.Item(1)
+    exsh.Columns.ColumnWidth = 16
+
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
-    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
+    Dim CurrentCount As Double, CurrentPrice As Long, WinningCount As Double, WinningPrice As Long
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
-    Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
-    Dim BuyWinningCount As Integer, SellWinningCount As Integer, BuyWinningPrice As Double, SellWinningPrice As Double
+    Dim BuyCurrentCount As Double, SellCurrentCount As Double, BuyCurrentPrice As Long, SellCurrentPrice As Long
+    Dim BuyWinningCount As Double, SellWinningCount As Double, BuyWinningPrice As Long, SellWinningPrice As Long
     Dim OrderDate As String
-    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Double, BonusProduct As String
+    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Long, BonusProduct As String
     Dim CID As String, CName As String
-    Dim PriceCount As Double
-    Dim PIDBuyCurrentCount(1024) As Integer, PIDSellCurrentCount(1024) As Integer, PIDBuyCurrentPrice(1024) As Double, PIDSellCurrentPrice(1024) As Double
-    Dim PIDBuyWinningCount(1024) As Integer, PIDSellWinningCount(1024) As Integer, PIDBuyWinningPrice(1024) As Double, PIDSellWinningPrice(1024) As Double
+    Dim PriceCount As Long
+    Dim PIDBuyCurrentCount(1024) As Double, PIDSellCurrentCount(1024) As Double, PIDBuyCurrentPrice(1024) As Long, PIDSellCurrentPrice(1024) As Long
+    Dim PIDBuyWinningCount(1024) As Double, PIDSellWinningCount(1024) As Double, PIDBuyWinningPrice(1024) As Long, PIDSellWinningPrice(1024) As Long
     
     
     BuyCurrentCount = 0
@@ -286,27 +295,25 @@ Sub DayReport(ByVal TargetPath As String)
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
 
     
-    Open TargetPath For Output As #1
-        
-        Print #1, "<table>"
-    
+
         'show report datetime
-        Body = "<tr><td>日期</td><td colspan=10>" & txtCurrentDate.Text & "</td></tr>"
-        Print #1, Body
+        row = 1: col = 1: exsh.Cells(row, col) = "日期"
+        col = col + 1: exsh.Cells(row, col) = txtCurrentDate.Text
+        col = 11:   Call exsh.Range(Numeric2CharEN(2) & row, Numeric2CharEN(col) & row).Merge
+        row = row + 1
         
         'show product name
-        Body = "<tr><td>產品</td>"
+        col = 1:  exsh.Cells(row, col) = "產品"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "交易數量</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中獎數量</td>"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "交易數量"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "中獎數量"
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "<td>客戶金額總計</td>"
-        Body = Body & "</tr>"
-        Print #1, Body
+        col = col + 1: exsh.Cells(row, col) = "客戶金額總計"
+        row = row + 1
         
         
         'show every custom order per product
@@ -315,8 +322,7 @@ Sub DayReport(ByVal TargetPath As String)
             'mark custom name
             CID = custom_rec.Fields.Item("CID")
             CName = custom_rec.Fields.Item("CName")
-            Body = "<tr>"
-            Body = Body & "<td>" & CName & "</td>"
+            col = 1:  exsh.Cells(row, col) = CName
 
 
             'show every custom order per product
@@ -339,31 +345,31 @@ Sub DayReport(ByVal TargetPath As String)
                     SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
-                    CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
-                    WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
+                    CurrentCount = CurrentCount + SimpleRound(Val(rec1.Fields.Item("CurrentCount")), 4)
+                    WinningCount = WinningCount + SimpleRound(Val(rec1.Fields.Item("WinningCount")), 4)
                     If Not price_rec.EOF Then
-                        CurrentPrice = CurrentPrice + (Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")))
-                        WinningPrice = WinningPrice + (Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        CurrentPrice = CurrentPrice + SimpleRound(Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")), 0)
+                        WinningPrice = WinningPrice + SimpleRound(Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     
                     'a new variable to account buy and sell for each product
                     If CurrentCount >= 0 Then
-                        PIDBuyCurrentCount(i) = PIDBuyCurrentCount(i) + Val(rec1.Fields.Item("CurrentCount"))
-                        PIDBuyCurrentPrice(i) = PIDBuyCurrentPrice(i) + (Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")))
-                        PIDBuyWinningCount(i) = PIDBuyWinningCount(i) + Val(rec1.Fields.Item("WinningCount"))
-                        PIDBuyWinningPrice(i) = PIDBuyWinningPrice(i) + (Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        PIDBuyCurrentCount(i) = PIDBuyCurrentCount(i) + SimpleRound(rec1.Fields.Item("CurrentCount"), 4)
+                        PIDBuyCurrentPrice(i) = PIDBuyCurrentPrice(i) + SimpleRound(Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")), 0)
+                        PIDBuyWinningCount(i) = PIDBuyWinningCount(i) + SimpleRound(rec1.Fields.Item("WinningCount"), 4)
+                        PIDBuyWinningPrice(i) = PIDBuyWinningPrice(i) + SimpleRound(Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     Else
-                        PIDSellCurrentCount(i) = PIDSellCurrentCount(i) + Val(rec1.Fields.Item("CurrentCount"))
-                        PIDSellCurrentPrice(i) = PIDSellCurrentPrice(i) + (Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")))
-                        PIDSellWinningCount(i) = PIDSellWinningCount(i) + Val(rec1.Fields.Item("WinningCount"))
-                        PIDSellWinningPrice(i) = PIDSellWinningPrice(i) + (Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        PIDSellCurrentCount(i) = PIDSellCurrentCount(i) + SimpleRound(rec1.Fields.Item("CurrentCount"), 4)
+                        PIDSellCurrentPrice(i) = PIDSellCurrentPrice(i) + SimpleRound(Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")), 0)
+                        PIDSellWinningCount(i) = PIDSellWinningCount(i) + SimpleRound(rec1.Fields.Item("WinningCount"), 4)
+                        PIDSellWinningPrice(i) = PIDSellWinningPrice(i) + SimpleRound(Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     
                     rec1.MoveNext
                 Loop
-                Body = Body & "<td>" & CurrentCount & "</td>"
-                Body = Body & "<td>" & WinningCount & "</td>"
-                PriceCount = PriceCount + CurrentPrice - WinningPrice
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentCount, 4)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningCount, 4)
+                PriceCount = PriceCount + SimpleRound(CurrentPrice - WinningPrice, 0)
                 
                 'a new variable to account buy and sell
                 If CurrentCount >= 0 Then
@@ -378,87 +384,69 @@ Sub DayReport(ByVal TargetPath As String)
                     SellWinningPrice = SellWinningPrice + WinningPrice
                 End If
             Next
-            Body = Body & "<td>" & PriceCount & "</td>"
-            Body = Body & "</tr>"
-            Print #1, Body
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(PriceCount, 0)
+            row = row + 1
             
             custom_rec.MoveNext
         Loop
         
         
         'show buy and sell for each product account
-        Body = "<tr></tr>"
-        Print #1, Body
+        row = row + 1
         
-        Body = "<tr>"
-        Body = Body & "<td>買數量</td>"
+        col = 1: exsh.Cells(row, col) = "買數量"
         For i = 0 To Count - 1
-            Body = Body & "<td>" & PIDBuyCurrentCount(i) & "</td>"
-            Body = Body & "<td>" & PIDBuyCurrentPrice(i) & "</td>"
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(PIDBuyCurrentCount(i), 4)
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(PIDBuyWinningCount(i), 4)
         Next
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>買金額</td>"
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "買金額"
         For i = 0 To Count - 1
-            Body = Body & "<td>" & PIDBuyWinningCount(i) & "</td>"
-            Body = Body & "<td>" & PIDBuyWinningPrice(i) & "</td>"
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(PIDBuyCurrentPrice(i), 0)
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(PIDBuyWinningPrice(i), 0)
         Next
-        Body = Body & "</tr>"
-        Print #1, Body
+        row = row + 1
         
-        Body = "<tr>"
-        Body = Body & "<td>賣數量</td>"
+        col = 1: exsh.Cells(row, col) = "賣數量"
         For i = 0 To Count - 1
-            Body = Body & "<td>" & PIDSellCurrentCount(i) & "</td>"
-            Body = Body & "<td>" & PIDSellCurrentPrice(i) & "</td>"
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(PIDSellCurrentCount(i), 4)
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(PIDSellWinningCount(i), 4)
         Next
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>賣金額</td>"
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "賣金額"
         For i = 0 To Count - 1
-            Body = Body & "<td>" & PIDSellWinningCount(i) & "</td>"
-            Body = Body & "<td>" & PIDSellWinningPrice(i) & "</td>"
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(PIDSellCurrentPrice(i), 0)
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(PIDSellWinningPrice(i), 0)
         Next
-        Body = Body & "</tr>"
-        Print #1, Body
+        row = row + 1
         
         
-        Body = "<tr></tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買</td>"
-        Body = Body & "<td>" & BuyCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買中</td>"
-        Body = Body & "<td>" & BuyWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣</td>"
-        Body = Body & "<td>" & SellCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣中</td>"
-        Body = Body & "<td>" & SellWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningPrice, 0)
+        row = row + 1
         
         
-        Print #1, "</table>"
-    Close #1
+    Call exwb.SaveAs(TargetPath)
+    Call exap.Quit
+    
     
     product_rec.Close
     custom_rec.Close
@@ -466,16 +454,25 @@ Sub DayReport(ByVal TargetPath As String)
 End Sub
 
 Sub WeekReport(ByVal TargetPath As String)
+    Dim exap As Excel.Application
+    Dim exwb As Excel.Workbook
+    Dim exsh As Excel.Worksheet
+    Dim row As Integer, col As Integer
+    Set exap = New Excel.Application
+    Set exwb = exap.Workbooks.Add
+    Set exsh = exwb.Sheets.Item(1)
+    exsh.Columns.ColumnWidth = 16
+    
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
-    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
+    Dim CurrentCount As Double, CurrentPrice As Long, WinningCount As Double, WinningPrice As Long
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
-    Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
-    Dim BuyWinningCount As Integer, SellWinningCount As Integer, BuyWinningPrice As Double, SellWinningPrice As Double
+    Dim BuyCurrentCount As Double, SellCurrentCount As Double, BuyCurrentPrice As Long, SellCurrentPrice As Long
+    Dim BuyWinningCount As Double, SellWinningCount As Double, BuyWinningPrice As Long, SellWinningPrice As Long
     Dim OrderDate As String
-    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Double, BonusProduct As String
+    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Long, BonusProduct As String
     Dim CID As String, CName As String
     
     
@@ -496,28 +493,27 @@ Sub WeekReport(ByVal TargetPath As String)
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
     
-    Open TargetPath For Output As #1
-        
-        Print #1, "<table>"
+
     
         'show report datetime
-        Body = "<tr><td>日期</td><td colspan=10>" & DateTime.DateAdd("d", -6, txtCurrentDate.Text) & "至" & txtCurrentDate.Text & "</td></tr>"
-        Print #1, Body
+        row = 1: col = 1: exsh.Cells(row, col) = "日期"
+        col = col + 1: exsh.Cells(row, col) = DateTime.DateAdd("d", -6, txtCurrentDate.Text) & "至" & txtCurrentDate.Text
+        col = 11:   Call exsh.Range(Numeric2CharEN(2) & row, Numeric2CharEN(col) & row).Merge
+        row = row + 1
         
         'show product name
-        Body = "<tr><td>產品</td>"
+        col = 1: exsh.Cells(row, col) = "產品"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "交易金額</td>"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName")
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "交易金額"
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "<td>成數</td>"
-        Body = Body & "<td>前帳</td>"
-        Body = Body & "</tr>"
-        Print #1, Body
+        col = col + 1: exsh.Cells(row, col) = "成數"
+        col = col + 1: exsh.Cells(row, col) = "前帳"
+        row = row + 1
         
         'show every custom order per product
         product_rec.MoveFirst
@@ -525,9 +521,7 @@ Sub WeekReport(ByVal TargetPath As String)
             'mark custom name
             CID = custom_rec.Fields.Item("CID")
             CName = custom_rec.Fields.Item("CName")
-            Body = "<tr>"
-            Body = Body & "<td>" & CName & "</td>"
-
+            col = 1: exsh.Cells(row, col) = CName
 
             'show every custom order per product
             For i = 0 To Count - 1
@@ -548,17 +542,17 @@ Sub WeekReport(ByVal TargetPath As String)
                     SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
-                    CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
-                    WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
+                    CurrentCount = CurrentCount + SimpleRound(Val(rec1.Fields.Item("CurrentCount")), 4)
+                    WinningCount = WinningCount + SimpleRound(Val(rec1.Fields.Item("WinningCount")), 4)
                     If Not price_rec.EOF Then
-                        CurrentPrice = CurrentPrice + (Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")))
-                        WinningPrice = WinningPrice + (Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        CurrentPrice = CurrentPrice + SimpleRound(Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")), 0)
+                        WinningPrice = WinningPrice + SimpleRound(Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     
                     rec1.MoveNext
                 Loop
-                Body = Body & "<td>" & CurrentCount & "</td>"
-                Body = Body & "<td>" & CurrentPrice & "</td>"
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentCount, 4)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentPrice, 0)
                 
                 'a new variable to account buy and sell
                 If CurrentCount >= 0 Then
@@ -595,56 +589,47 @@ Sub WeekReport(ByVal TargetPath As String)
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                     
                     If Not price_rec.EOF Then
-                        BonusMoney = BonusMoney + (Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        BonusMoney = BonusMoney + SimpleRound(Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     rec2.MoveNext
                 Loop
                 
-                Body = Body & "<td>來自" & rec1.Fields.Item("CName") & "成數" & Proportion & "%共" & BonusMoney * (Proportion / 100) & "元。</td>"
+                col = 1: exsh.Cells(row, col) = "來自" & rec1.Fields.Item("CName") & "成數" & Proportion & "%共" & SimpleRound(BonusMoney * (Proportion / 100), 0) & "元。"
                 rec1.MoveNext
             Loop
             
-            Body = Body & "</tr>"
-            Print #1, Body
+            row = row + 1
             
             custom_rec.MoveNext
         Loop
         
         
-        Body = "<tr></tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買</td>"
-        Body = Body & "<td>" & BuyCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買中</td>"
-        Body = Body & "<td>" & BuyWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣</td>"
-        Body = Body & "<td>" & SellCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣中</td>"
-        Body = Body & "<td>" & SellWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningPrice, 0)
+        row = row + 1
         
         
-        Print #1, "</table>"
-    Close #1
+    Call exwb.SaveAs(TargetPath)
+    Call exap.Quit
+
     
     product_rec.Close
     custom_rec.Close
@@ -652,16 +637,25 @@ Sub WeekReport(ByVal TargetPath As String)
 End Sub
 
 Sub MonthReport(ByVal TargetPath As String)
+    Dim exap As Excel.Application
+    Dim exwb As Excel.Workbook
+    Dim exsh As Excel.Worksheet
+    Dim row As Integer, col As Integer
+    Set exap = New Excel.Application
+    Set exwb = exap.Workbooks.Add
+    Set exsh = exwb.Sheets.Item(1)
+    exsh.Columns.ColumnWidth = 16
+    
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
-    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
+    Dim CurrentCount As Double, CurrentPrice As Long, WinningCount As Double, WinningPrice As Long
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
-    Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
-    Dim BuyWinningCount As Integer, SellWinningCount As Integer, BuyWinningPrice As Double, SellWinningPrice As Double
+    Dim BuyCurrentCount As Double, SellCurrentCount As Double, BuyCurrentPrice As Long, SellCurrentPrice As Long
+    Dim BuyWinningCount As Double, SellWinningCount As Double, BuyWinningPrice As Long, SellWinningPrice As Long
     Dim OrderDate As String
-    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Double, BonusProduct As String
+    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Long, BonusProduct As String
     Dim CID As String, CName As String
     
     
@@ -682,27 +676,25 @@ Sub MonthReport(ByVal TargetPath As String)
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
     
-    Open TargetPath For Output As #1
-        
-        Print #1, "<table>"
     
         'show report datetime
-        Body = "<tr><td>日期</td><td colspan=10>" & Format(txtCurrentDate.Text, "yyyy/MM") & "月</td></tr>"
-        Print #1, Body
+        row = 1: col = 1: exsh.Cells(row, col) = "日期"
+        col = col + 1: exsh.Cells(row, col) = Format(txtCurrentDate.Text, "yyyy/MM") & "月"
+        col = 11:   Call exsh.Range(Numeric2CharEN(2) & row, Numeric2CharEN(col) & row).Merge
+        row = row + 1
         
         'show product name
-        Body = "<tr><td>產品</td>"
+        col = 1: exsh.Cells(row, col) = "產品"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "交易金額</td>"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName")
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "交易金額"
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "<td>成數</td>"
-        Body = Body & "</tr>"
-        Print #1, Body
+        col = col + 1: exsh.Cells(row, col) = "成數"
+        row = row + 1
         
         'show every custom order per product
         product_rec.MoveFirst
@@ -710,8 +702,7 @@ Sub MonthReport(ByVal TargetPath As String)
             'mark custom name
             CID = custom_rec.Fields.Item("CID")
             CName = custom_rec.Fields.Item("CName")
-            Body = "<tr>"
-            Body = Body & "<td>" & CName & "</td>"
+            col = 1: exsh.Cells(row, col) = CName
 
 
             'show every custom order per product
@@ -733,17 +724,17 @@ Sub MonthReport(ByVal TargetPath As String)
                     SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
-                    CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
-                    WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
+                    CurrentCount = CurrentCount + SimpleRound(Val(rec1.Fields.Item("CurrentCount")), 4)
+                    WinningCount = WinningCount + SimpleRound(Val(rec1.Fields.Item("WinningCount")), 4)
                     If Not price_rec.EOF Then
-                        CurrentPrice = CurrentPrice + (Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")))
-                        WinningPrice = WinningPrice + (Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        CurrentPrice = CurrentPrice + SimpleRound(Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")), 0)
+                        WinningPrice = WinningPrice + SimpleRound(Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     
                     rec1.MoveNext
                 Loop
-                Body = Body & "<td>" & CurrentCount & "</td>"
-                Body = Body & "<td>" & CurrentPrice & "</td>"
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentCount, 4)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentPrice, 0)
                 
                 'a new variable to account buy and sell
                 If CurrentCount >= 0 Then
@@ -779,56 +770,46 @@ Sub MonthReport(ByVal TargetPath As String)
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                     
                     If Not price_rec.EOF Then
-                        BonusMoney = BonusMoney + (Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        BonusMoney = BonusMoney + SimpleRound(Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     rec2.MoveNext
                 Loop
                 
-                Body = Body & "<td>來自" & rec1.Fields.Item("CName") & "成數" & Proportion & "%共" & BonusMoney * (Proportion / 100) & "元。</td>"
+                col = col + 1: exsh.Cells(row, col) = "來自" & rec1.Fields.Item("CName") & "成數" & Proportion & "%共" & SimpleRound(BonusMoney * (Proportion / 100), 0) & "元。"
                 rec1.MoveNext
             Loop
             
-            Body = Body & "</tr>"
-            Print #1, Body
-            
+            row = row + 1
             custom_rec.MoveNext
         Loop
         
         
-        Body = "<tr></tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買</td>"
-        Body = Body & "<td>" & BuyCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買中</td>"
-        Body = Body & "<td>" & BuyWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣</td>"
-        Body = Body & "<td>" & SellCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣中</td>"
-        Body = Body & "<td>" & SellWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningPrice, 0)
+        row = row + 1
         
         
-        Print #1, "</table>"
-    Close #1
+    Call exwb.SaveAs(TargetPath)
+    Call exap.Quit
+    
     
     product_rec.Close
     custom_rec.Close
@@ -836,16 +817,25 @@ Sub MonthReport(ByVal TargetPath As String)
 End Sub
 
 Sub YearReport(ByVal TargetPath As String)
+    Dim exap As Excel.Application
+    Dim exwb As Excel.Workbook
+    Dim exsh As Excel.Worksheet
+    Dim row As Integer, col As Integer
+    Set exap = New Excel.Application
+    Set exwb = exap.Workbooks.Add
+    Set exsh = exwb.Sheets.Item(1)
+    exsh.Columns.ColumnWidth = 16
+    
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
-    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
+    Dim CurrentCount As Double, CurrentPrice As Long, WinningCount As Double, WinningPrice As Long
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
-    Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
-    Dim BuyWinningCount As Integer, SellWinningCount As Integer, BuyWinningPrice As Double, SellWinningPrice As Double
+    Dim BuyCurrentCount As Double, SellCurrentCount As Double, BuyCurrentPrice As Long, SellCurrentPrice As Long
+    Dim BuyWinningCount As Double, SellWinningCount As Double, BuyWinningPrice As Long, SellWinningPrice As Long
     Dim OrderDate As String
-    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Double, BonusProduct As String
+    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Long, BonusProduct As String
     Dim CID As String, CName As String
     
     
@@ -865,28 +855,26 @@ Sub YearReport(ByVal TargetPath As String)
     SQL = "select * from custom order by CLng(CID);"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
-
-    Open TargetPath For Output As #1
-        
-        Print #1, "<table>"
+    
     
         'show report datetime
-        Body = "<tr><td>日期</td><td colspan=10>" & Format(txtCurrentDate.Text, "yyyy") & "年</td></tr>"
-        Print #1, Body
+        row = 1: col = 1: exsh.Cells(row, col) = "日期"
+        col = col + 1: exsh.Cells(row, col) = Format(txtCurrentDate.Text, "yyyy") & "年"
+        col = 11:   Call exsh.Range(Numeric2CharEN(2) & row, Numeric2CharEN(col) & row).Merge
+        row = row + 1
         
         'show product name
-        Body = "<tr><td>產品</td>"
+        col = 1: exsh.Cells(row, col) = "產品"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "交易金額</td>"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName")
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "交易金額"
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "<td>成數</td>"
-        Body = Body & "</tr>"
-        Print #1, Body
+        col = col + 1: exsh.Cells(row, col) = "成數"
+        row = row + 1
         
         'show every custom order per product
         product_rec.MoveFirst
@@ -894,8 +882,7 @@ Sub YearReport(ByVal TargetPath As String)
             'mark custom name
             CID = custom_rec.Fields.Item("CID")
             CName = custom_rec.Fields.Item("CName")
-            Body = "<tr>"
-            Body = Body & "<td>" & CName & "</td>"
+            col = 1: exsh.Cells(row, col) = CName
 
 
             'show every custom order per product
@@ -922,17 +909,17 @@ Sub YearReport(ByVal TargetPath As String)
                     SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
-                    CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
-                    WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
+                    CurrentCount = CurrentCount + SimpleRound(Val(rec1.Fields.Item("CurrentCount")), 4)
+                    WinningCount = WinningCount + SimpleRound(Val(rec1.Fields.Item("WinningCount")), 4)
                     If Not price_rec.EOF Then
-                        CurrentPrice = CurrentPrice + (Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")))
-                        WinningPrice = WinningPrice + (Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        CurrentPrice = CurrentPrice + SimpleRound(Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")), 0)
+                        WinningPrice = WinningPrice + SimpleRound(Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     
                     rec1.MoveNext
                 Loop
-                Body = Body & "<td>" & CurrentCount & "</td>"
-                Body = Body & "<td>" & CurrentPrice & "</td>"
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentCount, 4)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentPrice, 0)
                 
                 'a new variable to account buy and sell
                 If CurrentCount >= 0 Then
@@ -968,56 +955,47 @@ Sub YearReport(ByVal TargetPath As String)
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                     
                     If Not price_rec.EOF Then
-                        BonusMoney = BonusMoney + (Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        BonusMoney = BonusMoney + SimpleRound(Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     rec2.MoveNext
                 Loop
                 
-                Body = Body & "<td>來自" & rec1.Fields.Item("CName") & "成數" & Proportion & "%共" & BonusMoney * (Proportion / 100) & "元。</td>"
+                col = 1: exsh.Cells(row, col) = "來自" & rec1.Fields.Item("CName") & "成數" & Proportion & "%共" & SimpleRound(BonusMoney * (Proportion / 100), 0) & "元。"
                 rec1.MoveNext
             Loop
             
-            Body = Body & "</tr>"
-            Print #1, Body
+            row = row + 1
             
             custom_rec.MoveNext
         Loop
         
         
-        Body = "<tr></tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買</td>"
-        Body = Body & "<td>" & BuyCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買中</td>"
-        Body = Body & "<td>" & BuyWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣</td>"
-        Body = Body & "<td>" & SellCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣中</td>"
-        Body = Body & "<td>" & SellWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningPrice, 0)
+        row = row + 1
         
         
-        Print #1, "</table>"
-    Close #1
+    Call exwb.SaveAs(TargetPath)
+    Call exap.Quit
+    
     
     product_rec.Close
     custom_rec.Close
@@ -1025,17 +1003,26 @@ Sub YearReport(ByVal TargetPath As String)
 End Sub
 
 Sub DayAccount(ByVal TargetPath As String)
+    Dim exap As Excel.Application
+    Dim exwb As Excel.Workbook
+    Dim exsh As Excel.Worksheet
+    Dim row As Integer, col As Integer
+    Set exap = New Excel.Application
+    Set exwb = exap.Workbooks.Add
+    Set exsh = exwb.Sheets.Item(1)
+    exsh.Columns.ColumnWidth = 16
+    
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
-    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
-    Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
+    Dim CurrentCount As Double, CurrentPrice As Long, WinningCount As Double, WinningPrice As Long
+    Dim CurrentCountAll(1024) As Double, WinningCountAll(1024) As Double
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
-    Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
-    Dim BuyWinningCount As Integer, SellWinningCount As Integer, BuyWinningPrice As Double, SellWinningPrice As Double
+    Dim BuyCurrentCount As Double, SellCurrentCount As Double, BuyCurrentPrice As Long, SellCurrentPrice As Long
+    Dim BuyWinningCount As Double, SellWinningCount As Double, BuyWinningPrice As Long, SellWinningPrice As Long
     Dim OrderDate As String
-    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Double, BonusProduct As String
+    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Long, BonusProduct As String
     Dim CID As String, CName As String
     
     
@@ -1056,28 +1043,27 @@ Sub DayAccount(ByVal TargetPath As String)
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
 
-    Open TargetPath For Output As #1
-        
-        Print #1, "<table>"
-    
+
         'show report datetime
-        Body = "<tr><td colspan=2>" & txtCurrentDate.Text & "</td><td>日總計</td></tr>"
-        Print #1, Body
+        row = 1: col = 1: exsh.Cells(row, col) = txtCurrentDate.Text
+        col = 2:   Call exsh.Range(Numeric2CharEN(1) & row, Numeric2CharEN(col) & row).Merge
+        col = col + 1: exsh.Cells(row, col) = "日總計"
+        row = row + 1
         
         'show product name
-        Body = "<tr><td>產品</td>"
+        col = 1:  exsh.Cells(row, col) = "產品"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "交易金額</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中獎金額</td>"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName")
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "交易金額"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "中"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "中獎金額"
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "</tr>"
-        Print #1, Body
+        row = row + 1
+        
         
         'show every custom order per product
         product_rec.MoveFirst
@@ -1085,8 +1071,7 @@ Sub DayAccount(ByVal TargetPath As String)
             'mark custom name
             CID = custom_rec.Fields.Item("CID")
             CName = custom_rec.Fields.Item("CName")
-            Body = "<tr>"
-            Body = Body & "<td>" & CName & "</td>"
+            col = 1: exsh.Cells(row, col) = CName
 
 
             'show every custom order per product
@@ -1108,19 +1093,19 @@ Sub DayAccount(ByVal TargetPath As String)
                     SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
-                    CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
-                    WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
+                    CurrentCount = CurrentCount + SimpleRound(Val(rec1.Fields.Item("CurrentCount")), 4)
+                    WinningCount = WinningCount + SimpleRound(Val(rec1.Fields.Item("WinningCount")), 4)
                     If Not price_rec.EOF Then
-                        CurrentPrice = CurrentPrice + (Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")))
-                        WinningPrice = WinningPrice + (Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        CurrentPrice = CurrentPrice + SimpleRound(Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")), 0)
+                        WinningPrice = WinningPrice + SimpleRound(Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     
                     rec1.MoveNext
                 Loop
-                Body = Body & "<td>" & CurrentCount & "</td>"
-                Body = Body & "<td>" & CurrentPrice & "</td>"
-                Body = Body & "<td>" & WinningCount & "</td>"
-                Body = Body & "<td>" & WinningPrice & "</td>"
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentCount, 4)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentPrice, 0)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningCount, 4)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningPrice, 0)
                 
                 'a new variable to account buy and sell
                 If CurrentCount >= 0 Then
@@ -1139,56 +1124,47 @@ Sub DayAccount(ByVal TargetPath As String)
                 CurrentCountAll(i) = CurrentCountAll(i) + CurrentCount
                 WinningCountAll(i) = WinningCountAll(i) + WinningCount
             Next
-            Body = Body & "</tr>"
-            Print #1, Body
+            
+            row = row + 1
             
             custom_rec.MoveNext
         Loop
         
         
-        Body = "<tr><td>數量總計</td>"
+        col = 1: exsh.Cells(row, col) = "數量總計"
         For i = 0 To Count - 1
-            Body = Body & "<td>" & CurrentCountAll(i) & "</td><td></td>"
-            Body = Body & "<td>" & WinningCountAll(i) & "</td><td></td>"
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentCountAll(i), 4):   col = col + 1
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningCountAll(i), 4):   col = col + 1
         Next
-        Body = Body & "</tr>"
-        Print #1, Body
+        row = row + 1
+        
+              
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningPrice, 0)
+        row = row + 1
         
         
-        Body = "<tr></tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買</td>"
-        Body = Body & "<td>" & BuyCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買中</td>"
-        Body = Body & "<td>" & BuyWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣</td>"
-        Body = Body & "<td>" & SellCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣中</td>"
-        Body = Body & "<td>" & SellWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        
-        
-        Print #1, "</table>"
-    Close #1
+    Call exwb.SaveAs(TargetPath)
+    Call exap.Quit
+    
     
     product_rec.Close
     custom_rec.Close
@@ -1196,17 +1172,26 @@ Sub DayAccount(ByVal TargetPath As String)
 End Sub
 
 Sub WeekAccount(ByVal TargetPath As String)
+    Dim exap As Excel.Application
+    Dim exwb As Excel.Workbook
+    Dim exsh As Excel.Worksheet
+    Dim row As Integer, col As Integer
+    Set exap = New Excel.Application
+    Set exwb = exap.Workbooks.Add
+    Set exsh = exwb.Sheets.Item(1)
+    exsh.Columns.ColumnWidth = 16
+    
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
-    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
-    Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
+    Dim CurrentCount As Double, CurrentPrice As Long, WinningCount As Double, WinningPrice As Long
+    Dim CurrentCountAll(1024) As Double, WinningCountAll(1024) As Double
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
-    Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
-    Dim BuyWinningCount As Integer, SellWinningCount As Integer, BuyWinningPrice As Double, SellWinningPrice As Double
+    Dim BuyCurrentCount As Double, SellCurrentCount As Double, BuyCurrentPrice As Long, SellCurrentPrice As Long
+    Dim BuyWinningCount As Double, SellWinningCount As Double, BuyWinningPrice As Long, SellWinningPrice As Long
     Dim OrderDate As String
-    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Double, BonusProduct As String
+    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Long, BonusProduct As String
     Dim CID As String, CName As String
     
     
@@ -1227,30 +1212,29 @@ Sub WeekAccount(ByVal TargetPath As String)
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
     
-    Open TargetPath For Output As #1
         
-        Print #1, "<table>"
-    
         'show report datetime
-        Body = "<tr><td colspan=2>" & DateTime.DateAdd("d", -6, txtCurrentDate.Text) & "至" & txtCurrentDate.Text & "</td><td>週總計</td></tr>"
-        Print #1, Body
+        row = 1: col = 1: exsh.Cells(row, col) = DateTime.DateAdd("d", -6, txtCurrentDate.Text) & "至" & txtCurrentDate.Text
+        col = 2:   Call exsh.Range(Numeric2CharEN(1) & row, Numeric2CharEN(col) & row).Merge
+        col = col + 1: exsh.Cells(row, col) = "週總計"
+        row = row + 1
         
         'show product name
-        Body = "<tr><td>產品</td>"
+        col = 1:  exsh.Cells(row, col) = "產品"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "交易金額</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中獎金額</td>"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName")
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "交易金額"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "中"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "中獎金額"
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "<td>成數</td>"
-        Body = Body & "<td>前帳</td>"
-        Body = Body & "</tr>"
-        Print #1, Body
+        col = col + 1: exsh.Cells(row, col) = "成數"
+        col = col + 1: exsh.Cells(row, col) = "前帳"
+        row = row + 1
+        
         
         'show every custom order per product
         product_rec.MoveFirst
@@ -1258,8 +1242,7 @@ Sub WeekAccount(ByVal TargetPath As String)
             'mark custom name
             CID = custom_rec.Fields.Item("CID")
             CName = custom_rec.Fields.Item("CName")
-            Body = "<tr>"
-            Body = Body & "<td>" & CName & "</td>"
+            col = 1: exsh.Cells(row, col) = CName
 
 
             'show every custom order per product
@@ -1281,19 +1264,19 @@ Sub WeekAccount(ByVal TargetPath As String)
                     SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
-                    CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
-                    WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
+                    CurrentCount = CurrentCount + SimpleRound(Val(rec1.Fields.Item("CurrentCount")), 4)
+                    WinningCount = WinningCount + SimpleRound(Val(rec1.Fields.Item("WinningCount")), 4)
                     If Not price_rec.EOF Then
-                        CurrentPrice = CurrentPrice + (Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")))
-                        WinningPrice = WinningPrice + (Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        CurrentPrice = CurrentPrice + SimpleRound(Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")), 0)
+                        WinningPrice = WinningPrice + SimpleRound(Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     
                     rec1.MoveNext
                 Loop
-                Body = Body & "<td>" & CurrentCount & "</td>"
-                Body = Body & "<td>" & CurrentPrice & "</td>"
-                Body = Body & "<td>" & WinningCount & "</td>"
-                Body = Body & "<td>" & WinningPrice & "</td>"
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentCount, 4)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentPrice, 0)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningCount, 4)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningPrice, 0)
                 
                 'a new variable to account buy and sell
                 If CurrentCount >= 0 Then
@@ -1333,65 +1316,55 @@ Sub WeekAccount(ByVal TargetPath As String)
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                     
                     If Not price_rec.EOF Then
-                        BonusMoney = BonusMoney + (Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        BonusMoney = BonusMoney + SimpleRound(Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     rec2.MoveNext
                 Loop
                 
-                Body = Body & "<td>來自" & rec1.Fields.Item("CName") & "成數" & Proportion & "%共" & BonusMoney * (Proportion / 100) & "元。</td>"
+                col = col + 1: exsh.Cells(row, col) = "來自" & rec1.Fields.Item("CName") & "成數" & Proportion & "%共" & SimpleRound(BonusMoney * (Proportion / 100), 0) & "元。"
                 rec1.MoveNext
             Loop
             
-            Body = Body & "</tr>"
-            Print #1, Body
+            row = row + 1
             
             custom_rec.MoveNext
         Loop
         
         
-        Body = "<tr><td>數量總計</td>"
+        col = 1: exsh.Cells(row, col) = "數量總計"
         For i = 0 To Count - 1
-            Body = Body & "<td>" & CurrentCountAll(i) & "</td><td></td>"
-            Body = Body & "<td>" & WinningCountAll(i) & "</td><td></td>"
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentCountAll(i), 4):   col = col + 1
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningCountAll(i), 4):   col = col + 1
         Next
-        Body = Body & "</tr>"
-        Print #1, Body
+        row = row + 1
+        
+              
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningPrice, 0)
+        row = row + 1
         
         
-        Body = "<tr></tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買</td>"
-        Body = Body & "<td>" & BuyCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買中</td>"
-        Body = Body & "<td>" & BuyWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣</td>"
-        Body = Body & "<td>" & SellCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣中</td>"
-        Body = Body & "<td>" & SellWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        
-        
-        Print #1, "</table>"
-    Close #1
+    Call exwb.SaveAs(TargetPath)
+    Call exap.Quit
+    
     
     product_rec.Close
     custom_rec.Close
@@ -1399,17 +1372,26 @@ Sub WeekAccount(ByVal TargetPath As String)
 End Sub
 
 Sub MonthAccount(ByVal TargetPath As String)
+    Dim exap As Excel.Application
+    Dim exwb As Excel.Workbook
+    Dim exsh As Excel.Worksheet
+    Dim row As Integer, col As Integer
+    Set exap = New Excel.Application
+    Set exwb = exap.Workbooks.Add
+    Set exsh = exwb.Sheets.Item(1)
+    exsh.Columns.ColumnWidth = 16
+    
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
-    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
-    Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
+    Dim CurrentCount As Double, CurrentPrice As Long, WinningCount As Double, WinningPrice As Long
+    Dim CurrentCountAll(1024) As Double, WinningCountAll(1024) As Double
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
-    Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
-    Dim BuyWinningCount As Integer, SellWinningCount As Integer, BuyWinningPrice As Double, SellWinningPrice As Double
+    Dim BuyCurrentCount As Double, SellCurrentCount As Double, BuyCurrentPrice As Long, SellCurrentPrice As Long
+    Dim BuyWinningCount As Double, SellWinningCount As Double, BuyWinningPrice As Long, SellWinningPrice As Long
     Dim OrderDate As String
-    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Double, BonusProduct As String
+    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Long, BonusProduct As String
     Dim CID As String, CName As String
     
     
@@ -1430,29 +1412,28 @@ Sub MonthAccount(ByVal TargetPath As String)
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
     
-    Open TargetPath For Output As #1
-        
-        Print #1, "<table>"
-    
+           
         'show report datetime
-        Body = "<tr><td colspan=2>" & Format(txtCurrentDate.Text, "yyyy/MM") & "</td><td>月總計</td></tr>"
-        Print #1, Body
+        row = 1: col = 1: exsh.Cells(row, col) = Format(txtCurrentDate.Text, "yyyy/MM")
+        col = 2:   Call exsh.Range(Numeric2CharEN(1) & row, Numeric2CharEN(col) & row).Merge
+        col = col + 1: exsh.Cells(row, col) = "月總計"
+        row = row + 1
         
         'show product name
-        Body = "<tr><td>產品</td>"
+        col = 1:  exsh.Cells(row, col) = "產品"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "交易金額</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中獎金額</td>"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName")
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "交易金額"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "中"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "中獎金額"
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "<td>成數</td>"
-        Body = Body & "</tr>"
-        Print #1, Body
+        col = col + 1: exsh.Cells(row, col) = "成數"
+        row = row + 1
+        
         
         'show every custom order per product
         product_rec.MoveFirst
@@ -1460,8 +1441,7 @@ Sub MonthAccount(ByVal TargetPath As String)
             'mark custom name
             CID = custom_rec.Fields.Item("CID")
             CName = custom_rec.Fields.Item("CName")
-            Body = "<tr>"
-            Body = Body & "<td>" & CName & "</td>"
+            col = 1: exsh.Cells(row, col) = CName
 
 
             'show every custom order per product
@@ -1483,19 +1463,19 @@ Sub MonthAccount(ByVal TargetPath As String)
                     SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
-                    CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
-                    WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
+                    CurrentCount = CurrentCount + SimpleRound(Val(rec1.Fields.Item("CurrentCount")), 4)
+                    WinningCount = WinningCount + SimpleRound(Val(rec1.Fields.Item("WinningCount")), 4)
                     If Not price_rec.EOF Then
-                        CurrentPrice = CurrentPrice + (Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")))
-                        WinningPrice = WinningPrice + (Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        CurrentPrice = CurrentPrice + SimpleRound(Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")), 0)
+                        WinningPrice = WinningPrice + SimpleRound(Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     
                     rec1.MoveNext
                 Loop
-                Body = Body & "<td>" & CurrentCount & "</td>"
-                Body = Body & "<td>" & CurrentPrice & "</td>"
-                Body = Body & "<td>" & WinningCount & "</td>"
-                Body = Body & "<td>" & WinningPrice & "</td>"
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentCount, 4)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentPrice, 0)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningCount, 4)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningPrice, 0)
                 
                 'a new variable to account buy and sell
                 If CurrentCount >= 0 Then
@@ -1535,65 +1515,56 @@ Sub MonthAccount(ByVal TargetPath As String)
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                     
                     If Not price_rec.EOF Then
-                        BonusMoney = BonusMoney + (Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        BonusMoney = BonusMoney + SimpleRound(Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     rec2.MoveNext
                 Loop
                 
-                Body = Body & "<td>來自" & rec1.Fields.Item("CName") & "成數" & Proportion & "%共" & BonusMoney * (Proportion / 100) & "元。</td>"
+                col = col + 1: exsh.Cells(row, col) = "來自" & rec1.Fields.Item("CName") & "成數" & Proportion & "%共" & SimpleRound(BonusMoney * (Proportion / 100), 0) & "元。"
                 rec1.MoveNext
             Loop
             
-            Body = Body & "</tr>"
-            Print #1, Body
+            row = row + 1
             
             custom_rec.MoveNext
         Loop
         
         
-        Body = "<tr><td>數量總計</td>"
+        
+        col = 1: exsh.Cells(row, col) = "數量總計"
         For i = 0 To Count - 1
-            Body = Body & "<td>" & CurrentCountAll(i) & "</td><td></td>"
-            Body = Body & "<td>" & WinningCountAll(i) & "</td><td></td>"
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentCountAll(i), 4):   col = col + 1
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningCountAll(i), 4):   col = col + 1
         Next
-        Body = Body & "</tr>"
-        Print #1, Body
+        row = row + 1
+        
+              
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningPrice, 0)
+        row = row + 1
         
         
-        Body = "<tr></tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買</td>"
-        Body = Body & "<td>" & BuyCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買中</td>"
-        Body = Body & "<td>" & BuyWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣</td>"
-        Body = Body & "<td>" & SellCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣中</td>"
-        Body = Body & "<td>" & SellWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        
-        
-        Print #1, "</table>"
-    Close #1
+    Call exwb.SaveAs(TargetPath)
+    Call exap.Quit
+    
     
     product_rec.Close
     custom_rec.Close
@@ -1601,17 +1572,26 @@ Sub MonthAccount(ByVal TargetPath As String)
 End Sub
 
 Sub YearAccount(ByVal TargetPath As String)
+    Dim exap As Excel.Application
+    Dim exwb As Excel.Workbook
+    Dim exsh As Excel.Worksheet
+    Dim row As Integer, col As Integer
+    Set exap = New Excel.Application
+    Set exwb = exap.Workbooks.Add
+    Set exsh = exwb.Sheets.Item(1)
+    exsh.Columns.ColumnWidth = 16
+    
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
-    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
-    Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
+    Dim CurrentCount As Double, CurrentPrice As Long, WinningCount As Double, WinningPrice As Long
+    Dim CurrentCountAll(1024) As Double, WinningCountAll(1024) As Double
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
-    Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
-    Dim BuyWinningCount As Integer, SellWinningCount As Integer, BuyWinningPrice As Double, SellWinningPrice As Double
+    Dim BuyCurrentCount As Double, SellCurrentCount As Double, BuyCurrentPrice As Long, SellCurrentPrice As Long
+    Dim BuyWinningCount As Double, SellWinningCount As Double, BuyWinningPrice As Long, SellWinningPrice As Long
     Dim OrderDate As String
-    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Double, BonusProduct As String
+    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Long, BonusProduct As String
     Dim CID As String, CName As String
     
     
@@ -1632,29 +1612,27 @@ Sub YearAccount(ByVal TargetPath As String)
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
     
-    Open TargetPath For Output As #1
-        
-        Print #1, "<table>"
-    
+       
         'show report datetime
-        Body = "<tr><td colspan=2>" & Format(txtCurrentDate.Text, "yyyy") & "</td><td>年總計</td></tr>"
-        Print #1, Body
+        row = 1: col = 1: exsh.Cells(row, col) = Format(txtCurrentDate.Text, "yyyy")
+        col = 2:   Call exsh.Range(Numeric2CharEN(1) & row, Numeric2CharEN(col) & row).Merge
+        col = col + 1: exsh.Cells(row, col) = "年總計"
+        row = row + 1
         
         'show product name
-        Body = "<tr><td>產品</td>"
+        col = 1:  exsh.Cells(row, col) = "產品"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "交易金額</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中獎金額</td>"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName")
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "交易金額"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "中"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "中獎金額"
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "<td>成數</td>"
-        Body = Body & "</tr>"
-        Print #1, Body
+        col = col + 1: exsh.Cells(row, col) = "成數"
+        row = row + 1
         
         'show every custom order per product
         product_rec.MoveFirst
@@ -1662,8 +1640,7 @@ Sub YearAccount(ByVal TargetPath As String)
             'mark custom name
             CID = custom_rec.Fields.Item("CID")
             CName = custom_rec.Fields.Item("CName")
-            Body = "<tr>"
-            Body = Body & "<td>" & CName & "</td>"
+            col = 1:  exsh.Cells(row, col) = CName
 
 
             'show every custom order per product
@@ -1685,19 +1662,19 @@ Sub YearAccount(ByVal TargetPath As String)
                     SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
-                    CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
-                    WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
+                    CurrentCount = CurrentCount + SimpleRound(Val(rec1.Fields.Item("CurrentCount")), 4)
+                    WinningCount = WinningCount + SimpleRound(Val(rec1.Fields.Item("WinningCount")), 4)
                     If Not price_rec.EOF Then
-                        CurrentPrice = CurrentPrice + (Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")))
-                        WinningPrice = WinningPrice + (Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        CurrentPrice = CurrentPrice + SimpleRound(Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")), 0)
+                        WinningPrice = WinningPrice + SimpleRound(Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     
                     rec1.MoveNext
                 Loop
-                Body = Body & "<td>" & CurrentCount & "</td>"
-                Body = Body & "<td>" & CurrentPrice & "</td>"
-                Body = Body & "<td>" & WinningCount & "</td>"
-                Body = Body & "<td>" & WinningPrice & "</td>"
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentCount, 4)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentPrice, 0)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningCount, 4)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningPrice, 0)
                 
                 'a new variable to account buy and sell
                 If CurrentCount >= 0 Then
@@ -1737,65 +1714,55 @@ Sub YearAccount(ByVal TargetPath As String)
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                     
                     If Not price_rec.EOF Then
-                        BonusMoney = BonusMoney + (Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        BonusMoney = BonusMoney + SimpleRound(Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     rec2.MoveNext
                 Loop
                 
-                Body = Body & "<td>來自" & rec1.Fields.Item("CName") & "成數" & Proportion & "%共" & BonusMoney * (Proportion / 100) & "元。</td>"
+                col = col + 1: exsh.Cells(row, col) = "來自" & rec1.Fields.Item("CName") & "成數" & Proportion & "%共" & SimpleRound(BonusMoney * (Proportion / 100), 0) & "元。"
                 rec1.MoveNext
             Loop
             
-            Body = Body & "</tr>"
-            Print #1, Body
+            row = row + 1
             
             custom_rec.MoveNext
         Loop
         
         
-        Body = "<tr><td>數量總計</td>"
+        col = 1: exsh.Cells(row, col) = "數量總計"
         For i = 0 To Count - 1
-            Body = Body & "<td>" & CurrentCountAll(i) & "</td><td></td>"
-            Body = Body & "<td>" & WinningCountAll(i) & "</td><td></td>"
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentCountAll(i), 4):   col = col + 1
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningCountAll(i), 4):   col = col + 1
         Next
-        Body = Body & "</tr>"
-        Print #1, Body
+        row = row + 1
+        
+              
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningPrice, 0)
+        row = row + 1
         
         
-        Body = "<tr></tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買</td>"
-        Body = Body & "<td>" & BuyCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買中</td>"
-        Body = Body & "<td>" & BuyWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣</td>"
-        Body = Body & "<td>" & SellCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣中</td>"
-        Body = Body & "<td>" & SellWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        
-        
-        Print #1, "</table>"
-    Close #1
+    Call exwb.SaveAs(TargetPath)
+    Call exap.Quit
+    
     
     product_rec.Close
     custom_rec.Close
@@ -1804,18 +1771,27 @@ End Sub
 
 
 Sub FourKDayReport(ByVal TargetPath As String)
+    Dim exap As Excel.Application
+    Dim exwb As Excel.Workbook
+    Dim exsh As Excel.Worksheet
+    Dim row As Integer, col As Integer
+    Set exap = New Excel.Application
+    Set exwb = exap.Workbooks.Add
+    Set exsh = exwb.Sheets.Item(1)
+    exsh.Columns.ColumnWidth = 16
+    
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
-    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
+    Dim CurrentCount As Double, CurrentPrice As Long, WinningCount As Double, WinningPrice As Long
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
-    Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
-    Dim BuyWinningCount As Integer, SellWinningCount As Integer, BuyWinningPrice As Double, SellWinningPrice As Double
+    Dim BuyCurrentCount As Double, SellCurrentCount As Double, BuyCurrentPrice As Long, SellCurrentPrice As Long
+    Dim BuyWinningCount As Double, SellWinningCount As Double, BuyWinningPrice As Long, SellWinningPrice As Long
     Dim OrderDate As String
-    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Double, BonusProduct As String
+    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Long, BonusProduct As String
     Dim CID As String, CName As String
-    Dim PriceCount As Double
+    Dim PriceCount As Long
     
     
     BuyCurrentCount = 0
@@ -1835,27 +1811,26 @@ Sub FourKDayReport(ByVal TargetPath As String)
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
     
-    Open TargetPath For Output As #1
         
-        Print #1, "<table>"
-    
         'show report datetime
-        Body = "<tr><td>日期</td><td colspan=10>" & txtCurrentDate.Text & "</td></tr>"
-        Print #1, Body
+        row = 1: col = 1: exsh.Cells(row, col) = "日期"
+        col = col + 1: exsh.Cells(row, col) = txtCurrentDate.Text
+        col = 11:   Call exsh.Range(Numeric2CharEN(2) & row, Numeric2CharEN(col) & row).Merge
+        row = row + 1
         
         'show product name
-        Body = "<tr><td>產品</td>"
+        col = 1:  exsh.Cells(row, col) = "產品"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "交易數量</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中獎數量</td>"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "交易數量"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "中獎數量"
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "<td>客戶金額總計</td>"
-        Body = Body & "</tr>"
-        Print #1, Body
+        col = col + 1: exsh.Cells(row, col) = "客戶金額總計"
+        row = row + 1
+        
         
         'show every custom order per product
         product_rec.MoveFirst
@@ -1863,8 +1838,7 @@ Sub FourKDayReport(ByVal TargetPath As String)
             'mark custom name
             CID = custom_rec.Fields.Item("CID")
             CName = custom_rec.Fields.Item("CName")
-            Body = "<tr>"
-            Body = Body & "<td>" & CName & "</td>"
+            col = 1: exsh.Cells(row, col) = CName
 
 
             'show every custom order per product
@@ -1887,18 +1861,18 @@ Sub FourKDayReport(ByVal TargetPath As String)
                     SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
-                    CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
-                    WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
+                    CurrentCount = CurrentCount + SimpleRound(Val(rec1.Fields.Item("CurrentCount")), 4)
+                    WinningCount = WinningCount + SimpleRound(Val(rec1.Fields.Item("WinningCount")), 4)
                     If Not price_rec.EOF Then
-                        CurrentPrice = CurrentPrice + (Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")))
-                        WinningPrice = WinningPrice + (Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        CurrentPrice = CurrentPrice + SimpleRound(Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")), 0)
+                        WinningPrice = WinningPrice + SimpleRound(Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     
                     rec1.MoveNext
                 Loop
-                Body = Body & "<td>" & CurrentCount & "</td>"
-                Body = Body & "<td>" & WinningCount & "</td>"
-                PriceCount = PriceCount + CurrentPrice - WinningPrice
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentCount, 4)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningCount, 4)
+                PriceCount = PriceCount + SimpleRound(CurrentPrice - WinningPrice, 0)
                 
                 'a new variable to account buy and sell
                 If CurrentCount >= 0 Then
@@ -1913,48 +1887,39 @@ Sub FourKDayReport(ByVal TargetPath As String)
                     SellWinningPrice = SellWinningPrice + WinningPrice
                 End If
             Next
-            Body = Body & "<td>" & PriceCount & "</td>"
-            Body = Body & "</tr>"
-            Print #1, Body
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(PriceCount, 0)
+            row = row + 1
             
             custom_rec.MoveNext
         Loop
         
         
-        Body = "<tr></tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買</td>"
-        Body = Body & "<td>" & BuyCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買中</td>"
-        Body = Body & "<td>" & BuyWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣</td>"
-        Body = Body & "<td>" & SellCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣中</td>"
-        Body = Body & "<td>" & SellWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningPrice, 0)
+        row = row + 1
         
         
-        Print #1, "</table>"
-    Close #1
+    Call exwb.SaveAs(TargetPath)
+    Call exap.Quit
+    
     
     product_rec.Close
     custom_rec.Close
@@ -1962,16 +1927,25 @@ Sub FourKDayReport(ByVal TargetPath As String)
 End Sub
 
 Sub FourKWeekReport(ByVal TargetPath As String)
+    Dim exap As Excel.Application
+    Dim exwb As Excel.Workbook
+    Dim exsh As Excel.Worksheet
+    Dim row As Integer, col As Integer
+    Set exap = New Excel.Application
+    Set exwb = exap.Workbooks.Add
+    Set exsh = exwb.Sheets.Item(1)
+    exsh.Columns.ColumnWidth = 16
+    
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
-    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
+    Dim CurrentCount As Double, CurrentPrice As Long, WinningCount As Double, WinningPrice As Long
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
-    Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
-    Dim BuyWinningCount As Integer, SellWinningCount As Integer, BuyWinningPrice As Double, SellWinningPrice As Double
+    Dim BuyCurrentCount As Double, SellCurrentCount As Double, BuyCurrentPrice As Long, SellCurrentPrice As Long
+    Dim BuyWinningCount As Double, SellWinningCount As Double, BuyWinningPrice As Long, SellWinningPrice As Long
     Dim OrderDate As String
-    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Double, BonusProduct As String
+    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Long, BonusProduct As String
     Dim CID As String, CName As String
     
     
@@ -1992,28 +1966,28 @@ Sub FourKWeekReport(ByVal TargetPath As String)
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
     
-    Open TargetPath For Output As #1
-        
-        Print #1, "<table>"
-    
+                
         'show report datetime
-        Body = "<tr><td>日期</td><td colspan=10>" & DateTime.DateAdd("d", -6, txtCurrentDate.Text) & "至" & txtCurrentDate.Text & "</td></tr>"
-        Print #1, Body
+        row = 1: col = 1: exsh.Cells(row, col) = "日期"
+        col = col + 1: exsh.Cells(row, col) = DateTime.DateAdd("d", -6, txtCurrentDate.Text) & "至" & txtCurrentDate.Text
+        col = 11:   Call exsh.Range(Numeric2CharEN(2) & row, Numeric2CharEN(col) & row).Merge
+        row = row + 1
         
         'show product name
-        Body = "<tr><td>產品</td>"
+        col = 1:  exsh.Cells(row, col) = "產品"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "交易金額</td>"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName")
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "交易金額"
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "<td>成數</td>"
-        Body = Body & "<td>前帳</td>"
-        Body = Body & "</tr>"
-        Print #1, Body
+        col = col + 1: exsh.Cells(row, col) = "成數"
+        col = col + 1: exsh.Cells(row, col) = "前帳"
+        row = row + 1
+        
+        
         
         'show every custom order per product
         product_rec.MoveFirst
@@ -2021,8 +1995,7 @@ Sub FourKWeekReport(ByVal TargetPath As String)
             'mark custom name
             CID = custom_rec.Fields.Item("CID")
             CName = custom_rec.Fields.Item("CName")
-            Body = "<tr>"
-            Body = Body & "<td>" & CName & "</td>"
+            col = 1: exsh.Cells(row, col) = CName
 
 
             'show every custom order per product
@@ -2044,17 +2017,17 @@ Sub FourKWeekReport(ByVal TargetPath As String)
                     SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
-                    CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
-                    WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
+                    CurrentCount = CurrentCount + SimpleRound(Val(rec1.Fields.Item("CurrentCount")), 4)
+                    WinningCount = WinningCount + SimpleRound(Val(rec1.Fields.Item("WinningCount")), 4)
                     If Not price_rec.EOF Then
-                        CurrentPrice = CurrentPrice + (Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")))
-                        WinningPrice = WinningPrice + (Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        CurrentPrice = CurrentPrice + SimpleRound(Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")), 0)
+                        WinningPrice = WinningPrice + SimpleRound(Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     
                     rec1.MoveNext
                 Loop
-                Body = Body & "<td>" & CurrentCount & "</td>"
-                Body = Body & "<td>" & CurrentPrice & "</td>"
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentCount, 4)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentPrice, 0)
                 
                 'a new variable to account buy and sell
                 If CurrentCount >= 0 Then
@@ -2090,56 +2063,47 @@ Sub FourKWeekReport(ByVal TargetPath As String)
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                     
                     If Not price_rec.EOF Then
-                        BonusMoney = BonusMoney + (Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        BonusMoney = BonusMoney + SimpleRound(Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     rec2.MoveNext
                 Loop
                 
-                Body = Body & "<td>來自" & rec1.Fields.Item("CName") & "成數" & Proportion & "%共" & BonusMoney * (Proportion / 100) & "元。</td>"
+                col = col + 1: exsh.Cells(row, col) = "來自" & rec1.Fields.Item("CName") & "成數" & Proportion & "%共" & SimpleRound(BonusMoney * (Proportion / 100), 0) & "元。"
                 rec1.MoveNext
             Loop
             
-            Body = Body & "</tr>"
-            Print #1, Body
+            row = row + 1
             
             custom_rec.MoveNext
         Loop
 
         
-        Body = "<tr></tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買</td>"
-        Body = Body & "<td>" & BuyCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買中</td>"
-        Body = Body & "<td>" & BuyWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣</td>"
-        Body = Body & "<td>" & SellCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣中</td>"
-        Body = Body & "<td>" & SellWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningPrice, 0)
+        row = row + 1
         
         
-        Print #1, "</table>"
-    Close #1
+    Call exwb.SaveAs(TargetPath)
+    Call exap.Quit
+    
     
     product_rec.Close
     custom_rec.Close
@@ -2147,16 +2111,25 @@ Sub FourKWeekReport(ByVal TargetPath As String)
 End Sub
 
 Sub FourKMonthReport(ByVal TargetPath As String)
+    Dim exap As Excel.Application
+    Dim exwb As Excel.Workbook
+    Dim exsh As Excel.Worksheet
+    Dim row As Integer, col As Integer
+    Set exap = New Excel.Application
+    Set exwb = exap.Workbooks.Add
+    Set exsh = exwb.Sheets.Item(1)
+    exsh.Columns.ColumnWidth = 16
+    
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
-    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
+    Dim CurrentCount As Double, CurrentPrice As Long, WinningCount As Double, WinningPrice As Long
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
-    Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
-    Dim BuyWinningCount As Integer, SellWinningCount As Integer, BuyWinningPrice As Double, SellWinningPrice As Double
+    Dim BuyCurrentCount As Double, SellCurrentCount As Double, BuyCurrentPrice As Long, SellCurrentPrice As Long
+    Dim BuyWinningCount As Double, SellWinningCount As Double, BuyWinningPrice As Long, SellWinningPrice As Long
     Dim OrderDate As String
-    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Double, BonusProduct As String
+    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Long, BonusProduct As String
     Dim CID As String, CName As String
     
     
@@ -2177,29 +2150,26 @@ Sub FourKMonthReport(ByVal TargetPath As String)
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
 
-    
-    
-    Open TargetPath For Output As #1
-        
-        Print #1, "<table>"
-    
+           
         'show report datetime
-        Body = "<tr><td>日期</td><td colspan=10>" & Format(txtCurrentDate.Text, "yyyy/MM") & "月</td></tr>"
-        Print #1, Body
+        row = 1: col = 1: exsh.Cells(row, col) = "日期"
+        col = col + 1: exsh.Cells(row, col) = Format(txtCurrentDate.Text, "yyyy/MM") & "月"
+        col = 11:   Call exsh.Range(Numeric2CharEN(2) & row, Numeric2CharEN(col) & row).Merge
+        row = row + 1
         
         'show product name
-        Body = "<tr><td>產品</td>"
+        col = 1:  exsh.Cells(row, col) = "產品"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "交易金額</td>"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName")
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "交易金額"
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "<td>成數</td>"
-        Body = Body & "</tr>"
-        Print #1, Body
+        col = col + 1: exsh.Cells(row, col) = "成數"
+        row = row + 1
+        
         
         'show every custom order per product
         product_rec.MoveFirst
@@ -2207,8 +2177,7 @@ Sub FourKMonthReport(ByVal TargetPath As String)
             'mark custom name
             CID = custom_rec.Fields.Item("CID")
             CName = custom_rec.Fields.Item("CName")
-            Body = "<tr>"
-            Body = Body & "<td>" & CName & "</td>"
+            col = 1: exsh.Cells(row, col) = CName
 
 
             'show every custom order per product
@@ -2230,17 +2199,17 @@ Sub FourKMonthReport(ByVal TargetPath As String)
                     SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
-                    CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
-                    WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
+                    CurrentCount = CurrentCount + SimpleRound(Val(rec1.Fields.Item("CurrentCount")), 4)
+                    WinningCount = WinningCount + SimpleRound(Val(rec1.Fields.Item("WinningCount")), 4)
                     If Not price_rec.EOF Then
-                        CurrentPrice = CurrentPrice + (Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")))
-                        WinningPrice = WinningPrice + (Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        CurrentPrice = CurrentPrice + SimpleRound(Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")), 0)
+                        WinningPrice = WinningPrice + SimpleRound(Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     
                     rec1.MoveNext
                 Loop
-                Body = Body & "<td>" & CurrentCount & "</td>"
-                Body = Body & "<td>" & CurrentPrice & "</td>"
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentCount, 4)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentPrice, 0)
                 
                 'a new variable to account buy and sell
                 If CurrentCount >= 0 Then
@@ -2276,56 +2245,47 @@ Sub FourKMonthReport(ByVal TargetPath As String)
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                     
                     If Not price_rec.EOF Then
-                        BonusMoney = BonusMoney + (Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        BonusMoney = BonusMoney + SimpleRound(Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     rec2.MoveNext
                 Loop
                 
-                Body = Body & "<td>來自" & rec1.Fields.Item("CName") & "成數" & Proportion & "%共" & BonusMoney * (Proportion / 100) & "元。</td>"
+                col = col + 1: exsh.Cells(row, col) = "來自" & rec1.Fields.Item("CName") & "成數" & Proportion & "%共" & SimpleRound(BonusMoney * (Proportion / 100), 0) & "元。"
                 rec1.MoveNext
             Loop
             
-            Body = Body & "</tr>"
-            Print #1, Body
+            row = row + 1
             
             custom_rec.MoveNext
         Loop
         
         
-        Body = "<tr></tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買</td>"
-        Body = Body & "<td>" & BuyCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買中</td>"
-        Body = Body & "<td>" & BuyWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣</td>"
-        Body = Body & "<td>" & SellCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣中</td>"
-        Body = Body & "<td>" & SellWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningPrice, 0)
+        row = row + 1
         
         
-        Print #1, "</table>"
-    Close #1
+    Call exwb.SaveAs(TargetPath)
+    Call exap.Quit
+    
     
     product_rec.Close
     custom_rec.Close
@@ -2333,16 +2293,25 @@ Sub FourKMonthReport(ByVal TargetPath As String)
 End Sub
 
 Sub FourKYearReport(ByVal TargetPath As String)
+    Dim exap As Excel.Application
+    Dim exwb As Excel.Workbook
+    Dim exsh As Excel.Worksheet
+    Dim row As Integer, col As Integer
+    Set exap = New Excel.Application
+    Set exwb = exap.Workbooks.Add
+    Set exsh = exwb.Sheets.Item(1)
+    exsh.Columns.ColumnWidth = 16
+    
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
-    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
+    Dim CurrentCount As Double, CurrentPrice As Long, WinningCount As Double, WinningPrice As Long
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
-    Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
-    Dim BuyWinningCount As Integer, SellWinningCount As Integer, BuyWinningPrice As Double, SellWinningPrice As Double
+    Dim BuyCurrentCount As Double, SellCurrentCount As Double, BuyCurrentPrice As Long, SellCurrentPrice As Long
+    Dim BuyWinningCount As Double, SellWinningCount As Double, BuyWinningPrice As Long, SellWinningPrice As Long
     Dim OrderDate As String
-    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Double, BonusProduct As String
+    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Long, BonusProduct As String
     Dim CID As String, CName As String
     
     
@@ -2363,29 +2332,27 @@ Sub FourKYearReport(ByVal TargetPath As String)
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
 
-    
-    
-    Open TargetPath For Output As #1
         
-        Print #1, "<table>"
-    
         'show report datetime
-        Body = "<tr><td>日期</td><td colspan=10>" & Format(txtCurrentDate.Text, "yyyy") & "年</td></tr>"
-        Print #1, Body
+        row = 1: col = 1: exsh.Cells(row, col) = "日期"
+        col = col + 1: exsh.Cells(row, col) = Format(txtCurrentDate.Text, "yyyy") & "年"
+        col = 11:   Call exsh.Range(Numeric2CharEN(2) & row, Numeric2CharEN(col) & row).Merge
+        row = row + 1
         
         'show product name
-        Body = "<tr><td>產品</td>"
+        col = 1:  exsh.Cells(row, col) = "產品"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "交易金額</td>"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName")
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "交易金額"
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "<td>成數</td>"
-        Body = Body & "</tr>"
-        Print #1, Body
+        col = col + 1: exsh.Cells(row, col) = "成數"
+        row = row + 1
+        
+        
         
         'show every custom order per product
         product_rec.MoveFirst
@@ -2393,8 +2360,7 @@ Sub FourKYearReport(ByVal TargetPath As String)
             'mark custom name
             CID = custom_rec.Fields.Item("CID")
             CName = custom_rec.Fields.Item("CName")
-            Body = "<tr>"
-            Body = Body & "<td>" & CName & "</td>"
+            col = 1: exsh.Cells(row, col) = CName
 
 
             'show every custom order per product
@@ -2416,17 +2382,17 @@ Sub FourKYearReport(ByVal TargetPath As String)
                     SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
-                    CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
-                    WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
+                    CurrentCount = CurrentCount + SimpleRound(Val(rec1.Fields.Item("CurrentCount")), 4)
+                    WinningCount = WinningCount + SimpleRound(Val(rec1.Fields.Item("WinningCount")), 4)
                     If Not price_rec.EOF Then
-                        CurrentPrice = CurrentPrice + (Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")))
-                        WinningPrice = WinningPrice + (Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        CurrentPrice = CurrentPrice + SimpleRound(Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")), 0)
+                        WinningPrice = WinningPrice + SimpleRound(Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     
                     rec1.MoveNext
                 Loop
-                Body = Body & "<td>" & CurrentCount & "</td>"
-                Body = Body & "<td>" & CurrentPrice & "</td>"
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentCount, 4)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentPrice, 0)
                 
                 'a new variable to account buy and sell
                 If CurrentCount >= 0 Then
@@ -2451,7 +2417,7 @@ Sub FourKYearReport(ByVal TargetPath As String)
                 
                 'search the bonus fromer order count.
                 BonusMoney = 0
-                SQL = "select * from [order] where CID='" & BonusTarget & "' and and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31');"
+                SQL = "select * from [order] where CID='" & BonusTarget & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/") & "01/01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/") & "12/31');"
                 Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec2)
                 Do Until rec2.EOF
                     'search price, and addition to variable
@@ -2462,56 +2428,47 @@ Sub FourKYearReport(ByVal TargetPath As String)
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                     
                     If Not price_rec.EOF Then
-                        BonusMoney = BonusMoney + (Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        BonusMoney = BonusMoney + SimpleRound(Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     rec2.MoveNext
                 Loop
                 
-                Body = Body & "<td>來自" & rec1.Fields.Item("CName") & "成數" & Proportion & "%共" & BonusMoney * (Proportion / 100) & "元。</td>"
+                col = col + 1: exsh.Cells(row, col) = "來自" & rec1.Fields.Item("CName") & "成數" & Proportion & "%共" & SimpleRound(BonusMoney * (Proportion / 100), 0) & "元。"
                 rec1.MoveNext
             Loop
             
-            Body = Body & "</tr>"
-            Print #1, Body
+            row = row + 1
             
             custom_rec.MoveNext
         Loop
         
         
-        Body = "<tr></tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買</td>"
-        Body = Body & "<td>" & BuyCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買中</td>"
-        Body = Body & "<td>" & BuyWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣</td>"
-        Body = Body & "<td>" & SellCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣中</td>"
-        Body = Body & "<td>" & SellWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningPrice, 0)
+        row = row + 1
         
         
-        Print #1, "</table>"
-    Close #1
+    Call exwb.SaveAs(TargetPath)
+    Call exap.Quit
+    
     
     product_rec.Close
     custom_rec.Close
@@ -2519,17 +2476,26 @@ Sub FourKYearReport(ByVal TargetPath As String)
 End Sub
 
 Sub FourKDayAccount(ByVal TargetPath As String)
+    Dim exap As Excel.Application
+    Dim exwb As Excel.Workbook
+    Dim exsh As Excel.Worksheet
+    Dim row As Integer, col As Integer
+    Set exap = New Excel.Application
+    Set exwb = exap.Workbooks.Add
+    Set exsh = exwb.Sheets.Item(1)
+    exsh.Columns.ColumnWidth = 16
+    
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
-    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
-    Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
+    Dim CurrentCount As Double, CurrentPrice As Long, WinningCount As Double, WinningPrice As Long
+    Dim CurrentCountAll(1024) As Double, WinningCountAll(1024) As Double
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
-    Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
-    Dim BuyWinningCount As Integer, SellWinningCount As Integer, BuyWinningPrice As Double, SellWinningPrice As Double
+    Dim BuyCurrentCount As Double, SellCurrentCount As Double, BuyCurrentPrice As Long, SellCurrentPrice As Long
+    Dim BuyWinningCount As Double, SellWinningCount As Double, BuyWinningPrice As Long, SellWinningPrice As Long
     Dim OrderDate As String
-    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Double, BonusProduct As String
+    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Long, BonusProduct As String
     Dim CID As String, CName As String
     
     
@@ -2549,29 +2515,29 @@ Sub FourKDayAccount(ByVal TargetPath As String)
     SQL = "select * from custom order by CLng(CID);"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
-    
-    Open TargetPath For Output As #1
-        
-        Print #1, "<table>"
-    
+            
+            
         'show report datetime
-        Body = "<tr><td colspan=2>" & txtCurrentDate.Text & "</td><td>日總計</td></tr>"
-        Print #1, Body
+        row = 1: col = 1: exsh.Cells(row, col) = txtCurrentDate.Text
+        col = 2:   Call exsh.Range(Numeric2CharEN(1) & row, Numeric2CharEN(col) & row).Merge
+        col = col + 1: exsh.Cells(row, col) = "日總計"
+        row = row + 1
         
         'show product name
-        Body = "<tr><td>產品</td>"
+        col = 1:  exsh.Cells(row, col) = "產品"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "交易金額</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中獎金額</td>"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName")
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "交易金額"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "中"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "中獎金額"
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "</tr>"
-        Print #1, Body
+        row = row + 1
+
+        
         
         'show every custom order per product
         product_rec.MoveFirst
@@ -2579,8 +2545,7 @@ Sub FourKDayAccount(ByVal TargetPath As String)
             'mark custom name
             CID = custom_rec.Fields.Item("CID")
             CName = custom_rec.Fields.Item("CName")
-            Body = "<tr>"
-            Body = Body & "<td>" & CName & "</td>"
+            col = 1:  exsh.Cells(row, col) = CName
 
 
             'show every custom order per product
@@ -2602,19 +2567,19 @@ Sub FourKDayAccount(ByVal TargetPath As String)
                     SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
-                    CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
-                    WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
+                    CurrentCount = CurrentCount + SimpleRound(Val(rec1.Fields.Item("CurrentCount")), 4)
+                    WinningCount = WinningCount + SimpleRound(Val(rec1.Fields.Item("WinningCount")), 4)
                     If Not price_rec.EOF Then
-                        CurrentPrice = CurrentPrice + (Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")))
-                        WinningPrice = WinningPrice + (Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        CurrentPrice = CurrentPrice + SimpleRound(Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")), 0)
+                        WinningPrice = WinningPrice + SimpleRound(Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     
                     rec1.MoveNext
                 Loop
-                Body = Body & "<td>" & CurrentCount & "</td>"
-                Body = Body & "<td>" & CurrentPrice & "</td>"
-                Body = Body & "<td>" & WinningCount & "</td>"
-                Body = Body & "<td>" & WinningPrice & "</td>"
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentCount, 4)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentPrice, 0)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningCount, 4)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningPrice, 0)
                 
                 'a new variable to account buy and sell
                 If CurrentCount >= 0 Then
@@ -2633,56 +2598,47 @@ Sub FourKDayAccount(ByVal TargetPath As String)
                 CurrentCountAll(i) = CurrentCountAll(i) + CurrentCount
                 WinningCountAll(i) = WinningCountAll(i) + WinningCount
             Next
-            Body = Body & "</tr>"
-            Print #1, Body
+            row = row + 1
             
             custom_rec.MoveNext
         Loop
         
         
-        Body = "<tr><td>數量總計</td>"
+        col = 1: exsh.Cells(row, col) = "數量總計"
         For i = 0 To Count - 1
-            Body = Body & "<td>" & CurrentCountAll(i) & "</td><td></td>"
-            Body = Body & "<td>" & WinningCountAll(i) & "</td><td></td>"
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentCountAll(i), 4):   col = col + 1
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningCountAll(i), 4):   col = col + 1
         Next
-        Body = Body & "</tr>"
-        Print #1, Body
+        row = row + 1
+        
+              
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningPrice, 0)
+        row = row + 1
         
         
-        Body = "<tr></tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買</td>"
-        Body = Body & "<td>" & BuyCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買中</td>"
-        Body = Body & "<td>" & BuyWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣</td>"
-        Body = Body & "<td>" & SellCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣中</td>"
-        Body = Body & "<td>" & SellWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        
-        
-        Print #1, "</table>"
-    Close #1
+    Call exwb.SaveAs(TargetPath)
+    Call exap.Quit
+    
+    
     
     product_rec.Close
     custom_rec.Close
@@ -2690,17 +2646,26 @@ Sub FourKDayAccount(ByVal TargetPath As String)
 End Sub
 
 Sub FourKWeekAccount(ByVal TargetPath As String)
+    Dim exap As Excel.Application
+    Dim exwb As Excel.Workbook
+    Dim exsh As Excel.Worksheet
+    Dim row As Integer, col As Integer
+    Set exap = New Excel.Application
+    Set exwb = exap.Workbooks.Add
+    Set exsh = exwb.Sheets.Item(1)
+    exsh.Columns.ColumnWidth = 16
+    
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
-    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
-    Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
+    Dim CurrentCount As Double, CurrentPrice As Long, WinningCount As Double, WinningPrice As Long
+    Dim CurrentCountAll(1024) As Double, WinningCountAll(1024) As Double
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
-    Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
-    Dim BuyWinningCount As Integer, SellWinningCount As Integer, BuyWinningPrice As Double, SellWinningPrice As Double
+    Dim BuyCurrentCount As Double, SellCurrentCount As Double, BuyCurrentPrice As Long, SellCurrentPrice As Long
+    Dim BuyWinningCount As Double, SellWinningCount As Double, BuyWinningPrice As Long, SellWinningPrice As Long
     Dim OrderDate As String
-    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Double, BonusProduct As String
+    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Long, BonusProduct As String
     Dim CID As String, CName As String
     
     
@@ -2721,32 +2686,29 @@ Sub FourKWeekAccount(ByVal TargetPath As String)
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
 
-    
-    
-    Open TargetPath For Output As #1
-        
-        Print #1, "<table>"
-    
+            
         'show report datetime
-        Body = "<tr><td colspan=2>" & DateTime.DateAdd("d", -6, txtCurrentDate.Text) & "至" & txtCurrentDate.Text & "</td><td>週總計</td></tr>"
-        Print #1, Body
+        row = 1: col = 1: exsh.Cells(row, col) = DateTime.DateAdd("d", -6, txtCurrentDate.Text) & "至" & txtCurrentDate.Text
+        col = 2:   Call exsh.Range(Numeric2CharEN(1) & row, Numeric2CharEN(col) & row).Merge
+        col = col + 1: exsh.Cells(row, col) = ">週總計"
+        row = row + 1
         
         'show product name
-        Body = "<tr><td>產品</td>"
+        col = 1:  exsh.Cells(row, col) = "產品"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "交易金額</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中獎金額</td>"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName")
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "交易金額"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "中"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "中獎金額"
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "<td>成數</td>"
-        Body = Body & "<td>前帳</td>"
-        Body = Body & "</tr>"
-        Print #1, Body
+        col = col + 1: exsh.Cells(row, col) = "成數"
+        col = col + 1: exsh.Cells(row, col) = "前帳"
+        row = row + 1
+        
         
         'show every custom order per product
         product_rec.MoveFirst
@@ -2754,8 +2716,7 @@ Sub FourKWeekAccount(ByVal TargetPath As String)
             'mark custom name
             CID = custom_rec.Fields.Item("CID")
             CName = custom_rec.Fields.Item("CName")
-            Body = "<tr>"
-            Body = Body & "<td>" & CName & "</td>"
+            col = 1: exsh.Cells(row, col) = CName
 
 
             'show every custom order per product
@@ -2777,19 +2738,19 @@ Sub FourKWeekAccount(ByVal TargetPath As String)
                     SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
-                    CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
-                    WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
+                    CurrentCount = CurrentCount + SimpleRound(Val(rec1.Fields.Item("CurrentCount")), 4)
+                    WinningCount = WinningCount + SimpleRound(Val(rec1.Fields.Item("WinningCount")), 4)
                     If Not price_rec.EOF Then
-                        CurrentPrice = CurrentPrice + (Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")))
-                        WinningPrice = WinningPrice + (Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        CurrentPrice = CurrentPrice + SimpleRound(Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")), 0)
+                        WinningPrice = WinningPrice + SimpleRound(Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     
                     rec1.MoveNext
                 Loop
-                Body = Body & "<td>" & CurrentCount & "</td>"
-                Body = Body & "<td>" & CurrentPrice & "</td>"
-                Body = Body & "<td>" & WinningCount & "</td>"
-                Body = Body & "<td>" & WinningPrice & "</td>"
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentCount, 4)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentPrice, 0)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningCount, 4)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningPrice, 0)
                 
                 'a new variable to account buy and sell
                 If CurrentCount >= 0 Then
@@ -2829,65 +2790,56 @@ Sub FourKWeekAccount(ByVal TargetPath As String)
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                     
                     If Not price_rec.EOF Then
-                        BonusMoney = BonusMoney + (Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        BonusMoney = BonusMoney + SimpleRound(Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     rec2.MoveNext
                 Loop
                 
-                Body = Body & "<td>來自" & rec1.Fields.Item("CName") & "成數" & Proportion & "%共" & BonusMoney * (Proportion / 100) & "元。</td>"
+                col = col + 1: exsh.Cells(row, col) = "來自" & rec1.Fields.Item("CName") & "成數" & Proportion & "%共" & SimpleRound(BonusMoney * (Proportion / 100), 0) & "元。"
                 rec1.MoveNext
             Loop
-            
-            Body = Body & "</tr>"
-            Print #1, Body
+            row = row + 1
             
             custom_rec.MoveNext
         Loop
         
         
-        Body = "<tr><td>數量總計</td>"
+        
+        col = 1: exsh.Cells(row, col) = "數量總計"
         For i = 0 To Count - 1
-            Body = Body & "<td>" & CurrentCountAll(i) & "</td><td></td>"
-            Body = Body & "<td>" & WinningCountAll(i) & "</td><td></td>"
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentCountAll(i), 4):   col = col + 1
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningCountAll(i), 4):   col = col + 1
         Next
-        Body = Body & "</tr>"
-        Print #1, Body
+        row = row + 1
         
-
-        Body = "<tr></tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買</td>"
-        Body = Body & "<td>" & BuyCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買中</td>"
-        Body = Body & "<td>" & BuyWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣</td>"
-        Body = Body & "<td>" & SellCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣中</td>"
-        Body = Body & "<td>" & SellWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
+              
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningPrice, 0)
+        row = row + 1
         
         
-        Print #1, "</table>"
-    Close #1
+    Call exwb.SaveAs(TargetPath)
+    Call exap.Quit
+    
+    
     
     product_rec.Close
     custom_rec.Close
@@ -2895,17 +2847,26 @@ Sub FourKWeekAccount(ByVal TargetPath As String)
 End Sub
 
 Sub FourKMonthAccount(ByVal TargetPath As String)
+    Dim exap As Excel.Application
+    Dim exwb As Excel.Workbook
+    Dim exsh As Excel.Worksheet
+    Dim row As Integer, col As Integer
+    Set exap = New Excel.Application
+    Set exwb = exap.Workbooks.Add
+    Set exsh = exwb.Sheets.Item(1)
+    exsh.Columns.ColumnWidth = 16
+    
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
-    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
-    Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
+    Dim CurrentCount As Double, CurrentPrice As Long, WinningCount As Double, WinningPrice As Long
+    Dim CurrentCountAll(1024) As Double, WinningCountAll(1024) As Double
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
-    Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
-    Dim BuyWinningCount As Integer, SellWinningCount As Integer, BuyWinningPrice As Double, SellWinningPrice As Double
+    Dim BuyCurrentCount As Double, SellCurrentCount As Double, BuyCurrentPrice As Long, SellCurrentPrice As Long
+    Dim BuyWinningCount As Double, SellWinningCount As Double, BuyWinningPrice As Long, SellWinningPrice As Long
     Dim OrderDate As String
-    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Double, BonusProduct As String
+    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Long, BonusProduct As String
     Dim CID As String, CName As String
     
     
@@ -2925,30 +2886,29 @@ Sub FourKMonthAccount(ByVal TargetPath As String)
     SQL = "select * from custom order by CLng(CID);"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
-
-    Open TargetPath For Output As #1
-        
-        Print #1, "<table>"
-    
+       
+       
         'show report datetime
-        Body = "<tr><td colspan=2>" & Format(txtCurrentDate.Text, "yyyy/MM") & "</td><td>月總計</td></tr>"
-        Print #1, Body
+        row = 1: col = 1: exsh.Cells(row, col) = Format(txtCurrentDate.Text, "yyyy/MM")
+        col = 2:   Call exsh.Range(Numeric2CharEN(1) & row, Numeric2CharEN(col) & row).Merge
+        col = col + 1: exsh.Cells(row, col) = ">月總計"
+        row = row + 1
         
         'show product name
-        Body = "<tr><td>產品</td>"
+        col = 1:  exsh.Cells(row, col) = "產品"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "交易金額</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中獎金額</td>"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName")
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "交易金額"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "中"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "中獎金額"
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "<td>成數</td>"
-        Body = Body & "</tr>"
-        Print #1, Body
+        col = col + 1: exsh.Cells(row, col) = "成數"
+        row = row + 1
+        
         
         'show every custom order per product
         product_rec.MoveFirst
@@ -2956,8 +2916,7 @@ Sub FourKMonthAccount(ByVal TargetPath As String)
             'mark custom name
             CID = custom_rec.Fields.Item("CID")
             CName = custom_rec.Fields.Item("CName")
-            Body = "<tr>"
-            Body = Body & "<td>" & CName & "</td>"
+            col = 1: exsh.Cells(row, col) = CName
 
 
             'show every custom order per product
@@ -2979,19 +2938,19 @@ Sub FourKMonthAccount(ByVal TargetPath As String)
                     SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
-                    CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
-                    WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
+                    CurrentCount = CurrentCount + SimpleRound(Val(rec1.Fields.Item("CurrentCount")), 4)
+                    WinningCount = WinningCount + SimpleRound(Val(rec1.Fields.Item("WinningCount")), 4)
                     If Not price_rec.EOF Then
-                        CurrentPrice = CurrentPrice + (Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")))
-                        WinningPrice = WinningPrice + (Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        CurrentPrice = CurrentPrice + SimpleRound(Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")), 0)
+                        WinningPrice = WinningPrice + SimpleRound(Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     
                     rec1.MoveNext
                 Loop
-                Body = Body & "<td>" & CurrentCount & "</td>"
-                Body = Body & "<td>" & CurrentPrice & "</td>"
-                Body = Body & "<td>" & WinningCount & "</td>"
-                Body = Body & "<td>" & WinningPrice & "</td>"
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentCount, 4)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentPrice, 0)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningCount, 4)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningPrice, 0)
                 
                 'a new variable to account buy and sell
                 If CurrentCount >= 0 Then
@@ -3031,65 +2990,56 @@ Sub FourKMonthAccount(ByVal TargetPath As String)
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                     
                     If Not price_rec.EOF Then
-                        BonusMoney = BonusMoney + (Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        BonusMoney = BonusMoney + SimpleRound(Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     rec2.MoveNext
                 Loop
                 
-                Body = Body & "<td>來自" & rec1.Fields.Item("CName") & "成數" & Proportion & "%共" & BonusMoney * (Proportion / 100) & "元。</td>"
+                col = col + 1: exsh.Cells(row, col) = "來自" & rec1.Fields.Item("CName") & "成數" & Proportion & "%共" & SimpleRound(BonusMoney * (Proportion / 100), 0) & "元。"
                 rec1.MoveNext
             Loop
             
-            Body = Body & "</tr>"
-            Print #1, Body
+            row = row + 1
             
             custom_rec.MoveNext
         Loop
         
         
-        Body = "<tr><td>數量總計</td>"
+        col = 1: exsh.Cells(row, col) = "數量總計"
         For i = 0 To Count - 1
-            Body = Body & "<td>" & CurrentCountAll(i) & "</td><td></td>"
-            Body = Body & "<td>" & WinningCountAll(i) & "</td><td></td>"
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentCountAll(i), 4):   col = col + 1
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningCountAll(i), 4):   col = col + 1
         Next
-        Body = Body & "</tr>"
-        Print #1, Body
-
-
-        Body = "<tr></tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買</td>"
-        Body = Body & "<td>" & BuyCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買中</td>"
-        Body = Body & "<td>" & BuyWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣</td>"
-        Body = Body & "<td>" & SellCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣中</td>"
-        Body = Body & "<td>" & SellWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
+        row = row + 1
+        
+              
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningPrice, 0)
+        row = row + 1
         
         
-        Print #1, "</table>"
-    Close #1
+    Call exwb.SaveAs(TargetPath)
+    Call exap.Quit
+    
+    
     
     product_rec.Close
     custom_rec.Close
@@ -3097,17 +3047,26 @@ Sub FourKMonthAccount(ByVal TargetPath As String)
 End Sub
 
 Sub FourKYearAccount(ByVal TargetPath As String)
+    Dim exap As Excel.Application
+    Dim exwb As Excel.Workbook
+    Dim exsh As Excel.Worksheet
+    Dim row As Integer, col As Integer
+    Set exap = New Excel.Application
+    Set exwb = exap.Workbooks.Add
+    Set exsh = exwb.Sheets.Item(1)
+    exsh.Columns.ColumnWidth = 16
+    
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer, PID As String
-    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
-    Dim CurrentCountAll(1024) As Long, WinningCountAll(1024) As Long
+    Dim CurrentCount As Double, CurrentPrice As Long, WinningCount As Double, WinningPrice As Long
+    Dim CurrentCountAll(1024) As Double, WinningCountAll(1024) As Double
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset, rec2 As New adoDB.Recordset
-    Dim BuyCurrentCount As Integer, SellCurrentCount As Integer, BuyCurrentPrice As Double, SellCurrentPrice As Double
-    Dim BuyWinningCount As Integer, SellWinningCount As Integer, BuyWinningPrice As Double, SellWinningPrice As Double
+    Dim BuyCurrentCount As Double, SellCurrentCount As Double, BuyCurrentPrice As Long, SellCurrentPrice As Long
+    Dim BuyWinningCount As Double, SellWinningCount As Double, BuyWinningPrice As Long, SellWinningPrice As Long
     Dim OrderDate As String
-    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Double, BonusProduct As String
+    Dim Proportion As Integer, BonusTarget As String, BonusMoney As Long, BonusProduct As String
     Dim CID As String, CName As String
     
     
@@ -3128,29 +3087,27 @@ Sub FourKYearAccount(ByVal TargetPath As String)
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
     
     
-    Open TargetPath For Output As #1
-        
-        Print #1, "<table>"
-    
         'show report datetime
-        Body = "<tr><td colspan=2>" & Format(txtCurrentDate.Text, "yyyy") & "</td><td>年總計</td></tr>"
-        Print #1, Body
+        row = 1: col = 1: exsh.Cells(row, col) = Format(txtCurrentDate.Text, "yyyy")
+        col = 2:   Call exsh.Range(Numeric2CharEN(1) & row, Numeric2CharEN(col) & row).Merge
+        col = col + 1: exsh.Cells(row, col) = ">年總計"
+        row = row + 1
         
         'show product name
-        Body = "<tr><td>產品</td>"
+        col = 1:  exsh.Cells(row, col) = "產品"
         Count = 0
         Do Until product_rec.EOF
             PIDArray(Count) = product_rec.Fields.Item("PID")
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "交易金額</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中</td>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中獎金額</td>"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName")
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "交易金額"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "中"
+            col = col + 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "中獎金額"
             Count = Count + 1
             product_rec.MoveNext
         Loop
-        Body = Body & "<td>成數</td>"
-        Body = Body & "</tr>"
-        Print #1, Body
+        col = col + 1: exsh.Cells(row, col) = "成數"
+        row = row + 1
+        
         
         'show every custom order per product
         product_rec.MoveFirst
@@ -3158,8 +3115,7 @@ Sub FourKYearAccount(ByVal TargetPath As String)
             'mark custom name
             CID = custom_rec.Fields.Item("CID")
             CName = custom_rec.Fields.Item("CName")
-            Body = "<tr>"
-            Body = Body & "<td>" & CName & "</td>"
+            col = 1: exsh.Cells(row, col) = CName
 
 
             'show every custom order per product
@@ -3181,19 +3137,19 @@ Sub FourKYearAccount(ByVal TargetPath As String)
                     SQL = "select * from price where PID='" & PIDArray(i) & "' and CID='" & CID & "' and CurrentDate<='" & OrderDate & "' order by CurrentDate desc;"
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                 
-                    CurrentCount = CurrentCount + Val(rec1.Fields.Item("CurrentCount"))
-                    WinningCount = WinningCount + Val(rec1.Fields.Item("WinningCount"))
+                    CurrentCount = CurrentCount + SimpleRound(Val(rec1.Fields.Item("CurrentCount")), 4)
+                    WinningCount = WinningCount + SimpleRound(Val(rec1.Fields.Item("WinningCount")), 4)
                     If Not price_rec.EOF Then
-                        CurrentPrice = CurrentPrice + (Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")))
-                        WinningPrice = WinningPrice + (Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        CurrentPrice = CurrentPrice + SimpleRound(Val(rec1.Fields.Item("CurrentCount")) * Val(price_rec.Fields.Item("CurrentPrice")), 0)
+                        WinningPrice = WinningPrice + SimpleRound(Val(rec1.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     
                     rec1.MoveNext
                 Loop
-                Body = Body & "<td>" & CurrentCount & "</td>"
-                Body = Body & "<td>" & CurrentPrice & "</td>"
-                Body = Body & "<td>" & WinningCount & "</td>"
-                Body = Body & "<td>" & WinningPrice & "</td>"
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentCount, 4)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentPrice, 0)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningCount, 4)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningPrice, 0)
                 
                 'a new variable to account buy and sell
                 If CurrentCount >= 0 Then
@@ -3233,65 +3189,56 @@ Sub FourKYearAccount(ByVal TargetPath As String)
                     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, price_rec)
                     
                     If Not price_rec.EOF Then
-                        BonusMoney = BonusMoney + (Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")))
+                        BonusMoney = BonusMoney + SimpleRound(Val(rec2.Fields.Item("WinningCount")) * Val(price_rec.Fields.Item("WinningPrice")), 0)
                     End If
                     rec2.MoveNext
                 Loop
                 
-                Body = Body & "<td>來自" & rec1.Fields.Item("CName") & "成數" & Proportion & "%共" & BonusMoney * (Proportion / 100) & "元。</td>"
+                col = col + 1: exsh.Cells(row, col) = "來自" & rec1.Fields.Item("CName") & "成數" & Proportion & "%共" & SimpleRound(BonusMoney * (Proportion / 100), 0) & "元。"
                 rec1.MoveNext
             Loop
             
-            Body = Body & "</tr>"
-            Print #1, Body
+            row = row + 1
             
             custom_rec.MoveNext
         Loop
         
         
-        Body = "<tr><td>數量總計</td>"
-        For i = 0 To Count - 1
-            Body = Body & "<td>" & CurrentCountAll(i) & "</td><td></td>"
-            Body = Body & "<td>" & WinningCountAll(i) & "</td><td></td>"
-        Next
-        Body = Body & "</tr>"
-        Print #1, Body
-        
 
-        Body = "<tr></tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買</td>"
-        Body = Body & "<td>" & BuyCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計買中</td>"
-        Body = Body & "<td>" & BuyWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & BuyWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣</td>"
-        Body = Body & "<td>" & SellCurrentCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellCurrentPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
-        Body = "<tr>"
-        Body = Body & "<td>小計賣中</td>"
-        Body = Body & "<td>" & SellWinningCount & "</td><td></td>"
-        Body = Body & "<td>金額</td>"
-        Body = Body & "<td>" & SellWinningPrice & "</td><td></td>"
-        Body = Body & "</tr>"
-        Print #1, Body
+        col = 1: exsh.Cells(row, col) = "數量總計"
+        For i = 0 To Count - 1
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentCountAll(i), 4):   col = col + 1
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningCountAll(i), 4):   col = col + 1
+        Next
+        row = row + 1
+        
+              
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計買中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BuyWinningPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellCurrentPrice, 0)
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "小計賣中"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningCount, 4)
+        col = col + 2: exsh.Cells(row, col) = "金額"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(SellWinningPrice, 0)
+        row = row + 1
         
         
-        Print #1, "</table>"
-    Close #1
+    Call exwb.SaveAs(TargetPath)
+    Call exap.Quit
+    
     
     product_rec.Close
     custom_rec.Close
@@ -3302,7 +3249,7 @@ End Sub
 Sub CustomProductDayReportDetail(ByVal TargetPath As String)
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer
-    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
+    Dim CurrentCount As Double, CurrentPrice As Long, WinningCount As Double, WinningPrice As Long
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
@@ -3311,7 +3258,7 @@ Sub CustomProductDayReportDetail(ByVal TargetPath As String)
     Dim beginv As Integer
     Dim endv As Integer
     Dim OrderDate As String, ProductID As String, ProductName As String
-    Dim PriceCount As Double
+    Dim PriceCount As Long
     
         
     'search order
@@ -3366,27 +3313,27 @@ Sub CustomProductDayReportDetail(ByVal TargetPath As String)
             Body = Body & "<td>" & OrderDate & "</td>"
             Body = Body & "<td>" & ProductName & "</td>"
             
-            Body = Body & "<td>" & order_rec.Fields.Item("CurrentCount") & "</td>"
+            Body = Body & "<td>" & SimpleRound(order_rec.Fields.Item("CurrentCount"), 4) & "</td>"
             If price_rec.EOF Then
                 Body = Body & "<td>0</td>"
             Else
-                Body = Body & "<td>" & order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")) & "</td>"
-                PriceCount = PriceCount + (order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")))
+                Body = Body & "<td>" & SimpleRound(order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")), 0) & "</td>"
+                PriceCount = PriceCount + SimpleRound(order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")), 0)
             End If
             
-            Body = Body & "<td>" & order_rec.Fields.Item("WinningCount") & "</td>"
+            Body = Body & "<td>" & SimpleRound(order_rec.Fields.Item("WinningCount"), 4) & "</td>"
             If price_rec.EOF Then
                 Body = Body & "<td>0</td>"
             Else
-                Body = Body & "<td>" & order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")) & "</td>"
-                PriceCount = PriceCount - (order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")))
+                Body = Body & "<td>" & SimpleRound(order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")), 0) & "</td>"
+                PriceCount = PriceCount - SimpleRound(order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")), 0)
             End If
             
-            Body = Body & "<td>" & order_rec.Fields.Item("AddMoney") & "</td>"
-            If Not IsNull(order_rec.Fields.Item("AddMoney")) Then PriceCount = PriceCount + Val(order_rec.Fields.Item("AddMoney"))
+            Body = Body & "<td>" & SimpleRound(Val(order_rec.Fields.Item("AddMoney")), 0) & "</td>"
+            If Not IsNull(order_rec.Fields.Item("AddMoney")) Then PriceCount = PriceCount + SimpleRound(Val(order_rec.Fields.Item("AddMoney")), 0)
             
-            Body = Body & "<td>" & order_rec.Fields.Item("BonusMoney") & "</td>"
-            '不計退水金額 'If Not IsNull(order_rec.Fields.Item("BonusMoney")) Then PriceCount = PriceCount - order_rec.Fields.Item("BonusMoney")
+            Body = Body & "<td>" & SimpleRound(Val(order_rec.Fields.Item("BonusMoney")), 0) & "</td>"
+            '不計退水金額 'If Not IsNull(order_rec.Fields.Item("BonusMoney")) Then PriceCount = PriceCount - simpleround(val(order_rec.Fields.Item("BonusMoney")),0)
             
             Body = Body & "<td>" & order_rec.Fields.Item("Note") & "</td>"
               
@@ -3398,7 +3345,7 @@ Sub CustomProductDayReportDetail(ByVal TargetPath As String)
         Loop
         
         'show price count
-        Body = "<tr><td>應收</td><td>" & PriceCount & "</td></tr>"
+        Body = "<tr><td>應收</td><td>" & SimpleRound(PriceCount, 0) & "</td></tr>"
         Print #1, Body
         
         Print #1, "</table>"
@@ -3410,7 +3357,7 @@ End Sub
 Sub CustomProductWeekReportDetail(ByVal TargetPath As String)
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer
-    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
+    Dim CurrentCount As Double, CurrentPrice As Long, WinningCount As Double, WinningPrice As Long
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
@@ -3419,7 +3366,7 @@ Sub CustomProductWeekReportDetail(ByVal TargetPath As String)
     Dim beginv As Integer
     Dim endv As Integer
     Dim OrderDate As String, ProductID As String, ProductName As String
-    Dim PriceCount As Double
+    Dim PriceCount As Long
     
        
     'search order
@@ -3474,27 +3421,27 @@ Sub CustomProductWeekReportDetail(ByVal TargetPath As String)
             Body = Body & "<td>" & OrderDate & "</td>"
             Body = Body & "<td>" & ProductName & "</td>"
             
-            Body = Body & "<td>" & order_rec.Fields.Item("CurrentCount") & "</td>"
+            Body = Body & "<td>" & SimpleRound(order_rec.Fields.Item("CurrentCount"), 4) & "</td>"
             If price_rec.EOF Then
                 Body = Body & "<td>0</td>"
             Else
-                Body = Body & "<td>" & order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")) & "</td>"
-                PriceCount = PriceCount + (order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")))
+                Body = Body & "<td>" & SimpleRound(order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")), 0) & "</td>"
+                PriceCount = PriceCount + SimpleRound(order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")), 0)
             End If
             
-            Body = Body & "<td>" & order_rec.Fields.Item("WinningCount") & "</td>"
+            Body = Body & "<td>" & SimpleRound(order_rec.Fields.Item("WinningCount"), 4) & "</td>"
             If price_rec.EOF Then
                 Body = Body & "<td>0</td>"
             Else
-                Body = Body & "<td>" & order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")) & "</td>"
-                PriceCount = PriceCount - (order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")))
+                Body = Body & "<td>" & SimpleRound(order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")), 0) & "</td>"
+                PriceCount = PriceCount - SimpleRound(order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")), 0)
             End If
             
-            Body = Body & "<td>" & order_rec.Fields.Item("AddMoney") & "</td>"
-            If Not IsNull(order_rec.Fields.Item("AddMoney")) Then PriceCount = PriceCount + Val(order_rec.Fields.Item("AddMoney"))
+            Body = Body & "<td>" & SimpleRound(Val(order_rec.Fields.Item("AddMoney")), 0) & "</td>"
+            If Not IsNull(order_rec.Fields.Item("AddMoney")) Then PriceCount = PriceCount + SimpleRound(Val(order_rec.Fields.Item("AddMoney")), 0)
             
-            Body = Body & "<td>" & order_rec.Fields.Item("BonusMoney") & "</td>"
-            '不計退水金額 'If Not IsNull(order_rec.Fields.Item("BonusMoney")) Then PriceCount = PriceCount - order_rec.Fields.Item("BonusMoney")
+            Body = Body & "<td>" & SimpleRound(Val(order_rec.Fields.Item("BonusMoney")), 0) & "</td>"
+            '不計退水金額 'If Not IsNull(order_rec.Fields.Item("BonusMoney")) Then PriceCount = PriceCount - simpleround(val(order_rec.Fields.Item("BonusMoney")),0)
             
             Body = Body & "<td>" & order_rec.Fields.Item("Note") & "</td>"
               
@@ -3506,7 +3453,7 @@ Sub CustomProductWeekReportDetail(ByVal TargetPath As String)
         Loop
         
         'show price count
-        Body = "<tr><td>應收</td><td>" & PriceCount & "</td></tr>"
+        Body = "<tr><td>應收</td><td>" & SimpleRound(PriceCount, 0) & "</td></tr>"
         Print #1, Body
         
         Print #1, "</table>"
@@ -3517,10 +3464,19 @@ End Sub
 
 
 Sub CustomProductDayReport(ByVal TargetPath As String)
+    Dim exap As Excel.Application
+    Dim exwb As Excel.Workbook
+    Dim exsh As Excel.Worksheet
+    Dim row As Integer, col As Integer
+    Set exap = New Excel.Application
+    Set exwb = exap.Workbooks.Add
+    Set exsh = exwb.Sheets.Item(1)
+    exsh.Columns.ColumnWidth = 16
+    
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer
-    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
-    Dim AddMoney As Double, BonusMoney As Double, Note As String
+    Dim CurrentCount As Double, CurrentPrice As Long, WinningCount As Double, WinningPrice As Long
+    Dim AddMoney As Long, BonusMoney As Long, Note As String
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
@@ -3529,7 +3485,7 @@ Sub CustomProductDayReport(ByVal TargetPath As String)
     Dim beginv As Integer
     Dim endv As Integer
     Dim OrderDate As String, ProductID As String, ProductName As String
-    Dim PriceCount As Double
+    Dim PriceCount As Long
     Dim GroupFlag As Integer, GroupMax As Integer
     Dim Current(100) As Double, Winning(100) As Double
     
@@ -3546,39 +3502,42 @@ Sub CustomProductDayReport(ByVal TargetPath As String)
         Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
         
         'get the highest group, and setting for row count
-        SQL = "select top 1 MAX(Group) AS HighestGroup from [order] where cint(PID)>=" & beginv & " and cint(PID)<=" & endv & ";"
+        SQL = "select top 1 MAX(Group) AS HighestGroup from [order] where cint(PID)>=" & beginv & " and cint(PID)<=" & endv & " and CurrentDate='" & txtCurrentDate.Text & "';"
         Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
     Else
         SQL = "select * from product where PID='" & PData(0) & "' order by CLng(PID);"
         Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
         
         'get the highest group, and setting for row count
-        SQL = "select top 1 MAX(Group) AS HighestGroup from [order] where PID='" & PData(0) & "';"
+        SQL = "select top 1 MAX(Group) AS HighestGroup from [order] where PID='" & PData(0) & "' and CurrentDate='" & txtCurrentDate.Text & "';"
         Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, rec1)
     End If
     GroupMax = Val(rec1.Fields.Item("HighestGroup"))
        
     
-    Open TargetPath For Output As #1
-        
-        Print #1, "<table>"
     
         'show report datetime
-        Body = "<tr><td>日期</td><td colspan=10>" & txtCurrentDate.Text & "</td></tr>"
-        Print #1, Body
+        row = 1: col = 1: exsh.Cells(row, col) = "日期"
+        col = col + 1: exsh.Cells(row, col) = txtCurrentDate.Text
+        col = 11:   Call exsh.Range(Numeric2CharEN(2) & row, Numeric2CharEN(col) & row).Merge
+        row = row + 1
         
         'show custom name and product name
-        Body = "<tr><td>客戶名稱</td><td colspan=10>" & CData(1) & "</td></tr>"
-        Print #1, Body
-        Body = "<tr><td>產品名稱</td><td colspan=10>" & PData(1) & "</td></tr>"
-        Print #1, Body
-        Body = "<tr><td>明細</td>"
+        col = 1: exsh.Cells(row, col) = "客戶名稱"
+        col = col + 1: exsh.Cells(row, col) = CData(1)
+        col = 11:   Call exsh.Range(Numeric2CharEN(2) & row, Numeric2CharEN(col) & row).Merge
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "產品名稱"
+        col = col + 1: exsh.Cells(row, col) = PData(1)
+        col = 11:   Call exsh.Range(Numeric2CharEN(2) & row, Numeric2CharEN(col) & row).Merge
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "明細"
         For i = 0 To GroupMax
-            Body = Body & "<td>" & (i + 1) & "</td>"
+            col = col + 1: exsh.Cells(row, col) = (i + 1)
         Next
-        Body = Body & "<td>數量總計</td><td>金額總計</td></tr>"
-        Print #1, Body
-        
+        col = col + 1: exsh.Cells(row, col) = "數量總計"
+        col = col + 1: exsh.Cells(row, col) = "金額總計"
+        row = row + 1
         
         
         'list choice product
@@ -3631,10 +3590,10 @@ Sub CustomProductDayReport(ByVal TargetPath As String)
                 Note = Note & order_rec.Fields.Item("Note")
                 
                 
-                Debug.Print order_rec.Fields.Item("pid") & " ";
-                Debug.Print order_rec.Fields.Item("currentcount");
-                Debug.Print order_rec.Fields.Item("Group");
-                Debug.Print GroupFlag
+                'Debug.Print order_rec.Fields.Item("pid") & " ";
+                'Debug.Print order_rec.Fields.Item("currentcount");
+                'Debug.Print order_rec.Fields.Item("Group");
+                'Debug.Print GroupFlag
                 
                 
                 'save count
@@ -3663,54 +3622,49 @@ Sub CustomProductDayReport(ByVal TargetPath As String)
             
             
             'write to xml
-            Body = "<tr>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "</td>"
+            col = 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName")
             For i = 0 To GroupMax
-                Body = Body & "<td>" & Current(i) & "</td>"
+                col = col + 1: exsh.Cells(row, col) = Current(i)
             Next
-            Body = Body & "<td>" & CurrentCount & "</td>"
-            Body = Body & "<td>" & CurrentPrice & "</td>"
-            Body = Body & "</tr>"
-            Print #1, Body
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentCount, 4)
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentPrice, 0)
+            row = row + 1
             PriceCount = PriceCount + CurrentPrice
             
-            Body = "<tr>"
-            Body = Body & "<td>" & product_rec.Fields.Item("PName") & "中</td>"
+            col = 1: exsh.Cells(row, col) = product_rec.Fields.Item("PName") & "中"
             For i = 0 To GroupMax
-                Body = Body & "<td>" & Winning(i) & "</td>"
+                col = col + 1: exsh.Cells(row, col) = Winning(i)
             Next
-            Body = Body & "<td>" & WinningCount & "</td>"
-            Body = Body & "<td>" & WinningPrice & "</td>"
-            Body = Body & "</tr>"
-            Print #1, Body
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningCount, 4)
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningPrice, 0)
+            row = row + 1
             PriceCount = PriceCount - WinningPrice
             
             product_rec.MoveNext
         Loop
         
         
-        Body = "<tr>"
-        Body = Body & "<td>漲價</td>"
-        Body = Body & "<td>" & AddMoney & "</td>"
-        Body = Body & "</tr>"
-        Print #1, Body
+        col = 1: exsh.Cells(row, col) = "漲價"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(AddMoney, 0)
+        row = row + 1
         PriceCount = PriceCount + AddMoney
         
         
-        'Body = "<tr>"
-        'Body = Body & "<td>退水</td>"
-        'Body = Body & "<td>" & BonusMoney & "</td>"
-        'Body = Body & "</tr>"
-        'Print #1, Body
+        'col = 1: exsh.Cells(row, col) = "退水"
+        'col = col + 1: exsh.Cells(row, col) = SimpleRound( BonusMoney, 0)
+        'row = row + 1
         '不計退水金額 'PriceCount = PriceCount - BonusMoney
         
         
         'show price count
-        Body = "<tr><td>應收</td><td>" & PriceCount & "</td></tr>"
-        Print #1, Body
+        col = 1: exsh.Cells(row, col) = "應收"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(PriceCount, 0)
+        row = row + 1
         
-        Print #1, "</table>"
-    Close #1
+        
+    Call exwb.SaveAs(TargetPath)
+    Call exap.Quit
+    
     
     order_rec.Close
     product_rec.Close
@@ -3722,9 +3676,18 @@ End Sub
 
 
 Sub CustomProductWeekTransaction(ByVal TargetPath As String)
+    Dim exap As Excel.Application
+    Dim exwb As Excel.Workbook
+    Dim exsh As Excel.Worksheet
+    Dim row As Integer, col As Integer
+    Set exap = New Excel.Application
+    Set exwb = exap.Workbooks.Add
+    Set exsh = exwb.Sheets.Item(1)
+    exsh.Columns.ColumnWidth = 16
+    
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer
-    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
+    Dim CurrentCount As Double, CurrentPrice As Long, WinningCount As Double, WinningPrice As Long
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
@@ -3733,8 +3696,8 @@ Sub CustomProductWeekTransaction(ByVal TargetPath As String)
     Dim beginv As Integer
     Dim endv As Integer
     Dim OrderDate As String, ProductID As String, ProductName As String
-    Dim PriceCount As Double
-    Dim OldOrderDate As String, CurrentPriceCount As Double, WinningPriceCount As Double, AddMoney As Double, BonusMoney As Double
+    Dim PriceCount As Long
+    Dim OldOrderDate As String, CurrentPriceCount As Long, WinningPriceCount As Long, AddMoney As Long, BonusMoney As Long
     Dim DayDiff As Integer
        
        
@@ -3752,21 +3715,29 @@ Sub CustomProductWeekTransaction(ByVal TargetPath As String)
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
   
     
-    Open TargetPath For Output As #1
-        
-        Print #1, "<table>"
-    
         'show report datetime
-        Body = "<tr><td>日期</td><td colspan=10>" & DateTime.DateAdd("d", -6, txtCurrentDate.Text) & "至" & txtCurrentDate.Text & "</td></tr>"
-        Print #1, Body
+        row = 1: col = 1: exsh.Cells(row, col) = "日期"
+        col = col + 1: exsh.Cells(row, col) = DateTime.DateAdd("d", -6, txtCurrentDate.Text) & "至" & txtCurrentDate.Text
+        col = 11:   Call exsh.Range(Numeric2CharEN(2) & row, Numeric2CharEN(col) & row).Merge
+        row = row + 1
         
         'show custom name and product name
-        Body = "<tr><td>客戶名稱</td><td colspan=10>" & CData(1) & "</td></tr>"
-        Print #1, Body
-        Body = "<tr><td>產品名稱</td><td colspan=10>" & PData(1) & "</td></tr>"
-        Print #1, Body
-        Body = "<tr><td>交易日期</td><td>交易金額</td><td>中獎金額</td><td>漲價</td><td>退水金額</td><td>小計</td></tr>"
-        Print #1, Body
+        col = 1: exsh.Cells(row, col) = "客戶名稱"
+        col = col + 1: exsh.Cells(row, col) = CData(1)
+        col = 11:   Call exsh.Range(Numeric2CharEN(2) & row, Numeric2CharEN(col) & row).Merge
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "產品名稱"
+        col = col + 1: exsh.Cells(row, col) = PData(1)
+        col = 11:   Call exsh.Range(Numeric2CharEN(2) & row, Numeric2CharEN(col) & row).Merge
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "交易日期"
+        col = col + 1: exsh.Cells(row, col) = "交易金額"
+        col = col + 1: exsh.Cells(row, col) = "交中獎金額"
+        col = col + 1: exsh.Cells(row, col) = "漲價"
+        col = col + 1: exsh.Cells(row, col) = "退水金額"
+        col = col + 1: exsh.Cells(row, col) = "小計"
+        row = row + 1
+        
         
         'show every order with current date
         PriceCount = 0
@@ -3789,37 +3760,33 @@ Sub CustomProductWeekTransaction(ByVal TargetPath As String)
                 If OldOrderDate = "" And OrderDate <> "" Then
                     DayDiff = DateDiff("d", Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd"), OrderDate)
                     For i = 0 To DayDiff - 1
-                        Body = "<tr>"
-                        Body = Body & "<td>" & DateTime.DateAdd("d", i, Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd")) & "</td>"
-                        Body = Body & "<td>0</td>"
-                        Body = Body & "<td>0</td>"
-                        Body = Body & "<td>0</td>"
-                        Body = Body & "<td>0</td>"
-                        Body = Body & "<td>0</td>"
-                        Body = Body & "</tr>"
-                        Print #1, Body
+                        col = 1: exsh.Cells(row, col) = DateTime.DateAdd("d", i, Format(DateTime.DateAdd("d", -6, Format(txtCurrentDate.Text, "yyyy/MM/dd")), "yyyy/MM/dd"))
+                        col = col + 1: exsh.Cells(row, col) = 0
+                        col = col + 1: exsh.Cells(row, col) = 0
+                        col = col + 1: exsh.Cells(row, col) = 0
+                        col = col + 1: exsh.Cells(row, col) = 0
+                        col = col + 1: exsh.Cells(row, col) = 0
+                        row = row + 1
                     Next
                 End If
                 
                 'save data
                 If Not price_rec.EOF Then
-                    CurrentPriceCount = CurrentPriceCount + (order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")))
-                    WinningPriceCount = WinningPriceCount + (order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")))
+                    CurrentPriceCount = CurrentPriceCount + SimpleRound(order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")), 0)
+                    WinningPriceCount = WinningPriceCount + SimpleRound(order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")), 0)
                 End If
-                If Not IsNull(order_rec.Fields.Item("AddMoney")) Then AddMoney = AddMoney + Val(order_rec.Fields.Item("AddMoney"))
-                If Not IsNull(order_rec.Fields.Item("BonusMoney")) Then BonusMoney = BonusMoney + Val(order_rec.Fields.Item("BonusMoney"))
+                If Not IsNull(order_rec.Fields.Item("AddMoney")) Then AddMoney = AddMoney + SimpleRound(order_rec.Fields.Item("AddMoney"), 0)
+                If Not IsNull(order_rec.Fields.Item("BonusMoney")) Then BonusMoney = BonusMoney + SimpleRound(order_rec.Fields.Item("BonusMoney"), 0)
             Else
                 'mark custom name
-                Body = "<tr>"
-                Body = Body & "<td>" & OldOrderDate & "</td>"
-                Body = Body & "<td>" & CurrentPriceCount & "</td>"
-                Body = Body & "<td>" & WinningPriceCount & "</td>"
-                Body = Body & "<td>" & AddMoney & "</td>"
-                Body = Body & "<td>" & BonusMoney & "</td>"
-                Body = Body & "<td>" & CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney & "</td>"
-                PriceCount = PriceCount + CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney
-                Body = Body & "</tr>"
-                Print #1, Body
+                col = 1: exsh.Cells(row, col) = OldOrderDate
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentPriceCount, 0)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningPriceCount, 0)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(AddMoney, 0)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(BonusMoney, 0)
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentPriceCount - WinningPriceCount + AddMoney + BonusMoney, 0)
+                row = row + 1
+                PriceCount = PriceCount + CurrentPriceCount - WinningPriceCount + AddMoney + BonusMoney
                 
                 'clear variable data
                 CurrentPriceCount = 0
@@ -3830,15 +3797,13 @@ Sub CustomProductWeekTransaction(ByVal TargetPath As String)
                 'fill data per day
                 DayDiff = DateDiff("d", OldOrderDate, OrderDate)
                 For i = 1 To DayDiff - 1
-                    Body = "<tr>"
-                    Body = Body & "<td>" & DateTime.DateAdd("d", i, OldOrderDate) & "</td>"
-                    Body = Body & "<td>0</td>"
-                    Body = Body & "<td>0</td>"
-                    Body = Body & "<td>0</td>"
-                    Body = Body & "<td>0</td>"
-                    Body = Body & "<td>0</td>"
-                    Body = Body & "</tr>"
-                    Print #1, Body
+                    col = 1: exsh.Cells(row, col) = DateTime.DateAdd("d", i, OldOrderDate)
+                    col = col + 1: exsh.Cells(row, col) = 0
+                    col = col + 1: exsh.Cells(row, col) = 0
+                    col = col + 1: exsh.Cells(row, col) = 0
+                    col = col + 1: exsh.Cells(row, col) = 0
+                    col = col + 1: exsh.Cells(row, col) = 0
+                    row = row + 1
                 Next
             End If
             OldOrderDate = OrderDate
@@ -3855,44 +3820,51 @@ Sub CustomProductWeekTransaction(ByVal TargetPath As String)
         If OldOrderDate = "" Then OldOrderDate = OrderDate
         
         'mark custom name
-        Body = "<tr>"
-        Body = Body & "<td>" & OldOrderDate & "</td>"
-        Body = Body & "<td>" & CurrentPriceCount & "</td>"
-        Body = Body & "<td>" & WinningPriceCount & "</td>"
-        Body = Body & "<td>" & AddMoney & "</td>"
-        Body = Body & "<td>" & BonusMoney & "</td>"
-        Body = Body & "<td>" & CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney & "</td>"
-        PriceCount = PriceCount + CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney
-        Body = Body & "</tr>"
-        Print #1, Body
+        col = 1: exsh.Cells(row, col) = OldOrderDate
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentPriceCount, 0)
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningPriceCount, 0)
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(AddMoney, 0)
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(BonusMoney, 0)
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentPriceCount - WinningPriceCount + AddMoney + BonusMoney, 0)
+        row = row + 1
+        PriceCount = PriceCount + CurrentPriceCount - WinningPriceCount + AddMoney + BonusMoney
         DayDiff = DateDiff("d", OrderDate, txtCurrentDate.Text)
         For i = 1 To DayDiff - 1
-            Body = "<tr>"
-            Body = Body & "<td>" & DateTime.DateAdd("d", i, OrderDate) & "</td>"
-            Body = Body & "<td>0</td>"
-            Body = Body & "<td>0</td>"
-            Body = Body & "<td>0</td>"
-            Body = Body & "<td>0</td>"
-            Body = Body & "<td>0</td>"
-            Body = Body & "</tr>"
-            Print #1, Body
+            col = 1: exsh.Cells(row, col) = DateTime.DateAdd("d", i, OrderDate)
+            col = col + 1: exsh.Cells(row, col) = 0
+            col = col + 1: exsh.Cells(row, col) = 0
+            col = col + 1: exsh.Cells(row, col) = 0
+            col = col + 1: exsh.Cells(row, col) = 0
+            col = col + 1: exsh.Cells(row, col) = 0
+            row = row + 1
         Next
         
         
         'show price count
-        Body = "<tr><td>總計</td><td>" & PriceCount & "</td></tr>"
-        Print #1, Body
+        col = 1: exsh.Cells(row, col) = "總計"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(PriceCount, 0)
         
-        Print #1, "</table>"
-    Close #1
+        
+    Call exwb.SaveAs(TargetPath)
+    Call exap.Quit
+    
     
     order_rec.Close
 End Sub
 
 Sub CustomWeekReport(ByVal TargetPath As String)
+    Dim exap As Excel.Application
+    Dim exwb As Excel.Workbook
+    Dim exsh As Excel.Worksheet
+    Dim row As Integer, col As Integer
+    Set exap = New Excel.Application
+    Set exwb = exap.Workbooks.Add
+    Set exsh = exwb.Sheets.Item(1)
+    exsh.Columns.ColumnWidth = 16
+    
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer
-    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
+    Dim CurrentCount As Double, CurrentPrice As Long, WinningCount As Double, WinningPrice As Long
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
@@ -3901,7 +3873,7 @@ Sub CustomWeekReport(ByVal TargetPath As String)
     Dim beginv As Integer
     Dim endv As Integer
     Dim OrderDate As String, ProductID As String, ProductName As String
-    Dim PriceCount As Double
+    Dim PriceCount As Long
     
     
     'search order
@@ -3910,19 +3882,29 @@ Sub CustomWeekReport(ByVal TargetPath As String)
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
   
     
-    Open TargetPath For Output As #1
-        
-        Print #1, "<table>"
-    
         'show report datetime
-        Body = "<tr><td>日期</td><td colspan=10>" & DateTime.DateAdd("d", -6, txtCurrentDate.Text) & "至" & txtCurrentDate.Text & "</td></tr>"
-        Print #1, Body
+        row = 1: col = 1: exsh.Cells(row, col) = "日期"
+        col = col + 1: exsh.Cells(row, col) = DateTime.DateAdd("d", -6, txtCurrentDate.Text) & "至" & txtCurrentDate.Text
+        col = 11:   Call exsh.Range(Numeric2CharEN(2) & row, Numeric2CharEN(col) & row).Merge
+        row = row + 1
         
         'show custom name and product name
-        Body = "<tr><td>客戶名稱</td><td colspan=10>" & CData(1) & "</td></tr>"
-        Print #1, Body
-        Body = "<tr><td>交易流水號</td><td>交易日期</td><td>產品名稱</td><td>交易數量</td><td>交易金額</td><td>中獎數量</td><td>中獎金額</td><td>漲價</td><td>退水金額</td><td>備註</td></tr>"
-        Print #1, Body
+        col = 1: exsh.Cells(row, col) = "客戶名稱"
+        col = col + 1: exsh.Cells(row, col) = CData(1)
+        col = 11:   Call exsh.Range(Numeric2CharEN(2) & row, Numeric2CharEN(col) & row).Merge
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "交易流水號"
+        col = col + 1: exsh.Cells(row, col) = "交易日期"
+        col = col + 1: exsh.Cells(row, col) = "產品名稱"
+        col = col + 1: exsh.Cells(row, col) = "交易數量"
+        col = col + 1: exsh.Cells(row, col) = "交易金額"
+        col = col + 1: exsh.Cells(row, col) = "中獎數量"
+        col = col + 1: exsh.Cells(row, col) = "中獎金額"
+        col = col + 1: exsh.Cells(row, col) = "漲價"
+        col = col + 1: exsh.Cells(row, col) = "退水金額"
+        col = col + 1: exsh.Cells(row, col) = "備註"
+        row = row + 1
+        
         
         'show every order with current date
         PriceCount = 0
@@ -3941,56 +3923,66 @@ Sub CustomWeekReport(ByVal TargetPath As String)
             ProductName = product_rec.Fields.Item("PName")
         
             'mark custom name
-            Body = "<tr>"
-            Body = Body & "<td>" & order_rec.Fields.Item("SwiftCode") & "</td>"
-            Body = Body & "<td>" & OrderDate & "</td>"
-            Body = Body & "<td>" & ProductName & "</td>"
+            col = 1: exsh.Cells(row, col) = order_rec.Fields.Item("SwiftCode")
+            col = col + 1: exsh.Cells(row, col) = OrderDate
+            col = col + 1: exsh.Cells(row, col) = ProductName
             
-            Body = Body & "<td>" & order_rec.Fields.Item("CurrentCount") & "</td>"
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(order_rec.Fields.Item("CurrentCount"), 4)
             If price_rec.EOF Then
-                Body = Body & "<td>0</td>"
+                col = col + 1: exsh.Cells(row, col) = 0
             Else
-                Body = Body & "<td>" & order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")) & "</td>"
-                PriceCount = PriceCount + (order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")))
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")), 0)
+                PriceCount = PriceCount + SimpleRound(order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")), 0)
             End If
             
-            Body = Body & "<td>" & order_rec.Fields.Item("WinningCount") & "</td>"
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(order_rec.Fields.Item("WinningCount"), 4)
             If price_rec.EOF Then
-                Body = Body & "<td>0</td>"
+                col = col + 1: exsh.Cells(row, col) = 0
             Else
-                Body = Body & "<td>" & order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")) & "</td>"
-                PriceCount = PriceCount - (order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")))
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")), 0)
+                PriceCount = PriceCount - SimpleRound(order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")), 0)
             End If
             
-            Body = Body & "<td>" & order_rec.Fields.Item("AddMoney") & "</td>"
-            If Not IsNull(order_rec.Fields.Item("AddMoney")) Then PriceCount = PriceCount + Val(order_rec.Fields.Item("AddMoney"))
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(Val(order_rec.Fields.Item("AddMoney")), 0)
+            If Not IsNull(order_rec.Fields.Item("AddMoney")) Then PriceCount = PriceCount + SimpleRound(Val(order_rec.Fields.Item("AddMoney")), 0)
             
-            Body = Body & "<td>" & order_rec.Fields.Item("BonusMoney") & "</td>"
-            '不計退水金額 'If Not IsNull(order_rec.Fields.Item("BonusMoney")) Then PriceCount = PriceCount - order_rec.Fields.Item("BonusMoney")
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(Val(order_rec.Fields.Item("BonusMoney")), 0)
+            '不計退水金額 'If Not IsNull(order_rec.Fields.Item("BonusMoney")) Then PriceCount = PriceCount - simpleround(val(order_rec.Fields.Item("BonusMoney")),0)
             
-            Body = Body & "<td>" & order_rec.Fields.Item("Note") & "</td>"
+            col = col + 1: exsh.Cells(row, col) = order_rec.Fields.Item("Note")
               
 
-            Body = Body & "</tr>"
-            Print #1, Body
+            row = row + 1
+            
             
             order_rec.MoveNext
         Loop
         
-        'show price count
-        Body = "<tr><td>應收</td><td>" & PriceCount & "</td></tr>"
-        Print #1, Body
         
-        Print #1, "</table>"
-    Close #1
+        'show price count
+        col = 1: exsh.Cells(row, col) = "應收"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(PriceCount, 0)
+        
+    Call exwb.SaveAs(TargetPath)
+    Call exap.Quit
+    
     
     order_rec.Close
 End Sub
 
 Sub CustomMonthReport(ByVal TargetPath As String)
+    Dim exap As Excel.Application
+    Dim exwb As Excel.Workbook
+    Dim exsh As Excel.Worksheet
+    Dim row As Integer, col As Integer
+    Set exap = New Excel.Application
+    Set exwb = exap.Workbooks.Add
+    Set exsh = exwb.Sheets.Item(1)
+    exsh.Columns.ColumnWidth = 16
+    
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer
-    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
+    Dim CurrentCount As Double, CurrentPrice As Long, WinningCount As Double, WinningPrice As Long
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
@@ -3999,7 +3991,7 @@ Sub CustomMonthReport(ByVal TargetPath As String)
     Dim beginv As Integer
     Dim endv As Integer
     Dim OrderDate As String, ProductID As String, ProductName As String
-    Dim PriceCount As Double
+    Dim PriceCount As Long
     
     
     'search order
@@ -4007,20 +3999,30 @@ Sub CustomMonthReport(ByVal TargetPath As String)
     SQL = "select * from [order] where CID='" & CData(0) & "' and (CurrentDate>='" & Format(txtCurrentDate.Text, "yyyy/MM/") & "01' and CurrentDate<='" & Format(txtCurrentDate.Text, "yyyy/MM/") & Date_Is_28_29_30_31(txtCurrentDate.Text) & "') order by CurrentDate;"
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
   
-    
-    Open TargetPath For Output As #1
-        
-        Print #1, "<table>"
-    
+          
         'show report datetime
-        Body = "<tr><td>日期</td><td colspan=10>" & Format(txtCurrentDate.Text, "yyyy/MM") & "</td></tr>"
-        Print #1, Body
+        row = 1: col = 1: exsh.Cells(row, col) = "日期"
+        col = col + 1: exsh.Cells(row, col) = Format(txtCurrentDate.Text, "yyyy/MM")
+        col = 11:   Call exsh.Range(Numeric2CharEN(2) & row, Numeric2CharEN(col) & row).Merge
+        row = row + 1
         
         'show custom name and product name
-        Body = "<tr><td>客戶名稱</td><td colspan=10>" & CData(1) & "</td></tr>"
-        Print #1, Body
-        Body = "<tr><td>交易流水號</td><td>交易日期</td><td>產品名稱</td><td>交易數量</td><td>交易金額</td><td>中獎數量</td><td>中獎金額</td><td>漲價</td><td>退水金額</td><td>備註</td></tr>"
-        Print #1, Body
+        col = 1: exsh.Cells(row, col) = "客戶名稱"
+        col = col + 1: exsh.Cells(row, col) = CData(1)
+        col = 11:   Call exsh.Range(Numeric2CharEN(2) & row, Numeric2CharEN(col) & row).Merge
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "交易流水號"
+        col = col + 1: exsh.Cells(row, col) = "交易日期"
+        col = col + 1: exsh.Cells(row, col) = "產品名稱"
+        col = col + 1: exsh.Cells(row, col) = "交易數量"
+        col = col + 1: exsh.Cells(row, col) = "交易金額"
+        col = col + 1: exsh.Cells(row, col) = "中獎數量"
+        col = col + 1: exsh.Cells(row, col) = "中獎金額"
+        col = col + 1: exsh.Cells(row, col) = "漲價"
+        col = col + 1: exsh.Cells(row, col) = "退水金額"
+        col = col + 1: exsh.Cells(row, col) = "備註"
+        row = row + 1
+        
         
         'show every order with current date
         PriceCount = 0
@@ -4039,56 +4041,66 @@ Sub CustomMonthReport(ByVal TargetPath As String)
             ProductName = product_rec.Fields.Item("PName")
         
             'mark custom name
-            Body = "<tr>"
-            Body = Body & "<td>" & order_rec.Fields.Item("SwiftCode") & "</td>"
-            Body = Body & "<td>" & OrderDate & "</td>"
-            Body = Body & "<td>" & ProductName & "</td>"
+            col = 1: exsh.Cells(row, col) = order_rec.Fields.Item("SwiftCode")
+            col = col + 1: exsh.Cells(row, col) = OrderDate
+            col = col + 1: exsh.Cells(row, col) = ProductName
             
-            Body = Body & "<td>" & order_rec.Fields.Item("CurrentCount") & "</td>"
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(order_rec.Fields.Item("CurrentCount"), 4)
             If price_rec.EOF Then
-                Body = Body & "<td>0</td>"
+                col = col + 1: exsh.Cells(row, col) = 0
             Else
-                Body = Body & "<td>" & order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")) & "</td>"
-                PriceCount = PriceCount + (order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")))
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")), 0)
+                PriceCount = PriceCount + SimpleRound(order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")), 0)
             End If
             
-            Body = Body & "<td>" & order_rec.Fields.Item("WinningCount") & "</td>"
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(order_rec.Fields.Item("WinningCount"), 4)
             If price_rec.EOF Then
-                Body = Body & "<td>0</td>"
+                col = col + 1: exsh.Cells(row, col) = 0
             Else
-                Body = Body & "<td>" & order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")) & "</td>"
-                PriceCount = PriceCount - (order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")))
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")), 0)
+                PriceCount = PriceCount - SimpleRound(order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")), 0)
             End If
             
-            Body = Body & "<td>" & order_rec.Fields.Item("AddMoney") & "</td>"
-            If Not IsNull(order_rec.Fields.Item("AddMoney")) Then PriceCount = PriceCount + Val(order_rec.Fields.Item("AddMoney"))
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(Val(order_rec.Fields.Item("AddMoney")), 0)
+            If Not IsNull(order_rec.Fields.Item("AddMoney")) Then PriceCount = PriceCount + SimpleRound(Val(order_rec.Fields.Item("AddMoney")), 0)
             
-            Body = Body & "<td>" & order_rec.Fields.Item("BonusMoney") & "</td>"
-            '不計退水金額 'If Not IsNull(order_rec.Fields.Item("BonusMoney")) Then PriceCount = PriceCount - order_rec.Fields.Item("BonusMoney")
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(Val(order_rec.Fields.Item("BonusMoney")), 0)
+            '不計退水金額 'If Not IsNull(order_rec.Fields.Item("BonusMoney")) Then PriceCount = PriceCount - simpleround(val(order_rec.Fields.Item("BonusMoney")),0)
             
-            Body = Body & "<td>" & order_rec.Fields.Item("Note") & "</td>"
+            col = col + 1: exsh.Cells(row, col) = order_rec.Fields.Item("Note")
               
 
-            Body = Body & "</tr>"
-            Print #1, Body
+            row = row + 1
+            
             
             order_rec.MoveNext
         Loop
         
         'show price count
-        Body = "<tr><td>應收</td><td>" & PriceCount & "</td></tr>"
-        Print #1, Body
+        col = 1: exsh.Cells(row, col) = "應收"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(PriceCount, 0)
         
-        Print #1, "</table>"
-    Close #1
+    Call exwb.SaveAs(TargetPath)
+    Call exap.Quit
+    
+    
     
     order_rec.Close
 End Sub
 
 Sub CustomYearReport(ByVal TargetPath As String)
+    Dim exap As Excel.Application
+    Dim exwb As Excel.Workbook
+    Dim exsh As Excel.Worksheet
+    Dim row As Integer, col As Integer
+    Set exap = New Excel.Application
+    Set exwb = exap.Workbooks.Add
+    Set exsh = exwb.Sheets.Item(1)
+    exsh.Columns.ColumnWidth = 16
+    
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer
-    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
+    Dim CurrentCount As Double, CurrentPrice As Long, WinningCount As Double, WinningPrice As Long
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
@@ -4097,7 +4109,7 @@ Sub CustomYearReport(ByVal TargetPath As String)
     Dim beginv As Integer
     Dim endv As Integer
     Dim OrderDate As String, ProductID As String, ProductName As String
-    Dim PriceCount As Double
+    Dim PriceCount As Long
     
     
     'search order
@@ -4106,19 +4118,29 @@ Sub CustomYearReport(ByVal TargetPath As String)
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, order_rec)
   
     
-    Open TargetPath For Output As #1
-        
-        Print #1, "<table>"
-    
         'show report datetime
-        Body = "<tr><td>日期</td><td colspan=10>" & Format(txtCurrentDate.Text, "yyyy") & "</td></tr>"
-        Print #1, Body
+        row = 1: col = 1: exsh.Cells(row, col) = "日期"
+        col = col + 1: exsh.Cells(row, col) = Format(txtCurrentDate.Text, "yyyy")
+        col = 11:   Call exsh.Range(Numeric2CharEN(2) & row, Numeric2CharEN(col) & row).Merge
+        row = row + 1
         
         'show custom name and product name
-        Body = "<tr><td>客戶名稱</td><td colspan=10>" & CData(1) & "</td></tr>"
-        Print #1, Body
-        Body = "<tr><td>交易流水號</td><td>交易日期</td><td>產品名稱</td><td>交易數量</td><td>交易金額</td><td>中獎數量</td><td>中獎金額</td><td>漲價</td><td>退水金額</td><td>備註</td></tr>"
-        Print #1, Body
+        col = 1: exsh.Cells(row, col) = "客戶名稱"
+        col = col + 1: exsh.Cells(row, col) = CData(1)
+        col = 11:   Call exsh.Range(Numeric2CharEN(2) & row, Numeric2CharEN(col) & row).Merge
+        row = row + 1
+        col = 1: exsh.Cells(row, col) = "交易流水號"
+        col = col + 1: exsh.Cells(row, col) = "交易日期"
+        col = col + 1: exsh.Cells(row, col) = "產品名稱"
+        col = col + 1: exsh.Cells(row, col) = "交易數量"
+        col = col + 1: exsh.Cells(row, col) = "交易金額"
+        col = col + 1: exsh.Cells(row, col) = "中獎數量"
+        col = col + 1: exsh.Cells(row, col) = "中獎金額"
+        col = col + 1: exsh.Cells(row, col) = "漲價"
+        col = col + 1: exsh.Cells(row, col) = "退水金額"
+        col = col + 1: exsh.Cells(row, col) = "備註"
+        row = row + 1
+        
         
         'show every order with current date
         PriceCount = 0
@@ -4137,48 +4159,49 @@ Sub CustomYearReport(ByVal TargetPath As String)
             ProductName = product_rec.Fields.Item("PName")
         
             'mark custom name
-            Body = "<tr>"
-            Body = Body & "<td>" & order_rec.Fields.Item("SwiftCode") & "</td>"
-            Body = Body & "<td>" & OrderDate & "</td>"
-            Body = Body & "<td>" & ProductName & "</td>"
+            col = 1: exsh.Cells(row, col) = order_rec.Fields.Item("SwiftCode")
+            col = col + 1: exsh.Cells(row, col) = OrderDate
+            col = col + 1: exsh.Cells(row, col) = ProductName
             
-            Body = Body & "<td>" & order_rec.Fields.Item("CurrentCount") & "</td>"
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(order_rec.Fields.Item("CurrentCount"), 4)
             If price_rec.EOF Then
-                Body = Body & "<td>0</td>"
+                col = col + 1: exsh.Cells(row, col) = 0
             Else
-                Body = Body & "<td>" & order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")) & "</td>"
-                PriceCount = PriceCount + (order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")))
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")), 0)
+                PriceCount = PriceCount + SimpleRound(order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")), 0)
             End If
             
-            Body = Body & "<td>" & order_rec.Fields.Item("WinningCount") & "</td>"
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(order_rec.Fields.Item("WinningCount"), 4)
             If price_rec.EOF Then
-                Body = Body & "<td>0</td>"
+                col = col + 1: exsh.Cells(row, col) = 0
             Else
-                Body = Body & "<td>" & order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")) & "</td>"
-                PriceCount = PriceCount - (order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")))
+                col = col + 1: exsh.Cells(row, col) = SimpleRound(order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")), 0)
+                PriceCount = PriceCount - SimpleRound(order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")), 0)
             End If
             
-            Body = Body & "<td>" & order_rec.Fields.Item("AddMoney") & "</td>"
-            If Not IsNull(order_rec.Fields.Item("AddMoney")) Then PriceCount = PriceCount + Val(order_rec.Fields.Item("AddMoney"))
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(Val(order_rec.Fields.Item("AddMoney")), 0)
+            If Not IsNull(order_rec.Fields.Item("AddMoney")) Then PriceCount = PriceCount + SimpleRound(Val(order_rec.Fields.Item("AddMoney")), 0)
             
-            Body = Body & "<td>" & order_rec.Fields.Item("BonusMoney") & "</td>"
-            '不計退水金額 'If Not IsNull(order_rec.Fields.Item("BonusMoney")) Then PriceCount = PriceCount - order_rec.Fields.Item("BonusMoney")
+            col = col + 1: exsh.Cells(row, col) = SimpleRound(Val(order_rec.Fields.Item("BonusMoney")), 0)
+            '不計退水金額 'If Not IsNull(order_rec.Fields.Item("BonusMoney")) Then PriceCount = PriceCount - simpleround(val(order_rec.Fields.Item("BonusMoney")),0)
             
-            Body = Body & "<td>" & order_rec.Fields.Item("Note") & "</td>"
+            col = col + 1: exsh.Cells(row, col) = order_rec.Fields.Item("Note")
               
 
-            Body = Body & "</tr>"
-            Print #1, Body
+            row = row + 1
+            
             
             order_rec.MoveNext
         Loop
         
-        'show price count
-        Body = "<tr><td>應收</td><td>" & PriceCount & "</td></tr>"
-        Print #1, Body
         
-        Print #1, "</table>"
-    Close #1
+        'show price count
+        col = 1: exsh.Cells(row, col) = "應收"
+        col = col + 1: exsh.Cells(row, col) = SimpleRound(PriceCount, 0)
+        
+    Call exwb.SaveAs(TargetPath)
+    Call exap.Quit
+    
     
     order_rec.Close
 End Sub
@@ -4186,7 +4209,7 @@ End Sub
 Sub CustomWeekTransaction(ByVal TargetPath As String)
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer
-    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
+    Dim CurrentCount As Double, CurrentPrice As Long, WinningCount As Double, WinningPrice As Long
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
@@ -4195,8 +4218,8 @@ Sub CustomWeekTransaction(ByVal TargetPath As String)
     Dim beginv As Integer
     Dim endv As Integer
     Dim OrderDate As String, ProductID As String, ProductName As String
-    Dim PriceCount As Double
-    Dim OldOrderDate As String, CurrentPriceCount As Double, WinningPriceCount As Double, AddMoney As Double, BonusMoney As Double
+    Dim PriceCount As Long
+    Dim OldOrderDate As String, CurrentPriceCount As Long, WinningPriceCount As Long, AddMoney As Long, BonusMoney As Long
     Dim DayDiff As Integer
        
        
@@ -4255,21 +4278,21 @@ Sub CustomWeekTransaction(ByVal TargetPath As String)
                 
                 'save data
                 If Not price_rec.EOF Then
-                    CurrentPriceCount = CurrentPriceCount + (order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")))
-                    WinningPriceCount = WinningPriceCount + (order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")))
+                    CurrentPriceCount = CurrentPriceCount + SimpleRound(order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")), 0)
+                    WinningPriceCount = WinningPriceCount + SimpleRound(order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")), 0)
                 End If
-                If Not IsNull(order_rec.Fields.Item("AddMoney")) Then AddMoney = AddMoney + Val(order_rec.Fields.Item("AddMoney"))
-                If Not IsNull(order_rec.Fields.Item("BonusMoney")) Then BonusMoney = BonusMoney + Val(order_rec.Fields.Item("BonusMoney"))
+                If Not IsNull(order_rec.Fields.Item("AddMoney")) Then AddMoney = AddMoney + SimpleRound(order_rec.Fields.Item("AddMoney"), 0)
+                If Not IsNull(order_rec.Fields.Item("BonusMoney")) Then BonusMoney = BonusMoney + SimpleRound(order_rec.Fields.Item("BonusMoney"), 0)
             Else
                 'mark custom name
                 Body = "<tr>"
                 Body = Body & "<td>" & OldOrderDate & "</td>"
-                Body = Body & "<td>" & CurrentPriceCount & "</td>"
-                Body = Body & "<td>" & WinningPriceCount & "</td>"
-                Body = Body & "<td>" & AddMoney & "</td>"
-                Body = Body & "<td>" & BonusMoney & "</td>"
-                Body = Body & "<td>" & CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney & "</td>"
-                PriceCount = PriceCount + CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney
+                Body = Body & "<td>" & SimpleRound(CurrentPriceCount, 0) & "</td>"
+                Body = Body & "<td>" & SimpleRound(WinningPriceCount, 0) & "</td>"
+                Body = Body & "<td>" & SimpleRound(AddMoney, 0) & "</td>"
+                Body = Body & "<td>" & SimpleRound(BonusMoney, 0) & "</td>"
+                Body = Body & "<td>" & SimpleRound(CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney, 0) & "</td>"
+                PriceCount = PriceCount + SimpleRound(CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney, 0)
                 Body = Body & "</tr>"
                 Print #1, Body
                 
@@ -4308,12 +4331,12 @@ Sub CustomWeekTransaction(ByVal TargetPath As String)
         'mark custom name
         Body = "<tr>"
         Body = Body & "<td>" & OldOrderDate & "</td>"
-        Body = Body & "<td>" & CurrentPriceCount & "</td>"
-        Body = Body & "<td>" & WinningPriceCount & "</td>"
-        Body = Body & "<td>" & AddMoney & "</td>"
-        Body = Body & "<td>" & BonusMoney & "</td>"
-        Body = Body & "<td>" & CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney & "</td>"
-        PriceCount = PriceCount + CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney
+        Body = Body & "<td>" & SimpleRound(CurrentPriceCount, 0) & "</td>"
+        Body = Body & "<td>" & SimpleRound(WinningPriceCount, 0) & "</td>"
+        Body = Body & "<td>" & SimpleRound(AddMoney, 0) & "</td>"
+        Body = Body & "<td>" & SimpleRound(BonusMoney, 0) & "</td>"
+        Body = Body & "<td>" & SimpleRound(CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney, 0) & "</td>"
+        PriceCount = PriceCount + SimpleRound(CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney, 0)
         Body = Body & "</tr>"
         Print #1, Body
         DayDiff = DateDiff("d", OrderDate, txtCurrentDate.Text)
@@ -4331,7 +4354,7 @@ Sub CustomWeekTransaction(ByVal TargetPath As String)
         
         
         'show price count
-        Body = "<tr><td>總計</td><td>" & PriceCount & "</td></tr>"
+        Body = "<tr><td>總計</td><td>" & SimpleRound(PriceCount, 0) & "</td></tr>"
         Print #1, Body
         
         Print #1, "</table>"
@@ -4344,7 +4367,7 @@ End Sub
 Sub CustomMonthTransaction(ByVal TargetPath As String)
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer
-    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
+    Dim CurrentCount As Double, CurrentPrice As Long, WinningCount As Double, WinningPrice As Long
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
@@ -4353,8 +4376,8 @@ Sub CustomMonthTransaction(ByVal TargetPath As String)
     Dim beginv As Integer
     Dim endv As Integer
     Dim OrderDate As String, ProductID As String, ProductName As String
-    Dim PriceCount As Double
-    Dim OldOrderDate As String, CurrentPriceCount As Double, WinningPriceCount As Double, AddMoney As Double, BonusMoney As Double
+    Dim PriceCount As Long
+    Dim OldOrderDate As String, CurrentPriceCount As Long, WinningPriceCount As Long, AddMoney As Long, BonusMoney As Long
     Dim DayDiff As Integer
        
        
@@ -4413,21 +4436,21 @@ Sub CustomMonthTransaction(ByVal TargetPath As String)
                 
                 'save data
                 If Not price_rec.EOF Then
-                    CurrentPriceCount = CurrentPriceCount + (order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")))
-                    WinningPriceCount = WinningPriceCount + (order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")))
+                    CurrentPriceCount = CurrentPriceCount + SimpleRound(order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")), 0)
+                    WinningPriceCount = WinningPriceCount + SimpleRound(order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")), 0)
                 End If
-                If Not IsNull(order_rec.Fields.Item("AddMoney")) Then AddMoney = AddMoney + Val(order_rec.Fields.Item("AddMoney"))
-                If Not IsNull(order_rec.Fields.Item("BonusMoney")) Then BonusMoney = BonusMoney + Val(order_rec.Fields.Item("BonusMoney"))
+                If Not IsNull(order_rec.Fields.Item("AddMoney")) Then AddMoney = AddMoney + SimpleRound(order_rec.Fields.Item("AddMoney"), 0)
+                If Not IsNull(order_rec.Fields.Item("BonusMoney")) Then BonusMoney = BonusMoney + SimpleRound(order_rec.Fields.Item("BonusMoney"), 0)
             Else
                 'mark custom name
                 Body = "<tr>"
                 Body = Body & "<td>" & OldOrderDate & "</td>"
-                Body = Body & "<td>" & CurrentPriceCount & "</td>"
-                Body = Body & "<td>" & WinningPriceCount & "</td>"
-                Body = Body & "<td>" & AddMoney & "</td>"
-                Body = Body & "<td>" & BonusMoney & "</td>"
-                Body = Body & "<td>" & CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney & "</td>"
-                PriceCount = PriceCount + CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney
+                Body = Body & "<td>" & SimpleRound(CurrentPriceCount, 0) & "</td>"
+                Body = Body & "<td>" & SimpleRound(WinningPriceCount, 0) & "</td>"
+                Body = Body & "<td>" & SimpleRound(AddMoney, 0) & "</td>"
+                Body = Body & "<td>" & SimpleRound(BonusMoney, 0) & "</td>"
+                Body = Body & "<td>" & SimpleRound(CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney, 0) & "</td>"
+                PriceCount = PriceCount + SimpleRound(CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney, 0)
                 Body = Body & "</tr>"
                 Print #1, Body
                 
@@ -4466,12 +4489,12 @@ Sub CustomMonthTransaction(ByVal TargetPath As String)
         'mark custom name
         Body = "<tr>"
         Body = Body & "<td>" & OldOrderDate & "</td>"
-        Body = Body & "<td>" & CurrentPriceCount & "</td>"
-        Body = Body & "<td>" & WinningPriceCount & "</td>"
-        Body = Body & "<td>" & AddMoney & "</td>"
-        Body = Body & "<td>" & BonusMoney & "</td>"
-        Body = Body & "<td>" & CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney & "</td>"
-        PriceCount = PriceCount + CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney
+        Body = Body & "<td>" & SimpleRound(CurrentPriceCount, 0) & "</td>"
+        Body = Body & "<td>" & SimpleRound(WinningPriceCount, 0) & "</td>"
+        Body = Body & "<td>" & SimpleRound(AddMoney, 0) & "</td>"
+        Body = Body & "<td>" & SimpleRound(BonusMoney, 0) & "</td>"
+        Body = Body & "<td>" & SimpleRound(CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney, 0) & "</td>"
+        PriceCount = PriceCount + SimpleRound(CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney, 0)
         Body = Body & "</tr>"
         Print #1, Body
         DayDiff = DateDiff("d", OrderDate, Format(txtCurrentDate.Text, "yyyy/MM/") & Date_Is_28_29_30_31(txtCurrentDate.Text))
@@ -4489,7 +4512,7 @@ Sub CustomMonthTransaction(ByVal TargetPath As String)
         
         
         'show price count
-        Body = "<tr><td>總計</td><td>" & PriceCount & "</td></tr>"
+        Body = "<tr><td>總計</td><td>" & SimpleRound(PriceCount, 0) & "</td></tr>"
         Print #1, Body
         
         Print #1, "</table>"
@@ -4502,7 +4525,7 @@ End Sub
 Sub CustomYearTransaction(ByVal TargetPath As String)
     Dim selectFields As String
     Dim Body As String, i As Integer, PIDArray(1024) As String, Count As Integer
-    Dim CurrentCount As Integer, CurrentPrice As Double, WinningCount As Integer, WinningPrice As Double
+    Dim CurrentCount As Double, CurrentPrice As Long, WinningCount As Double, WinningPrice As Long
     Dim SQL As String
     Dim product_rec As New adoDB.Recordset, price_rec As New adoDB.Recordset, custom_rec As New adoDB.Recordset, order_rec As New adoDB.Recordset
     Dim rec1 As New adoDB.Recordset
@@ -4511,8 +4534,8 @@ Sub CustomYearTransaction(ByVal TargetPath As String)
     Dim beginv As Integer
     Dim endv As Integer
     Dim OrderDate As String, ProductID As String, ProductName As String
-    Dim PriceCount As Double
-    Dim OldOrderDate As String, CurrentPriceCount As Double, WinningPriceCount As Double, AddMoney As Double, BonusMoney As Double
+    Dim PriceCount As Long
+    Dim OldOrderDate As String, CurrentPriceCount As Long, WinningPriceCount As Long, AddMoney As Long, BonusMoney As Long
     Dim DayDiff As Integer
        
        
@@ -4571,21 +4594,21 @@ Sub CustomYearTransaction(ByVal TargetPath As String)
                 
                 'save data
                 If Not price_rec.EOF Then
-                    CurrentPriceCount = CurrentPriceCount + (order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")))
-                    WinningPriceCount = WinningPriceCount + (order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")))
+                    CurrentPriceCount = CurrentPriceCount + SimpleRound(order_rec.Fields.Item("CurrentCount") * Val(price_rec.Fields.Item("CurrentPrice")), 0)
+                    WinningPriceCount = WinningPriceCount + SimpleRound(order_rec.Fields.Item("WinningCount") * Val(price_rec.Fields.Item("WinningPrice")), 0)
                 End If
-                If Not IsNull(order_rec.Fields.Item("AddMoney")) Then AddMoney = AddMoney + Val(order_rec.Fields.Item("AddMoney"))
-                If Not IsNull(order_rec.Fields.Item("BonusMoney")) Then BonusMoney = BonusMoney + Val(order_rec.Fields.Item("BonusMoney"))
+                If Not IsNull(order_rec.Fields.Item("AddMoney")) Then AddMoney = AddMoney + SimpleRound(order_rec.Fields.Item("AddMoney"), 0)
+                If Not IsNull(order_rec.Fields.Item("BonusMoney")) Then BonusMoney = BonusMoney + SimpleRound(order_rec.Fields.Item("BonusMoney"), 0)
             Else
                 'mark custom name
                 Body = "<tr>"
                 Body = Body & "<td>" & OldOrderDate & "</td>"
-                Body = Body & "<td>" & CurrentPriceCount & "</td>"
-                Body = Body & "<td>" & WinningPriceCount & "</td>"
-                Body = Body & "<td>" & AddMoney & "</td>"
-                Body = Body & "<td>" & BonusMoney & "</td>"
-                Body = Body & "<td>" & CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney & "</td>"
-                PriceCount = PriceCount + CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney
+                Body = Body & "<td>" & SimpleRound(CurrentPriceCount, 0) & "</td>"
+                Body = Body & "<td>" & SimpleRound(WinningPriceCount, 0) & "</td>"
+                Body = Body & "<td>" & SimpleRound(AddMoney, 0) & "</td>"
+                Body = Body & "<td>" & SimpleRound(BonusMoney, 0) & "</td>"
+                Body = Body & "<td>" & SimpleRound(CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney, 0) & "</td>"
+                PriceCount = PriceCount + SimpleRound(CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney, 0)
                 Body = Body & "</tr>"
                 Print #1, Body
                 
@@ -4624,12 +4647,12 @@ Sub CustomYearTransaction(ByVal TargetPath As String)
         'mark custom name
         Body = "<tr>"
         Body = Body & "<td>" & OldOrderDate & "</td>"
-        Body = Body & "<td>" & CurrentPriceCount & "</td>"
-        Body = Body & "<td>" & WinningPriceCount & "</td>"
-        Body = Body & "<td>" & AddMoney & "</td>"
-        Body = Body & "<td>" & BonusMoney & "</td>"
-        Body = Body & "<td>" & CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney & "</td>"
-        PriceCount = PriceCount + CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney
+        Body = Body & "<td>" & SimpleRound(CurrentPriceCount, 0) & "</td>"
+        Body = Body & "<td>" & SimpleRound(WinningPriceCount, 0) & "</td>"
+        Body = Body & "<td>" & SimpleRound(AddMoney, 0) & "</td>"
+        Body = Body & "<td>" & SimpleRound(BonusMoney, 0) & "</td>"
+        Body = Body & "<td>" & SimpleRound(CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney, 0) & "</td>"
+        PriceCount = PriceCount + SimpleRound(CurrentPriceCount + WinningPriceCount + AddMoney + BonusMoney, 0)
         Body = Body & "</tr>"
         Print #1, Body
         DayDiff = DateDiff("d", OrderDate, Format(txtCurrentDate.Text, "yyyy/") & "12/31")
@@ -4647,7 +4670,7 @@ Sub CustomYearTransaction(ByVal TargetPath As String)
         
         
         'show price count
-        Body = "<tr><td>總計</td><td>" & PriceCount & "</td></tr>"
+        Body = "<tr><td>總計</td><td>" & SimpleRound(PriceCount, 0) & "</td></tr>"
         Print #1, Body
         
         Print #1, "</table>"
@@ -4659,6 +4682,15 @@ End Sub
 
 
 Sub ProductWeekTransaction(ByVal TargetPath As String)
+    Dim exap As Excel.Application
+    Dim exwb As Excel.Workbook
+    Dim exsh As Excel.Worksheet
+    Dim row As Integer, col As Integer
+    Set exap = New Excel.Application
+    Set exwb = exap.Workbooks.Add
+    Set exsh = exwb.Sheets.Item(1)
+    exsh.Columns.ColumnWidth = 16
+    
     Const Day As Integer = 6
     
     Dim selectFields As String
@@ -4670,8 +4702,8 @@ Sub ProductWeekTransaction(ByVal TargetPath As String)
     Dim beginv As Integer
     Dim endv As Integer
     Dim OrderDate As String, ProductID As String, ProductName As String
-    Dim PriceCount As Double
-    Dim OldOrderDate As String, CurrentPriceCount(Day) As Double, WinningPriceCount(Day) As Double, AddMoney As Double, BonusMoney As Double
+    Dim PriceCount As Long
+    Dim OldOrderDate As String, CurrentPriceCount(Day) As Double, WinningPriceCount(Day) As Double, AddMoney As Long, BonusMoney As Long
     Dim DayDiff As Integer
     Dim SaveOrderDate(Day) As String
     
@@ -4684,23 +4716,20 @@ Sub ProductWeekTransaction(ByVal TargetPath As String)
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
   
     
-    Open TargetPath For Output As #1
         
-        Print #1, "<table>"
-    
         'show report datetime
-        Body = "<tr><td>日期</td><td colspan=10>" & DateTime.DateAdd("d", -6, txtCurrentDate.Text) & "至" & txtCurrentDate.Text & "</td></tr>"
-        Print #1, Body
-        Body = "<tr><td>產品名稱</td><td colspan=10>" & PData(1) & "</td></tr>"
-        Print #1, Body
+        row = 1: col = 1: exsh.Cells(row, col) = "日期"
+        col = col + 1: exsh.Cells(row, col) = DateTime.DateAdd("d", -6, txtCurrentDate.Text) & "至" & txtCurrentDate.Text
+        col = 11:   Call exsh.Range(Numeric2CharEN(2) & row, Numeric2CharEN(col) & row).Merge
+        row = row + 1
         
-        'list all day
-        Body = "<tr><td>客戶名稱</td>"
+        'show product name
+        col = 1: exsh.Cells(row, col) = "客戶名稱"
         For i = 6 To 0 Step -1
-            Body = Body & "<td>" & DateTime.DateAdd("d", -i, txtCurrentDate.Text) & "</td>"
+            col = col + 1: exsh.Cells(row, col) = DateTime.DateAdd("d", -i, txtCurrentDate.Text)
         Next
-        Body = Body & "<td>小計</td></tr>"
-        Print #1, Body
+        col = col + 1: exsh.Cells(row, col) = "小計"
+        row = row + 1
         
        
         'list all custom again
@@ -4761,41 +4790,50 @@ Sub ProductWeekTransaction(ByVal TargetPath As String)
             'list all custom name
             n = 0
             PriceCount = 0
-            Body = "<tr><td>" & custom_rec.Fields.Item("CName") & "</td>"
+            col = 1: exsh.Cells(row, col) = custom_rec.Fields.Item("CName")
             For i = 6 To 0 Step -1
                 If SaveOrderDate(n) = Format(DateTime.DateAdd("d", -i, txtCurrentDate.Text), "yyyy/MM/dd") Then
                     PriceCount = PriceCount + CurrentPriceCount(n)
                     
-                    Body = Body & "<td>" & CurrentPriceCount(n) & "</td>"
-                    'Body = Body & "<td>" & WinningPriceCount(n) & "</td>"
+                    col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentPriceCount(n), 0)
+                    'col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningPriceCount(n) ,0)
                     
                     CurrentPriceCount(n) = 0
                     'WinningPriceCount(n) =  0
                     
                     n = n + 1
                 Else
-                    Body = Body & "<td>0</td>"
-                    'Body = Body & "<td>0</td>"
+                    col = col + 1: exsh.Cells(row, col) = 0
+                    'col = col + 1: exsh.Cells(row, col) = 0
                 End If
             Next
-            Body = Body & "<td>" & PriceCount & "</td></tr>"
-            Print #1, Body
-            
+            col = col + 1
+            col = col + 1: exsh.Cells(row, col) = "=sum(" & Numeric2CharEN(2) & row & "," & Numeric2CharEN(9) & row & ")" 'SimpleRound(PriceCount, 0)
+            row = row + 1
             
             
             custom_rec.MoveNext
         Loop
         
         
-        
-        Print #1, "</table>"
-    Close #1
+    Call exwb.SaveAs(TargetPath)
+    Call exap.Quit
+    
     
     order_rec.Close
 End Sub
 
 
 Sub WeekTransaction(ByVal TargetPath As String)
+    Dim exap As Excel.Application
+    Dim exwb As Excel.Workbook
+    Dim exsh As Excel.Worksheet
+    Dim row As Integer, col As Integer
+    Set exap = New Excel.Application
+    Set exwb = exap.Workbooks.Add
+    Set exsh = exwb.Sheets.Item(1)
+    exsh.Columns.ColumnWidth = 16
+    
     Const Day As Integer = 6
     
     Dim selectFields As String
@@ -4806,8 +4844,8 @@ Sub WeekTransaction(ByVal TargetPath As String)
     Dim beginv As Integer
     Dim endv As Integer
     Dim OrderDate As String, ProductID As String, ProductName As String
-    Dim PriceCount As Double
-    Dim OldOrderDate As String, CurrentPriceCount(Day) As Double, WinningPriceCount(Day) As Double, AddMoney As Double, BonusMoney As Double
+    Dim PriceCount As Long
+    Dim OldOrderDate As String, CurrentPriceCount(Day) As Double, WinningPriceCount(Day) As Double, AddMoney As Long, BonusMoney As Long
     Dim DayDiff As Integer
     Dim SaveOrderDate(Day) As String
        
@@ -4816,22 +4854,22 @@ Sub WeekTransaction(ByVal TargetPath As String)
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, custom_rec)
   
     
-    Open TargetPath For Output As #1
-        
-        Print #1, "<table>"
-    
+       
         'show report datetime
-        Body = "<tr><td>日期</td><td colspan=10>" & DateTime.DateAdd("d", -6, txtCurrentDate.Text) & "至" & txtCurrentDate.Text & "</td></tr>"
-        Print #1, Body
+        row = 1: col = 1: exsh.Cells(row, col) = "日期"
+        col = col + 1: exsh.Cells(row, col) = DateTime.DateAdd("d", -6, txtCurrentDate.Text) & "至" & txtCurrentDate.Text
+        col = 11:   Call exsh.Range(Numeric2CharEN(2) & row, Numeric2CharEN(col) & row).Merge
+        row = row + 1
         
-        'list all day
-        Body = "<tr><td>客戶名稱</td>"
+        'show product name
+        col = 1: exsh.Cells(row, col) = "客戶名稱"
         For i = 6 To 0 Step -1
-            Body = Body & "<td>" & DateTime.DateAdd("d", -i, txtCurrentDate.Text) & "</td>"
+            col = col + 1: exsh.Cells(row, col) = DateTime.DateAdd("d", -i, txtCurrentDate.Text)
         Next
-        Body = Body & "<td>前帳</td>"
-        Body = Body & "<td>小計</td></tr>"
-        Print #1, Body
+        col = col + 1: exsh.Cells(row, col) = "前帳"
+        col = col + 1: exsh.Cells(row, col) = "小計"
+        row = row + 1
+        
         
        
         'list all custom again
@@ -4885,26 +4923,26 @@ Sub WeekTransaction(ByVal TargetPath As String)
             'list all custom name
             n = 0
             PriceCount = 0
-            Body = "<tr><td>" & custom_rec.Fields.Item("CName") & "</td>"
+            col = 1: exsh.Cells(row, col) = custom_rec.Fields.Item("CName")
             For i = 6 To 0 Step -1
                 If SaveOrderDate(n) = Format(DateTime.DateAdd("d", -i, txtCurrentDate.Text), "yyyy/MM/dd") Then
                     PriceCount = PriceCount + CurrentPriceCount(n)
                     
-                    Body = Body & "<td>" & CurrentPriceCount(n) & "</td>"
-                    'Body = Body & "<td>" & WinningPriceCount(n) & "</td>"
+                    col = col + 1: exsh.Cells(row, col) = SimpleRound(CurrentPriceCount(n), 0)
+                    'col = col + 1: exsh.Cells(row, col) = SimpleRound(WinningPriceCount(n) ,0)
                     
                     CurrentPriceCount(n) = 0
                     'WinningPriceCount(n) =  0
                     
                     n = n + 1
                 Else
-                    Body = Body & "<td>0</td>"
-                    'Body = Body & "<td>0</td>"
+                    col = col + 1: exsh.Cells(row, col) = 0
+                    'col = col + 1: exsh.Cells(row, col) = 0
                 End If
             Next
-            Body = Body & "<td></td>"
-            Body = Body & "<td>" & PriceCount & "</td></tr>"
-            Print #1, Body
+            col = col + 1
+            col = col + 1: exsh.Cells(row, col) = "=sum(" & Numeric2CharEN(2) & row & "," & Numeric2CharEN(9) & row & ")" 'SimpleRound(PriceCount, 0)
+            row = row + 1
             
             
             
@@ -4912,9 +4950,9 @@ Sub WeekTransaction(ByVal TargetPath As String)
         Loop
         
         
-        
-        Print #1, "</table>"
-    Close #1
+    Call exwb.SaveAs(TargetPath)
+    Call exap.Quit
+    
     
     order_rec.Close
 End Sub

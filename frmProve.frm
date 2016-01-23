@@ -579,145 +579,145 @@ End Sub
 Private Sub cmdCustomMonthTransaction_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "CustomMonthTransaction"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdCustomProductDayReport_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "CustomProductDayReport"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdCustomProductDayReportDetail_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "CustomProductDayReportDetail"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdCustomProductWeekReport_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "CustomProductWeekReport"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdCustomProductWeekReportDetail_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "CustomProductWeekReportDetail"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdCustomProductWeekTransaction_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "CustomProductWeekTransaction"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdCustomWeekReport_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "CustomWeekReport"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdCustomMonthReport_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "CustomMonthReport"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdCustomWeekTransaction_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "CustomWeekTransaction"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdCustomYearReport_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "CustomYearReport"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdCustomYearTransaction_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "CustomYearTransaction"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdDayAccount_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "DayAccount"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdDayReport_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "DayReport"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdFourKDayAccount_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "FourKDayAccount"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdFourKDayReport_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "FourKDayReport"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdFourKMonthAccount_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "FourKMonthAccount"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdFourKMonthReport_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "FourKMonthReport"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdFourKWeekAccount_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "FourKWeekAccount"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdFourKWeekReport_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "FourKWeekReport"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdFourKYearAccount_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "FourKYearAccount"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdFourKYearReport_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "FourKYearReport"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdMonthAccount_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "MonthAccount"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdMonthReport_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "MonthReport"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdMonthTransaction_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "MonthTransaction"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdProduct_Click()
@@ -729,43 +729,43 @@ End Sub
 Private Sub cmdProductWeekTransaction_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "ProductWeekTransaction"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdWeekAccount_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "WeekAccount"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdWeekReport_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "WeekReport"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdWeekTransaction_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "WeekTransaction"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdYearAccount_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "YearAccount"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdYearReport_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "YearReport"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub cmdYearTransaction_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "YearTransaction"
-    frmConfirm.Show
+    frmConfirmXLS.Show
 End Sub
 
 Private Sub Form_Load()

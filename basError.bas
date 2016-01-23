@@ -34,7 +34,7 @@ Public Function PrintLog(ByVal Log_String As String, Optional ByVal FileName As 
     SavePath = App.Path & "\log\"
     SaveFile = FileName & Format(DateTime.Date, "yyyyMMdd") & ".log"
     SaveDate = DateTime.Date
-    SaveTime = DateTime.Time
+    SaveTime = DateTime.time
     
     
     If Not FSO_FileExist.FolderExists(SavePath) Then
@@ -45,7 +45,7 @@ Public Function PrintLog(ByVal Log_String As String, Optional ByVal FileName As 
     FreeFilePort = FreeFile
     Open SavePath & SaveFile For Append As #FreeFilePort
         Print #FreeFilePort, SaveDate, SaveTime, "說明-" & Log_String
-        Print #FreeFilePort, SaveDate, SaveTime, "代碼-" & err.Number
+        Print #FreeFilePort, SaveDate, SaveTime, "代碼-" & err.number
         Print #FreeFilePort, SaveDate, SaveTime, "訊息-" & err.Description
     Close #FreeFilePort
     
@@ -60,7 +60,7 @@ Public Function ErrorOut(ByVal Log_String As String, Optional ByVal FileName As 
     Dim Log_File As String
     
     Log_File = PrintLog(Log_String, FileName)
-    MsgBox "發生系統錯誤：" & vbCrLf & "說明-" & Log_String & vbCrLf & "代碼-" & err.Number & vbCrLf & "訊息-" & err.Description & vbCrLf & vbCrLf & "請將錯誤記錄檔" & Log_File & "通知並寄予軒崴系統工程師", vbCritical
+    MsgBox "發生系統錯誤：" & vbCrLf & "說明-" & Log_String & vbCrLf & "代碼-" & err.number & vbCrLf & "訊息-" & err.Description & vbCrLf & vbCrLf & "請將錯誤記錄檔" & Log_File & "通知並寄予工程師", vbCritical
     
     ErrorOut = True
 End Function
