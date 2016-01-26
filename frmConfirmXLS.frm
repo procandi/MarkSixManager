@@ -104,7 +104,7 @@ Begin VB.Form frmConfirmXLS
          Strikethrough   =   0   'False
       EndProperty
       CustomFormat    =   "yyyy/MM/dd"
-      Format          =   98631683
+      Format          =   98041859
       CurrentDate     =   37058
    End
    Begin VB.Label lblEntry 
@@ -4807,8 +4807,7 @@ Sub ProductWeekTransaction(ByVal TargetPath As String)
                     'col = col + 1: exsh.Cells(row, col) = 0
                 End If
             Next
-            col = col + 1
-            col = col + 1: exsh.Cells(row, col) = "=sum(" & Numeric2CharEN(2) & row & "," & Numeric2CharEN(9) & row & ")" 'SimpleRound(PriceCount, 0)
+            col = col + 1: exsh.Cells(row, col) = "=sum(" & Numeric2CharEN(2) & row & "," & Numeric2CharEN(8) & row & ")" 'SimpleRound(PriceCount, 0)
             row = row + 1
             
             

@@ -1,7 +1,7 @@
 frmCustomAddNew = 0, 0, 0, 0, C, 300, 300, 1592, 946, C
 frmPriceUpdate = 250, 250, 1583, 896, C, 0, 0, 1292, 646, C
 frmProve = 25, 25, 1317, 609, , 275, 275, 1567, 921, C
-frmConfirmXLS = 75, 75, 1367, 659, Z, 100, 100, 1392, 746, C
+frmConfirmXLS = 75, 75, 1367, 659, , 100, 100, 1392, 746, C
 basDataBase = 0, 0, 0, 0, C
 basFunction = 78, 78, 749, 560, 
 basINI = 0, 0, 0, 0, C
@@ -28,5 +28,5 @@ frmOrderAddNewPart = 0, 0, 0, 0, C, 200, 200, 1492, 846, C
 frmOrder = 100, 100, 1525, 684, C, 225, 225, 1517, 871, C
 frmOrderOld = 0, 0, 0, 0, C, 250, 250, 1542, 896, C
 frmOrderAddNew = 225, 225, 1558, 871, C, 275, 275, 1567, 921, C
-frmConfirmCSV = 52, 52, 723, 534, , 104, 104, 775, 586, C
+frmConfirmCSV = 52, 52, 723, 534, Z, 104, 104, 775, 586, C
 basNew = 26, 26, 697, 508, 
