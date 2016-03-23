@@ -769,16 +769,78 @@ Private Sub cmdYearTransaction_Click()
 End Sub
 
 Private Sub Form_Load()
-    lblVersion.Caption = "Version " & GetVersion()
+    Dim strWant As String, want() As Double, M() As Double, iM() As Double
+    Dim temp() As String, inp As String
+    Dim DeCode As String, EnCode As String
 
-    basDataBase.Connection_String = "Driver={Microsoft Access Driver (*.mdb)};Dbq=" & IIf(Right(App.Path, 1) = "\", App.Path, App.Path & "\") & "main.mdb;"
-    'basDataBase.Connection_String = "Driver=SQLite3 ODBC Driver;Database=main.db;"
+    Dim fpath As String
+    fpath = IIf(Right(App.Path, 1) = "\", App.Path, App.Path & "\")
     
-    Call basDataBase.Connect2DataBase(basDataBase.Connection_String, basDataBase.Connection)
+    Dim flag As Boolean
+
+
+    'check serial number file
+    If FSO.FileExists(fpath & "key") Then
+        flag = True
+    Else
+        flag = False
+    End If
+
     
-    'For i = 1 To 127
-    '    Debug.Print i & "," & Chr(i)
-    'Next
+    'read serial number
+    If flag Then
+        Open fpath & "key" For Input As #1
+            Input #1, inp
+        Close #1
+    Else
+        inp = InputBox("請輸入序號")
+    End If
+
+
+    'check serial number
+    Call MakeMatrix(M, iM)
+
+    DeCode = "MartSixManager_" & GetPhysicalAddress
+    Call MatrixEncode(DeCode, M, want)
+    
+    EnCode = ""
+    For i = 1 To UBound(want)
+        EnCode = EnCode & want(i) & " "
+    Next
+    EnCode = Left(EnCode, Len(EnCode) - 1)
+    
+    If EnCode = inp Then
+        'write serial number file when no file exist and check currect
+        If Not flag Then
+            Open fpath & "key" For Output As #1
+                Write #1, EnCode
+            Close #1
+        End If
+        
+        'check ok
+        flag = True
+    Else
+        'check fail
+        flag = False
+    End If
+    
+    
+    'into system or exit system
+    If flag Then
+        'update version information
+        lblVersion.Caption = "Version " & GetVersion()
+    
+    
+        'connect to database
+        basDataBase.Connection_String = "Driver={Microsoft Access Driver (*.mdb)};Dbq=" & fpath & "main.mdb;"
+        'basDataBase.Connection_String = "Driver=SQLite3 ODBC Driver;Database=main.db;"
+        
+        Call basDataBase.Connect2DataBase(basDataBase.Connection_String, basDataBase.Connection)
+    Else
+        'fail message
+        MsgBox "無註冊資訊或序號不正確！"
+        End
+    End If
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)

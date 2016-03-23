@@ -47,3 +47,21 @@ Public Sub MatrixEncode(ByRef strSource As String, ByRef M() As Double, ByRef db
 End Sub
 '/*小華修改的(20091029)*/
 
+
+'/*矩陣加密的初始設定*/
+Public Function MakeMatrix(ByRef M() As Double, ByRef iM() As Double) As Boolean
+     Dim i, strWant As String
+     ReDim M(1 To 3, 1 To 3)
+     ReDim iM(1 To 3, 1 To 3)
+     
+     
+     M(1, 1) = 1: M(1, 2) = 2: M(1, 3) = 3: M(2, 1) = 4: M(2, 2) = 5
+     M(2, 3) = 6: M(3, 1) = 7: M(3, 2) = 8: M(3, 3) = 10
+     iM(1, 1) = -0.666666667: iM(1, 2) = -1.333333333: iM(1, 3) = 1
+     iM(2, 1) = -0.666666667: iM(2, 2) = 3.666666667: iM(2, 3) = -2
+     iM(3, 1) = 1: iM(3, 2) = -2: iM(3, 3) = 1
+     
+     
+     MakeMatrix = True
+End Function
+'/*小華修改的(20091029)*/
