@@ -799,7 +799,7 @@ Private Sub Form_Load()
 
     'check serial number
     Call MakeMatrix(M, iM)
-
+    
     DeCode = "MartSixManager_" & GetPhysicalAddress
     Call MatrixEncode(DeCode, M, want)
     
@@ -808,6 +808,9 @@ Private Sub Form_Load()
         EnCode = EnCode & want(i) & " "
     Next
     EnCode = Left(EnCode, Len(EnCode) - 1)
+    
+    'crack
+    'inp = EnCode
     
     If EnCode = inp Then
         'write serial number file when no file exist and check currect
