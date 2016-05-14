@@ -2,6 +2,61 @@
 
 
 class SettingHandle
+=begin
+
+recordset.Fields.each(){|field|
+  p field.name
+}
+
+product
+"PID"
+"PName"
+pid,pname
+
+price
+"SwiftCode"
+"CID"
+"PID"
+"CurrentDate"
+"CurrentPrice"
+"WinningPrice"
+"Upset"
+swiftcode,cid,pid,currentdate,currentprice,winningprice,upset
+
+custom
+"CID"
+"CName"
+"CType"
+"Address"
+"OpenDate"
+"BankID"
+"Proportion"
+"BonusTarget"
+"Phone1"
+"Phone2"
+"Phone3"
+"Phone4"
+"Phone5"
+"Phone6"
+"Note"
+cid,cname,ctype,address,opendate,bankid,proportion,bonustarget,phone1,phone2,phone3,phone4,phone5,phone6,note
+
+[order]
+"SwiftCode"
+"CID"
+"PID"
+"CurrentDate"
+"CurrentCount"
+"WinningCount"
+"AddMoney"
+"BonusMoney"
+"Note"
+"Group"
+swiftcode,cid,pid,currentdate,currentcount,winningcount,addmoney,bonusmoney,note,group
+
+=end
+
+
 #=begin
   #環境基本資料
   REMOTE_DBTYPE="ORA"  #MSSQL or DB2 or ORA
