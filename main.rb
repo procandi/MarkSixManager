@@ -23,46 +23,102 @@ def CustomDailyTransactionDetail(connection,current_pid,current_cid,current_date
 
 	#取符合條件的交易
 	recordset_order = WIN32OLE.new('ADODB.Recordset')
-	sql = "select * from [order] where PID='#{current_pid}' and CID='#{current_cid}' and CurrentDate='#{current_date}';"
+	if(current_pid.to_i()>=100)
+		sql = "select * from [order] where cint(PID)>=#{current_pid[1]+'0'} and cint(PID)<=#{current_pid[1]+'9'} and CID='#{current_cid}' and CurrentDate='#{current_date}';"
+	else
+		sql = "select * from [order] where PID='#{current_pid}' and CID='#{current_cid}' and CurrentDate='#{current_date}';"
+	end
 	recordset_order.Open(sql, connection)
 
 	#取符合條件且最接近想搜尋的日期的一筆的價格
 	recordset_price = WIN32OLE.new('ADODB.Recordset')
-	sql = "select top 1 * from price where PID='#{current_pid}' and CID='#{current_cid}' and CurrentDate<='#{current_date}' order by CurrentDate desc;"
+	if(current_pid.to_i()>=100)
+		sql = "select top 1 * from price where cint(PID)>=#{current_pid[1]+'0'} and cint(PID)<=#{current_pid[1]+'9'} and CID='#{current_cid}' and CurrentDate<='#{current_date}' order by CurrentDate desc;"
+	else
+		sql = "select top 1 * from price where PID='#{current_pid}' and CID='#{current_cid}' and CurrentDate<='#{current_date}' order by CurrentDate desc;"
+	end
 	recordset_price.Open(sql, connection)
 
 
+	#預存出所有會需要列出的資料
 	data_product = recordset_product.GetRows.transpose
+=begin
 	data_product.each(){|pid,pname|
 		p pid,pname
 	}
-	recordset_product.close
+=end
 
+	#data_custom = recordset_custom.GetRows.transpose
 =begin
-	data_custom = recordset_custom.GetRows.transpose
 	data_custom.each(){|cid,cname|
 		p cid,cname
 	}
-	recordset_custom.close
 =end
 
-
-=begin
 	data_order = recordset_order.GetRows.transpose
+=begin
 	data_order.each(){|swiftcode,cid,pid,currentdate,currentcount,winningcount,addmoney,bonusmoney,note,group|
 		p swiftcode,cid,pid,currentdate,currentcount,winningcount,addmoney,bonusmoney,note,group
 	}
-	recordset_order.close
 =end
 
+	#data_price = recordset_price.GetRows.transpose
 =begin
-	data_price = recordset_price.GetRows.transpose
 	data_price.each(){|swiftcode,cid,pid,currentdate,currentprice,winningprice,upset|
 		p swiftcode,cid,pid,currentdate,currentprice,winningprice,upset
 
 	}
-	recordset_price.close
 =end
+	
+
+	#Create a new Workbook
+	book = Spreadsheet::Workbook.new
+
+	#Create the worksheet
+	book.create_worksheet :name => '客戶每日交易明細'
+
+	#Create the rows to be inserted, and add row
+	pnamelist=[]
+	data_product.each(){|pid,pname| 
+		newpname=pname.sub(/.*_/,'') 
+		pnamelist+=[newpname]+[newpname+'中']
+	}
+	row = ['類別']+pnamelist
+	book.worksheet(0).insert_row(0, row)
+
+	currentlist=[]
+	winninglist=[]
+	data_order.each(){|swiftcode,cid,pid,currentdate,currentcount,winningcount,addmoney,bonusmoney,note,group| 
+		#p cid
+		#p pid
+		#p swiftcode
+		currentlist[pid=>1]
+	}
+	p currentlist
+	#row = ['牌支']+currentlist
+	#book.worksheet(0).insert_row(1, row)
+
+
+
+	#close recordset
+	recordset_product.close
+	recordset_custom.close
+	recordset_order.close
+	recordset_price.close
+
+
+	#Write the file
+	year='2016'
+	month='05'
+	a='a'
+	b='b'
+	c='c'
+	FileUtils.mkdir_p("report/#{year}/#{month}/")
+	book.write("report/#{year}/#{month}/#{a}_#{b}_#{c}_客戶每日交易明細.xls")
+
+	#End
+	p "#{a}_#{b}_#{c}_客戶每日交易明細.xls 已輸出"
+
 end
 
 
@@ -76,31 +132,3 @@ end
 
 
 CustomDailyTransactionDetail(@connection,'100','1','2016/01/11')
-
-
-
-=begin
-# Begin Test
-print "Spreadsheet Test\n"
-
-# Create the rows to be inserted
-row_1 = ['A1', 'B1']
-row_2 = ['A2', 'B2']
-
-# Create a new Workbook
-new_book = Spreadsheet::Workbook.new
-
-# Create the worksheet
-new_book.create_worksheet :name => 'Sheet Name'
-
-# Add row_1
-new_book.worksheet(0).insert_row(0, row_1)
-
-# Write the file
-new_book.write('test.xls')
-
-# End Test
-print "Test Complete.\n"
-=end
-
-
