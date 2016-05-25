@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 require 'win32ole'  
-require 'spreadsheet'
+#require 'spreadsheet' old function.
 require 'writeexcel'
 
 
@@ -118,6 +118,7 @@ def CustomDailyTransactionDetail(connection,current_pid,current_cid,current_date
 
 
 	#Write a number and formula using A1 notation, and add row
+	#列舉產品名
 	pnamelist=Array.new
 	data_product.each(){|pid,pname| 
 		newpname=pname.sub(/.*_/,'') 
@@ -127,7 +128,7 @@ def CustomDailyTransactionDetail(connection,current_pid,current_cid,current_date
 	sheet.write('A1', row)
 	
 
-
+	#列舉數量，並計算金額
 	currentcountlist=Hash.new(0)
 	winningcountlist=Hash.new(0)
 	data_order.each(){|swiftcode,cid,pid,currentdate,currentcount,winningcount,addmoney,bonusmoney,note,group| 
@@ -146,6 +147,7 @@ def CustomDailyTransactionDetail(connection,current_pid,current_cid,current_date
 	sheet.write('A3', row)
 
 
+	#計算應收、漲價、佔成
 	#row = ['應收']+[paylist.sum.round(4)]+['','','','']+['漲價']+[data_order.at(0).at(6)]+['']+['佔成']+[data_order.at(0).at(7)]	#get newest addmoney and bounsmoney from data array
 	row = ['應收']
 	sheet.write('A4',row)
@@ -159,7 +161,7 @@ def CustomDailyTransactionDetail(connection,current_pid,current_cid,current_date
 	sheet.write('J4',row)
 
 
-
+	#顯示日期、產品類別、姓名
 	row = [current_date]
 	sheet.write('A5', row)
 	format = book.add_format
@@ -169,10 +171,12 @@ def CustomDailyTransactionDetail(connection,current_pid,current_cid,current_date
 	row = [hash_custom['cname']]
 	sheet.merge_range('C5:K5', row, book.add_format)
 
+	#列舉產品名
 	row = ['單號']+pnamelist
 	sheet.write('A6', row)
 
 
+	#為每一筆交易列舉
 	currentcountlist=Hash.new(0)
 	winningcountlist=Hash.new(0)
 	oldgroup=-1
@@ -279,24 +283,6 @@ def DailyTransactionCounting(connection,current_pid,current_date)
 
 	#custom
 	data_custom = recordset_custom.GetRows.transpose
-	hash_custom=Hash.new
-	data_custom.each(){|cid,cname,ctype,address,opendate,bankid,proportion,bonustarget,phone1,phone2,phone3,phone4,phone5,phone6,note|
- 		hash_custom["cid"]=cid
-		hash_custom["cname"]=cname
-		hash_custom["ctype"]=ctype
-		hash_custom["address"]=address
-		hash_custom["opendate"]=opendate
-		hash_custom["bankid"]=bankid
-		hash_custom["proportion"]=proportion
-		hash_custom["bonustarget"]=bonustarget
-		hash_custom["phone1"]=phone1
-		hash_custom["phone2"]=phone2
-		hash_custom["phone3"]=phone3
-		hash_custom["phone4"]=phone4
-		hash_custom["phone5"]=phone5
-		hash_custom["phone6"]=phone6
-		hash_custom["note"]=note
-	}
 
 
 	#price
@@ -348,6 +334,7 @@ def DailyTransactionCounting(connection,current_pid,current_date)
 	sheet.write('A1', row)
 
 
+	#列舉產品名
 	pnamelist=Array.new
 	data_product.each(){|pid,pname| 
 		newpname=pname.sub(/.*_/,'') 
@@ -357,19 +344,37 @@ def DailyTransactionCounting(connection,current_pid,current_date)
 	sheet.write('A2', row)
 
 
+	#計算出、入、留
 	outcurrentcountlist=Hash.new(0)
 	outwinningcountlist=Hash.new(0)
 	incurrentcountlist=Hash.new(0)
 	inwinningcountlist=Hash.new(0)
+	customlist=Hash.new
 	data_order.each(){|swiftcode,cid,pid,currentdate,currentcount,winningcount,addmoney,bonusmoney,note,group| 
 		if(currentcount.to_f()>=0)
 			outcurrentcountlist[pid]+=currentcount.to_f()
 			outwinningcountlist[pid]+=winningcount.to_f()
+			
+			#若客戶的ID HASH尚未建立，則為每個客戶ID建置HASH，以供分別儲存他們的交易及中獎數量
+			if(customlist[cid]==nil)
+				customlist[cid]={'outcurrentcountlist'=>Hash.new(0),'outwinningcountlist'=>Hash.new(0),'incurrentcountlist'=>Hash.new(0),'inwinningcountlist'=>Hash.new(0)}
+			end
+			customlist[cid]['outcurrentcountlist'][pid]+=currentcount.to_f()
+			customlist[cid]['outwinningcountlist'][pid]+=winningcount.to_f()
 		else
 			incurrentcountlist[pid]+=currentcount.to_f()
 			inwinningcountlist[pid]+=winningcount.to_f()
+
+			#若客戶的ID HASH尚未建立，則為每個客戶ID建置HASH，以供分別儲存他們的交易及中獎數量
+			if(customlist[cid]==nil)
+				customlist[cid]={'outcurrentcountlist'=>Hash.new(0),'outwinningcountlist'=>Hash.new(0),'incurrentcountlist'=>Hash.new(0),'inwinningcountlist'=>Hash.new(0)}
+			end
+			customlist[cid]['incurrentcountlist'][pid]+=currentcount.to_f()
+			customlist[cid]['inwinningcountlist'][pid]+=winningcount.to_f()
 		end
 	}
+
+	#計算誤差
 	outpaylist=Array.new
 	inpaylist=Array.new
 	outcurrentcountlist.each(){|key,value|
@@ -389,23 +394,54 @@ def DailyTransactionCounting(connection,current_pid,current_date)
 	}
 	sheet.write('A6', row)
 
+	#插入空白行
 	row=['']
 	sheet.write('A7', row)	
 
+	#顯示出的客戶詳細清單
 	row = ['出']+pnamelist+['其它','其它中','應收(含水)','應收(扣水)','水','漲價']
 	sheet.write('A8', row)
 
-	row = [hash_custom['cname']]
-	sheet.write('A9', row)
-
-	row = ['留底']+['']
-	sheet.write('A10', row)
-
-	row = ['入']+pnamelist+['其它','其它中','應收(含水)','應收(扣水)','水','漲價']
-	sheet.write('A11', row)
+	rowindex=0
+	data_custom.each(){|cid,cname,ctype,address,opendate,bankid,proportion,bonustarget,phone1,phone2,phone3,phone4,phone5,phone6,note|
+		row = [cname]
+		if(customlist[cid]==nil)
+			row+=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+		else
+			outcurrentcountlist.each(){|key,value|
+				row+=[customlist[cid]['outcurrentcountlist'][key]*current_price[key].to_f()]+[customlist[cid]['outwinningcountlist'][key]*winning_price[key].to_f()]
+			}
+			row+=[0,0,0,0,0,0]
+		end
+		sheet.write('A'+(9+rowindex).to_s(), row)
+		rowindex+=1
+	}
 	
-	row = [hash_custom['cname']]
-	sheet.write('A12', row)
+
+	#顯示留底的客戶詳細清單
+	row = ['留底']+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+	sheet.write('A'+(9+rowindex).to_s(), row)
+	rowindex+=1
+
+
+	#顯示入的客戶詳細清單
+	row = ['入']+pnamelist+['其它','其它中','應收(含水)','應收(扣水)','水','漲價']
+	sheet.write('A'+(9+rowindex).to_s(), row)
+	rowindex+=1
+
+	data_custom.each(){|cid,cname,ctype,address,opendate,bankid,proportion,bonustarget,phone1,phone2,phone3,phone4,phone5,phone6,note|
+		row = [cname]
+		if(customlist[cid]==nil)
+			row+=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+		else
+			outcurrentcountlist.each(){|key,value|
+				row+=[customlist[cid]['incurrentcountlist'][key]*current_price[key].to_f()]+[customlist[cid]['inwinningcountlist'][key]*winning_price[key].to_f()]
+			}
+			row+=[0,0,0,0,0,0]
+		end
+		sheet.write('A'+(9+rowindex).to_s(), row)
+		rowindex+=1
+	}
 
 
 	#close recordset
