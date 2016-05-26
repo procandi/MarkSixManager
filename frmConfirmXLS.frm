@@ -104,7 +104,7 @@ Begin VB.Form frmConfirmXLS
          Strikethrough   =   0   'False
       EndProperty
       CustomFormat    =   "yyyy/MM/dd"
-      Format          =   37421059
+      Format          =   93519875
       CurrentDate     =   37058
    End
    Begin VB.Label lblEntry 

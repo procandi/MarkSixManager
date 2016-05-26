@@ -1,5 +1,5 @@
 VERSION 5.00
-Begin VB.Form frmProve 
+Begin VB.Form frmNewProve 
    BackColor       =   &H00C0C0C0&
    BorderStyle     =   1  '單線固定
    Caption         =   "系統主頁面"
@@ -7,7 +7,7 @@ Begin VB.Form frmProve
    ClientLeft      =   5055
    ClientTop       =   525
    ClientWidth     =   6765
-   Icon            =   "frmProve.frx":0000
+   Icon            =   "frmNewProve.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
@@ -365,7 +365,7 @@ Begin VB.Form frmProve
       Begin VB.Image Image1 
          Height          =   1035
          Left            =   240
-         Picture         =   "frmProve.frx":8ACE
+         Picture         =   "frmNewProve.frx":8ACE
          Stretch         =   -1  'True
          Top             =   120
          Width           =   5820
@@ -419,7 +419,7 @@ Begin VB.Form frmProve
       End
       Begin VB.Label Label2 
          BackStyle       =   0  '透明
-         Caption         =   $"frmProve.frx":3840F
+         Caption         =   $"frmNewProve.frx":3840F
          BeginProperty Font 
             Name            =   "新細明體"
             Size            =   9.75
@@ -565,7 +565,7 @@ Begin VB.Form frmProve
       Width           =   6465
    End
 End
-Attribute VB_Name = "frmProve"
+Attribute VB_Name = "frmNewProve"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
