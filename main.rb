@@ -330,6 +330,7 @@ def DailyTransactionCounting(connection,current_pid,current_date)
 
 
 	#Create the rows to be inserted, and add row
+	#顯示標題
 	row = [current_date]+[pname,'小計']
 	sheet.write('A1', row)
 
@@ -459,7 +460,10 @@ def DailyTransactionCounting(connection,current_pid,current_date)
 	
 
 	#顯示留底的客戶詳細清單
-	row = ['留底']+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+	symbol=9+rowindex
+	sumwithwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+L#{symbol}-M#{symbol}+P#{symbol}+Q#{symbol}"
+	sumwithoutwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+L#{symbol}-M#{symbol}+Q#{symbol}"
+	row = ['留底']+[0,0,0,0,0,0,0,0,0,0,0,0,sumwithwater,sumwithoutwater,0,0]
 	sheet.write('A'+(9+rowindex).to_s(), row)
 	rowindex+=1
 
@@ -531,7 +535,7 @@ def AllDailyTransactionCounting(connection,current_date)
 
 	#取符合條件且最接近想搜尋的日期的一筆的價格
 	recordset_price = WIN32OLE.new('ADODB.Recordset')
-	sql = "select * from price where PID not like '%5' and CurrentDate<='#{current_date}' order by CurrentDate desc,CLng(PID);"
+	sql = "select * from price where CLng(PID)<100 and PID not like '%5' and CurrentDate<='#{current_date}' order by CurrentDate desc,CLng(PID);"
 	recordset_price.Open(sql, connection)
 
 
@@ -590,6 +594,7 @@ def AllDailyTransactionCounting(connection,current_date)
 
 
 	#Create the rows to be inserted, and add row
+	#顯示標題
 	row = [current_date]+['日總計']
 	sheet.write('A1', row)
 
@@ -618,8 +623,8 @@ def AllDailyTransactionCounting(connection,current_date)
 	inbonusmoney=0
 	data_order.each(){|swiftcode,cid,pid,currentdate,currentcount,winningcount,addmoney,bonusmoney,note,group| 
 		if(currentcount.to_f()>=0)
-			outcurrentcountlist[pid[-1]]+=currentcount.to_f()
-			outwinningcountlist[pid[-1]]+=winningcount.to_f()
+			outcurrentcountlist[pid]+=currentcount.to_f()
+			outwinningcountlist[pid]+=winningcount.to_f()
 			outaddmoney+=addmoney.to_f()
 			outbonusmoney+=bonusmoney.to_f()
 			
@@ -627,13 +632,13 @@ def AllDailyTransactionCounting(connection,current_date)
 			if(customlist[cid]==nil)
 				customlist[cid]={'outcurrentcountlist'=>Hash.new(0),'outwinningcountlist'=>Hash.new(0),'outaddmoney'=>0,'outbonusmoney'=>0,'incurrentcountlist'=>Hash.new(0),'inwinningcountlist'=>Hash.new(0),'inaddmoney'=>0,'inbonusmoney'=>0}
 			end
-			customlist[cid]['outcurrentcountlist'][pid[-1]]+=currentcount.to_f()
-			customlist[cid]['outwinningcountlist'][pid[-1]]+=winningcount.to_f()
+			customlist[cid]['outcurrentcountlist'][pid]+=currentcount.to_f()
+			customlist[cid]['outwinningcountlist'][pid]+=winningcount.to_f()
 			customlist[cid]['outaddmoney']+=addmoney.to_f()
 			customlist[cid]['outbonusmoney']+=bonusmoney.to_f()
 		else
-			incurrentcountlist[pid[-1]]+=currentcount.to_f()
-			inwinningcountlist[pid[-1]]+=winningcount.to_f()
+			incurrentcountlist[pid]+=currentcount.to_f()
+			inwinningcountlist[pid]+=winningcount.to_f()
 			inaddmoney+=addmoney.to_f()
 			inbonusmoney+=bonusmoney.to_f()
 
@@ -641,8 +646,8 @@ def AllDailyTransactionCounting(connection,current_date)
 			if(customlist[cid]==nil)
 				customlist[cid]={'outcurrentcountlist'=>Hash.new(0),'outwinningcountlist'=>Hash.new(0),'outaddmoney'=>0,'outbonusmoney'=>0,'incurrentcountlist'=>Hash.new(0),'inwinningcountlist'=>Hash.new(0),'inaddmoney'=>0,'inbonusmoney'=>0}
 			end
-			customlist[cid]['incurrentcountlist'][pid[-1]]+=currentcount.to_f()
-			customlist[cid]['inwinningcountlist'][pid[-1]]+=winningcount.to_f()
+			customlist[cid]['incurrentcountlist'][pid]+=currentcount.to_f()
+			customlist[cid]['inwinningcountlist'][pid]+=winningcount.to_f()
 			customlist[cid]['inaddmoney']+=addmoney.to_f()
 			customlist[cid]['inbonusmoney']+=bonusmoney.to_f()
 		end
@@ -654,23 +659,29 @@ def AllDailyTransactionCounting(connection,current_date)
 	inbonusmoney/=4
 
 	#計算誤差
-	outpaylist=Array.new
-	inpaylist=Array.new
+	outpaylist=Hash.new(0)
+	inpaylist=Hash.new(0)
+	outgetlist=Hash.new(0)
+	ingetlist=Hash.new(0)
 	outcurrentcountlist.each(){|key,value|
-		outpaylist+=[outcurrentcountlist[key]*current_price[key].to_f()]+[outwinningcountlist[key]*winning_price[key].to_f()]
-		inpaylist+=[incurrentcountlist[key]*current_price[key].to_f()]+[inwinningcountlist[key]*winning_price[key].to_f()]
+		outpaylist[key[-1]]+=outcurrentcountlist[key]*current_price[key].to_f()
+		outgetlist[key[-1]]+=outwinningcountlist[key]*winning_price[key].to_f()
+		inpaylist[key[-1]]+=incurrentcountlist[key]*current_price[key].to_f()
+		ingetlist[key[-1]]+=inwinningcountlist[key]*winning_price[key].to_f()
 	}
+	outlist=[outpaylist['1'],outgetlist['1'],outpaylist['2'],outgetlist['2'],outpaylist['3'],outgetlist['3'],outpaylist['4'],outgetlist['4']]
+	inlist=[inpaylist['1'],ingetlist['1'],inpaylist['2'],ingetlist['2'],inpaylist['3'],ingetlist['3'],inpaylist['4'],ingetlist['4']]
 
 	symbol=3
 	sumwithwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+N#{symbol}+O#{symbol}"
 	sumwithoutwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+O#{symbol}"
-	row = ['出']+outpaylist+[0,0,sumwithwater,sumwithoutwater,outaddmoney,outbonusmoney]
+	row = ['出']+outlist+[0,0,sumwithwater,sumwithoutwater,outaddmoney,outbonusmoney]
 	sheet.write('A3', row)
 
 	symbol=4
 	sumwithwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+N#{symbol}+O#{symbol}"
 	sumwithoutwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+O#{symbol}"
-	row = ['入']+inpaylist+[0,0,sumwithwater,sumwithoutwater,inaddmoney,inbonusmoney]
+	row = ['入']+inlist+[0,0,sumwithwater,sumwithoutwater,inaddmoney,inbonusmoney]
 	sheet.write('A4', row)
 
 	symbol=5
@@ -708,10 +719,15 @@ def AllDailyTransactionCounting(connection,current_date)
 			customlist[cid]['outaddmoney']/=4
 			customlist[cid]['outbonusmoney']/=4
 
+
+			outpaylist=Hash.new(0)
+			outgetlist=Hash.new(0)
 			outcurrentcountlist.each(){|key,value|
-				row+=[customlist[cid]['outcurrentcountlist'][key]*current_price[key].to_f()]+[customlist[cid]['outwinningcountlist'][key]*winning_price[key].to_f()]
+				outpaylist[key[-1]]+=outcurrentcountlist[key]*current_price[key].to_f()
+				outgetlist[key[-1]]+=outwinningcountlist[key]*winning_price[key].to_f()
 			}
-			row+=[0,0,sumwithwater,sumwithoutwater,customlist[cid]['outaddmoney'],customlist[cid]['outbonusmoney']]
+			outlist=[outpaylist['1'],outgetlist['1'],outpaylist['2'],outgetlist['2'],outpaylist['3'],outgetlist['3'],outpaylist['4'],outgetlist['4']]			
+			row = ['出']+outlist+[0,0,sumwithwater,sumwithoutwater,customlist[cid]['outaddmoney'],customlist[cid]['outbonusmoney']]
 		end
 		sheet.write('A'+(9+rowindex).to_s(), row)
 		rowindex+=1
@@ -719,7 +735,10 @@ def AllDailyTransactionCounting(connection,current_date)
 	
 
 	#顯示留底的客戶詳細清單
-	row = ['留底']+[0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+	symbol=9+rowindex
+	sumwithwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+N#{symbol}+O#{symbol}"
+		sumwithoutwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+O#{symbol}"
+	row = ['留底']+[0,0,0,0,0,0,0,0,0,0,sumwithwater,sumwithoutwater,0,0]
 	sheet.write('A'+(9+rowindex).to_s(), row)
 	rowindex+=1
 
@@ -742,10 +761,15 @@ def AllDailyTransactionCounting(connection,current_date)
 			customlist[cid]['inaddmoney']/=4
 			customlist[cid]['inbonusmoney']/=4
 
-			outcurrentcountlist.each(){|key,value|
-				row+=[customlist[cid]['incurrentcountlist'][key]*current_price[key].to_f()]+[customlist[cid]['inwinningcountlist'][key]*winning_price[key].to_f()]
-			}			
-			row+=[0,0,sumwithwater,sumwithoutwater,customlist[cid]['inaddmoney'],customlist[cid]['inbonusmoney']]
+
+			inpaylist=Hash.new(0)
+			ingetlist=Hash.new(0)
+			incurrentcountlist.each(){|key,value|
+				inpaylist[key[-1]]+=incurrentcountlist[key]*current_price[key].to_f()
+				ingetlist[key[-1]]+=inwinningcountlist[key]*winning_price[key].to_f()
+			}
+			inlist=[inpaylist['1'],ingetlist['1'],inpaylist['2'],ingetlist['2'],inpaylist['3'],ingetlist['3'],inpaylist['4'],ingetlist['4']]
+			row = ['入']+inlist+[0,0,sumwithwater,sumwithoutwater,customlist[cid]['inaddmoney'],customlist[cid]['inbonusmoney']]
 		end
 		sheet.write('A'+(9+rowindex).to_s(), row)
 		rowindex+=1
@@ -773,11 +797,390 @@ end
 
 
 
+
+
+#全產品一週交易加總表
+def AllWeekTransactionCounting(connection,current_date)
+	#取符合條件的產品
+	recordset_product = WIN32OLE.new('ADODB.Recordset')
+	sql = "select * from product where CLng(PID)<100 order by CLng(PID);"
+	recordset_product.Open(sql, connection)
+
+	#取符合條件的使用者資料
+	recordset_custom = WIN32OLE.new('ADODB.Recordset')
+	sql = "select * from custom;"
+	recordset_custom.Open(sql, connection)
+	
+	#取符合條件的交易
+	recordset_order = WIN32OLE.new('ADODB.Recordset')
+	begin_date=(Date.parse(current_date)-6).to_s().gsub('-','/')
+	sql = "select * from [order] where (CurrentDate>='#{begin_date}' and CurrentDate<='#{current_date}') order by group,CLng(PID);"
+	recordset_order.Open(sql, connection)
+
+	#取符合條件且最接近想搜尋的日期的一筆的價格
+	recordset_price = WIN32OLE.new('ADODB.Recordset')
+	sql = "select * from price where CurrentDate<='#{current_date}' order by CurrentDate desc,CLng(PID);"
+	recordset_price.Open(sql, connection)
+
+
+
+
+
+
+	#預存出所有會需要列出的資料
+	#product
+	data_product = recordset_product.GetRows.transpose
+	pname='週總計'
+
+
+	#custom
+	data_custom = recordset_custom.GetRows.transpose
+
+
+	#price
+	data_price = recordset_price.GetRows.transpose
+	current_price=Hash.new()
+	winning_price=Hash.new()
+	data_price.each(){|swiftcode,cid,pid,currentdate,currentprice,winningprice,upset|
+		current_price[currentdate]=Hash.new() if current_price[currentdate]==nil
+		current_price[currentdate][pid]=currentprice
+
+		winning_price[currentdate]=Hash.new() if winning_price[currentdate]==nil
+		winning_price[currentdate][pid]=winningprice
+	}
+	#倒序依日期排序
+	current_price.sort_by{|key,v| key}.reverse
+	winning_price.sort_by{|key,v| key}.reverse
+
+	#order
+	data_order = recordset_order.GetRows.transpose
+
+
+
+	#取得交易日期的年月日
+	year=current_date.sub(/\/.*/,'')
+	month=current_date.sub(year+'/','').sub(/\/.*/,'')
+	day=current_date.sub(/.*\//,'')
+	free_current_date=current_date.gsub(/\//,'')
+
+
+	
+
+	#Write the file
+	FileUtils.mkdir_p("report/#{year}/#{month}/")
+	# Create a new Excel Workbook
+	book = WriteExcel.new("report/#{year}/#{month}/#{free_current_date}_全產品一週週總計.xls")
+	# Add worksheet(s)
+	sheet  = book.add_worksheet
+
+
+
+	#Create the rows to be inserted, and add row
+	#列舉日期
+	row = [begin_date+'~'+current_date]
+	sheet.write('A1', row)
+	row = ['D1','D2','D3','D4','D5','D6','D7']
+	format = book.add_format
+	format.set_format_properties(:bg_color => 'gray',:pattern  => 1)
+	sheet.write('B1', row, format)
+	row = ['總計','應收','前帳','水']
+	sheet.write('I1', row)
+
+
+	#計算出、入、留
+	outcurrentcountlist=Hash.new()
+	outwinningcountlist=Hash.new()
+	incurrentcountlist=Hash.new()
+	inwinningcountlist=Hash.new()
+	customlist=Hash.new
+	outaddmoney=Hash.new(0)
+	outbonusmoney=Hash.new(0)
+	inaddmoney=Hash.new(0)
+	inbonusmoney=Hash.new(0)
+	data_order.each(){|swiftcode,cid,pid,currentdate,currentcount,winningcount,addmoney,bonusmoney,note,group| 
+		if(currentcount.to_f()>=0)
+			#若計價清單要存的日期的HASH尚未建立，則為每個要存的日期建置HASH，以供別存到每一天，後續才能跟不同的價格表相乘
+			if(outcurrentcountlist[currentdate]==nil)
+				outcurrentcountlist[currentdate]=Hash.new(0)
+				outwinningcountlist[currentdate]=Hash.new(0)
+				incurrentcountlist[currentdate]=Hash.new(0)
+				inwinningcountlist[currentdate]=Hash.new(0)
+			end
+			#若客戶的ID HASH尚未建立，則為每個客戶ID建置HASH，以供分別儲存他們的交易及中獎數量
+			if(customlist[cid]==nil)
+				customlist[cid]=Hash.new()
+			end
+			if(customlist[cid][currentdate]==nil)
+				customlist[cid][currentdate]={'outcurrentcountlist'=>Hash.new(0),'outwinningcountlist'=>Hash.new(0),'outaddmoney'=>0,'outbonusmoney'=>0,'incurrentcountlist'=>Hash.new(0),'inwinningcountlist'=>Hash.new(0),'inaddmoney'=>0,'inbonusmoney'=>0}
+			end
+
+
+			outcurrentcountlist[currentdate][pid]+=currentcount.to_f()
+			outwinningcountlist[currentdate][pid]+=winningcount.to_f()
+			outaddmoney[current_date]+=addmoney.to_f()
+			outbonusmoney[current_date]+=bonusmoney.to_f()
+			
+			
+			customlist[cid][current_date]['outcurrentcountlist'][pid]+=currentcount.to_f()
+			customlist[cid][current_date]['outwinningcountlist'][pid]+=winningcount.to_f()
+			customlist[cid][current_date]['outaddmoney']+=addmoney.to_f()
+			customlist[cid][current_date]['outbonusmoney']+=bonusmoney.to_f()
+		else
+			#若計價清單要存的日期的HASH尚未建立，則為每個要存的日期建置HASH，以供別存到每一天，後續才能跟不同的價格表相乘
+			if(outcurrentcountlist[currentdate]==nil)
+				outcurrentcountlist[currentdate]=Hash.new(0)
+				outwinningcountlist[currentdate]=Hash.new(0)
+				incurrentcountlist[currentdate]=Hash.new(0)
+				inwinningcountlist[currentdate]=Hash.new(0)
+			end
+			#若客戶的ID HASH尚未建立，則為每個客戶ID建置HASH，以供分別儲存他們的交易及中獎數量
+			if(customlist[cid]==nil)
+				customlist[cid]=Hash.new()
+			end
+			if(customlist[cid][currentdate]==nil)
+				customlist[cid][currentdate]={'outcurrentcountlist'=>Hash.new(0),'outwinningcountlist'=>Hash.new(0),'outaddmoney'=>0,'outbonusmoney'=>0,'incurrentcountlist'=>Hash.new(0),'inwinningcountlist'=>Hash.new(0),'inaddmoney'=>0,'inbonusmoney'=>0}
+			end
+
+
+			incurrentcountlist[currentdate][pid]+=currentcount.to_f()
+			inwinningcountlist[currentdate][pid]+=winningcount.to_f()
+			inaddmoney[current_date]+=addmoney.to_f()
+			inbonusmoney[current_date]+=bonusmoney.to_f()
+
+
+			customlist[cid][current_date]['incurrentcountlist'][pid]+=currentcount.to_f()
+			customlist[cid][current_date]['inwinningcountlist'][pid]+=winningcount.to_f()
+			customlist[cid][current_date]['inaddmoney']+=addmoney.to_f()
+			customlist[cid][current_date]['inbonusmoney']+=bonusmoney.to_f()
+		end
+	}
+	#因為同一個GROUP的會被同時加進來，除以目前有的產品種類數就是正確的退水跟漲價金額了
+	outaddmoney.each(){|key,value|
+		outaddmoney[key]/=5
+		outbonusmoney[key]/=5
+		inaddmoney[key]/=5
+		inbonusmoney[key]/=5	
+	}
+
+
+	#計算誤差
+	outpaylist=Hash.new(0)
+	inpaylist=Hash.new(0)
+	(begin_date..current_date).each(){|key|
+		#找出過出日期相對最接近且有輸入價格的
+		mostneardate=nil
+		current_price.each(){|key1,phash1|
+			if(Date.parse(key1)<=Date.parse(key))
+				mostneardate=key1
+				break
+			end
+		}
+
+
+		#列舉並加總該日所有的產品，如果沒有找到最接近日期的價格表，那就乾脆不加了
+		if(mostneardate!=nil)
+			if(outcurrentcountlist[key]!=nil)
+				data_product.each(){|pid,pname|
+					outpaylist[key]+=(outcurrentcountlist[key][pid]*current_price[mostneardate][pid].to_f()-outwinningcountlist[key][pid]*winning_price[mostneardate][pid].to_f())
+					inpaylist[key]+=(incurrentcountlist[key][pid]*current_price[mostneardate][pid].to_f()--inwinningcountlist[key][pid]*winning_price[mostneardate][pid].to_f())
+				}
+			else
+				outpaylist[key]=0
+				inpaylist[key]=0
+			end
+		else
+			outpaylist[key]=0
+			inpaylist[key]=0
+		end	
+	}
+
+	symbol=2
+	sum="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}"
+	sumwitholdpay="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}+K#{symbol}+L#{symbol}"
+	#PAYLIST是將HASH後面的數值轉為ARRAY，再COLLECT分散輸出成ARRAY
+	#ADDMONEY是做同上的動作後，再把輸出的ARRAY透過INJECT的方式加總為一個數字
+	row = ['出']+outpaylist.collect(){|key,value| value}+[sum,sumwitholdpay,0,outaddmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]
+	sheet.write('A2', row)
+
+	symbol=3
+	sum="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}"
+	sumwitholdpay="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}+K#{symbol}+L#{symbol}"
+	#PAYLIST是將HASH後面的數值轉為ARRAY，再COLLECT分散輸出成ARRAY
+	#ADDMONEY是做同上的動作後，再把輸出的ARRAY透過INJECT的方式加總為一個數字
+	row = ['入']+inpaylist.collect(){|key,value| value}+[sum,sumwitholdpay,0,inaddmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]	
+	sheet.write('A3', row)
+
+	symbol=4
+	sum="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}"
+	sumwitholdpay="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}+K#{symbol}+L#{symbol}"
+	row = ['留']+[0,0,0,0,0,0,0,sum,sumwitholdpay,0,0]
+	sheet.write('A4', row)
+
+	row = ['誤差']
+	(11).times(){|i|
+		symbol=('B'.ord+i).chr
+		row+=["=#{symbol}3-#{symbol}2-#{symbol}4"]
+	}
+	sheet.write('A5', row)
+
+	#插入空白行
+	row=['']
+	sheet.write('A6', row)	
+
+	#顯示出的客戶詳細清單
+	row = ['出']
+	sheet.write('A7', row)
+	row = ['D1','D2','D3','D4','D5','D6','D7']
+	sheet.write('B7', row, format)
+	row = ['總計','應收','前帳','水']
+	sheet.write('I7', row)
+
+	rowindex=0
+	data_custom.each(){|cid,cname,ctype,address,opendate,bankid,proportion,bonustarget,phone1,phone2,phone3,phone4,phone5,phone6,note|
+		symbol=8+rowindex
+		sum="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}"
+		sumwitholdpay="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}+K#{symbol}+L#{symbol}"
+
+		row = [cname]
+		if(customlist[cid]==nil)
+			row+=[0,0,0,0,0,0,0,sum,sumwitholdpay,0,0]
+		else
+			outpaylist=Hash.new(0)
+			(begin_date..current_date).each(){|key|
+				#找出過出日期相對最接近且有輸入價格的
+				mostneardate=nil
+				current_price.each(){|key1,phash1|
+					if(Date.parse(key1)<=Date.parse(key))
+						mostneardate=key1
+						break
+					end
+				}
+
+
+				#列舉並加總該日所有的產品，如果沒有找到最接近日期的價格表，那就乾脆不加了
+				if(mostneardate!=nil)
+					if(outcurrentcountlist[key]!=nil)
+						data_product.each(){|pid,pname|
+							outpaylist[key]+=(customlist[cid][current_date]['outcurrentcountlist'][pid]*current_price[mostneardate][pid].to_f()-customlist[cid][current_date]['outwinningcountlist'][pid]*winning_price[mostneardate][pid].to_f())
+						}
+					else
+						outpaylist[key]=0
+					end
+				else
+					outpaylist[key]=0
+				end	
+			}
+
+			
+			#因為同一個GROUP的會被同時加進來，除以目前有的產品種類數就是正確的退水跟漲價金額了
+			outaddmoney.each(){|key,value|
+				customlist[cid][current_date]['outaddmoney']/=5
+				customlist[cid][current_date]['outbonusmoney']/=5
+			}
+		
+
+			row += outpaylist.collect(){|key,value| value}+[sum,sumwitholdpay,0,customlist[cid][current_date]['outaddmoney']]	
+		end
+		sheet.write('A'+(8+rowindex).to_s(), row)
+		rowindex+=1
+	}
+	
+
+	#顯示留底的客戶詳細清單
+	symbol=8+rowindex
+	sum="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}"
+	sumwitholdpay="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}+K#{symbol}+L#{symbol}"
+	row = ['留底']+[0,0,0,0,0,0,0,sum,sumwitholdpay,0,0]
+	sheet.write('A'+(8+rowindex).to_s(), row)
+	rowindex+=1
+
+
+	#顯示入的客戶詳細清單
+	row = ['入']
+	sheet.write('A'+(8+rowindex).to_s(), row)
+	row = ['D1','D2','D3','D4','D5','D6','D7']
+	sheet.write('B'+(8+rowindex).to_s(), row, format)
+	row = ['總計','應收','前帳','水']
+	sheet.write('I'+(8+rowindex).to_s(), row)
+	rowindex+=1
+
+	data_custom.each(){|cid,cname,ctype,address,opendate,bankid,proportion,bonustarget,phone1,phone2,phone3,phone4,phone5,phone6,note|
+		symbol=8+rowindex
+		sumwithwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+N#{symbol}+O#{symbol}"
+		sumwithoutwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+O#{symbol}"
+
+		row = [cname]
+		if(customlist[cid]==nil)
+			row+=[0,0,0,0,0,0,0,sum,sumwitholdpay,0,0]
+		else
+			inpaylist=Hash.new(0)
+			(begin_date..current_date).each(){|key|
+				#找出過出日期相對最接近且有輸入價格的
+				mostneardate=nil
+				current_price.each(){|key1,phash1|
+					if(Date.parse(key1)<=Date.parse(key))
+						mostneardate=key1
+						break
+					end
+				}
+
+
+				#列舉並加總該日所有的產品，如果沒有找到最接近日期的價格表，那就乾脆不加了
+				if(mostneardate!=nil)
+					if(incurrentcountlist[key]!=nil)
+						data_product.each(){|pid,pname|
+							inpaylist[key]+=(customlist[cid][current_date]['incurrentcountlist'][pid]*current_price[mostneardate][pid].to_f()-customlist[cid][current_date]['inwinningcountlist'][pid]*winning_price[mostneardate][pid].to_f())
+						}
+					else
+						inpaylist[key]=0
+					end
+				else
+					inpaylist[key]=0
+				end	
+			}
+
+			
+			#因為同一個GROUP的會被同時加進來，除以目前有的產品種類數就是正確的退水跟漲價金額了
+			inaddmoney.each(){|key,value|
+				customlist[cid][current_date]['inaddmoney']/=5
+				customlist[cid][current_date]['inbonusmoney']/=5
+			}
+		
+
+			row += inpaylist.collect(){|key,value| value}+[sum,sumwitholdpay,0,customlist[cid][current_date]['inaddmoney']]	
+		end
+		sheet.write('A'+(8+rowindex).to_s(), row)
+		rowindex+=1
+	}
+
+
+	#close recordset
+	recordset_product.close
+	recordset_custom.close
+	recordset_order.close
+	recordset_price.close
+
+
+	# write to file
+	book.close
+
+
+	#End
+	p "#{free_current_date}_全產品一週週總計.xls 已輸出"
+
+end
+
+
+
+
+
+
 @connection = WIN32OLE.new('ADODB.Connection')
 @connection.Open('Provider=Microsoft.ACE.OLEDB.12.0;Data Source=main.mdb')
 
 
 
-#CustomDailyTransactionDetail(@connection,'100','1','2016/01/11')
+CustomDailyTransactionDetail(@connection,'100','1','2016/01/11')
 DailyTransactionCounting(@connection,'100','2016/01/11')
 AllDailyTransactionCounting(@connection,'2016/01/11')
+AllWeekTransactionCounting(@connection,'2016/01/11')
