@@ -352,7 +352,7 @@ Private Sub Form_Load()
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
-    frmProve.Show
+    frmProveNew.Show
     Unload Me
 End Sub
 

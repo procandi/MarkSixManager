@@ -360,7 +360,7 @@ Begin VB.Form frmCustom
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   99418115
+         Format          =   94175235
          CurrentDate     =   37058
       End
       Begin VB.Label lblEntry 
@@ -827,7 +827,7 @@ Private Sub Form_Paint()
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
-    frmProve.Show
+    frmProveNew.Show
     Unload Me
 End Sub
 
