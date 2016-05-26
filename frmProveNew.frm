@@ -376,6 +376,12 @@ Private Sub cmdAllWeekTransactionCounting_Click()
     frmConfirmRuby.Show
 End Sub
 
+Private Sub cmdCustom_Click()
+    basVariable.Action = "CustomDetail"
+    frmCustom.Show
+    Me.Hide
+End Sub
+
 Private Sub cmdCustomDailyPriceDetail_Click()
     basVariable.Action = "PrintReport"
     basVariable.Parameter = "CustomDailyPriceDetail"
