@@ -104,7 +104,7 @@ Begin VB.Form frmConfirmRuby
          Strikethrough   =   0   'False
       EndProperty
       CustomFormat    =   "yyyy/MM/dd"
-      Format          =   94896131
+      Format          =   48300035
       CurrentDate     =   37058
    End
    Begin VB.Label lblEntry 
@@ -259,57 +259,45 @@ Private Sub cmdConfirm_Click()
         Select Case basVariable.Parameter
         Case "CustomDailyTransactionDetail"
             'Label1(0).Caption = "客戶每日交易明細"
-            
             CData = Split(cmbCName.Text, " ")
             PData = Split(cmbPName.Text, " ")
-            Call Shell("C:\Ruby22-x64\bin\ruby.exe -Ku main.rb" & " DailyTransactionCounting " & PData(0) & " " & CData(0) & " " & txtCurrentDate.Text)
+            MsgBox CreateObject("Wscript.Shell").Exec("ruby.exe -Ku main.rb DailyTransactionCounting " & txtCurrentDate.Text & " " & PData(0) & " " & CData(0)).StdOut.ReadAll
             
         Case "DailyTransactionCounting"
             'Label1(0).Caption = "每日交易加總表"
-            
             PData = Split(cmbPName.Text, " ")
-            Call Shell("C:\Ruby22-x64\bin\ruby.exe -Ku main.rb" & " DailyTransactionCounting " & PData(0) & " " & txtCurrentDate.Text)
+            MsgBox CreateObject("Wscript.Shell").Exec("ruby.exe -Ku main.rb DailyTransactionCounting " & txtCurrentDate.Text & " " & PData(0)).StdOut.ReadAll
             
         Case "AllDailyTransactionCounting"
             'Label1(0).Caption = "全產品每日交易加總表"
-            
-            Call Shell("C:\Ruby22-x64\bin\ruby.exe -Ku main.rb" & " AllDailyTransactionCounting " & txtCurrentDate.Text)
+            MsgBox CreateObject("Wscript.Shell").Exec("ruby.exe -Ku main.rb AllDailyTransactionCounting " & txtCurrentDate.Text).StdOut.ReadAll
             
         Case "AllWeekTransactionCounting"
             'Label1(0).Caption = "全產品一週交易加總表"
-            
-            Call Shell("C:\Ruby22-x64\bin\ruby.exe -Ku main.rb" & " AllWeekTransactionCounting " & txtCurrentDate.Text)
+            MsgBox CreateObject("Wscript.Shell").Exec("ruby.exe -Ku main.rb AllWeekTransactionCounting " & txtCurrentDate.Text).StdOut.ReadAll
             
         Case "AllMonthTransactionCounting"
             'Label1(0).Caption = "全產品當月交易加總表"
-            
-            Call Shell("C:\Ruby22-x64\bin\ruby.exe -Ku main.rb" & " AllMonthTransactionCounting " & txtCurrentDate.Text)
+            MsgBox CreateObject("Wscript.Shell").Exec("ruby.exe -Ku main.rb AllMonthTransactionCounting " & txtCurrentDate.Text).StdOut.ReadAll
             
         Case "MonthTransactionCounting"
             'Label1(0).Caption = "當月交易加總表"
-            
             PData = Split(cmbPName.Text, " ")
-            Call Shell("C:\Ruby22-x64\bin\ruby.exe -Ku main.rb" & " MonthTransactionCounting " & PData(0) & " " & txtCurrentDate.Text)
+            MsgBox CreateObject("Wscript.Shell").Exec("ruby.exe -Ku main.rb MonthTransactionCounting " & txtCurrentDate.Text & " " & PData(0)).StdOut.ReadAll
             
         Case "AllDaily4KTransactionCounting"
             'Label1(0).Caption = "全產品4K每日交易加總表"
-            
-            Call Shell("C:\Ruby22-x64\bin\ruby.exe -Ku main.rb" & " AllDaily4KTransactionCounting " & txtCurrentDate.Text)
+            MsgBox CreateObject("Wscript.Shell").Exec("ruby.exe -Ku main.rb AllDaily4KTransactionCounting " & txtCurrentDate.Text).StdOut.ReadAll
             
         Case "AllMonth4KTransactionCounting"
             'Label1(0).Caption = "全產品4K當月交易加總表"
-            
-            Call Shell("C:\Ruby22-x64\bin\ruby.exe -Ku main.rb" & " AllMonth4KTransactionCounting " & txtCurrentDate.Text)
+            MsgBox CreateObject("Wscript.Shell").Exec("ruby.exe -Ku main.rb AllMonth4KTransactionCounting " & txtCurrentDate.Text).StdOut.ReadAll
             
         Case "CustomDailyPriceDetail"
             'Label1(0).Caption = "客戶每日交易價格表"
+            MsgBox CreateObject("Wscript.Shell").Exec("ruby.exe -Ku main.rb CustomDailyPriceDetail " & txtCurrentDate.Text).StdOut.ReadAll
             
-            Call Shell("C:\Ruby22-x64\bin\ruby.exe -Ku main.rb" & " CustomDailyPriceDetail " & txtCurrentDate.Text)
         End Select
-        
-        
-        MsgBox "OK"
-        'Call Shell("C:\Ruby22-x64\bin\ruby.exe -Ku test.rb test")
     End If
 End Sub
 

@@ -1,4 +1,2 @@
-DailyTransactionCounting
-110
-3
-2016/05/26
+CustomDailyPriceDetail
+2016/06/01
