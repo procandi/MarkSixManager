@@ -411,13 +411,13 @@ def DailyTransactionCounting(connection,current_date,current_pid)
 		symbol=3
 		sumwithwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+L#{symbol}-M#{symbol}+P#{symbol}+Q#{symbol}"
 		sumwithoutwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+L#{symbol}-M#{symbol}+Q#{symbol}"
-		row = ['出']+outpaylist+[0,0,sumwithwater,sumwithoutwater,outaddmoney,outbonusmoney]
+		row = ['出']+outpaylist+[0,0,sumwithwater,sumwithoutwater,outbonusmoney,outaddmoney]
 		sheet.write('A3', row)
 
 		symbol=4
 		sumwithwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+L#{symbol}-M#{symbol}+P#{symbol}+Q#{symbol}"
 		sumwithoutwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+L#{symbol}-M#{symbol}+Q#{symbol}"
-		row = ['入']+inpaylist+[0,0,sumwithwater,sumwithoutwater,inaddmoney,inbonusmoney]
+		row = ['入']+inpaylist+[0,0,sumwithwater,sumwithoutwater,inbonusmoney,inaddmoney]
 		sheet.write('A4', row)
 
 		symbol=5
@@ -458,7 +458,7 @@ def DailyTransactionCounting(connection,current_date,current_pid)
 				outcurrentcountlist.each(){|key,value|
 					row+=[customlist[cid]['outcurrentcountlist'][key]*current_price[key].to_f()]+[customlist[cid]['outwinningcountlist'][key]*winning_price[key].to_f()]
 				}
-				row+=[0,0,sumwithwater,sumwithoutwater,customlist[cid]['outaddmoney'],customlist[cid]['outbonusmoney']]
+				row+=[0,0,sumwithwater,sumwithoutwater,customlist[cid]['outbonusmoney'],customlist[cid]['outaddmoney']]
 			end
 			sheet.write('A'+(9+rowindex).to_s(), row)
 			rowindex+=1
@@ -495,7 +495,7 @@ def DailyTransactionCounting(connection,current_date,current_pid)
 				outcurrentcountlist.each(){|key,value|
 					row+=[customlist[cid]['incurrentcountlist'][key]*current_price[key].to_f()]+[customlist[cid]['inwinningcountlist'][key]*winning_price[key].to_f()]
 				}
-				row+=[0,0,sumwithwater,sumwithoutwater,customlist[cid]['inaddmoney'],customlist[cid]['inbonusmoney']]
+				row+=[0,0,sumwithwater,sumwithoutwater,customlist[cid]['inbonusmoney'],customlist[cid]['inaddmoney']]
 			end
 			sheet.write('A'+(9+rowindex).to_s(), row)
 			rowindex+=1
@@ -681,13 +681,13 @@ def AllDailyTransactionCounting(connection,current_date)
 		symbol=3
 		sumwithwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+N#{symbol}+O#{symbol}"
 		sumwithoutwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+O#{symbol}"
-		row = ['出']+outlist+[0,0,sumwithwater,sumwithoutwater,outaddmoney,outbonusmoney]
+		row = ['出']+outlist+[0,0,sumwithwater,sumwithoutwater,outbonusmoney,outaddmoney]
 		sheet.write('A3', row)
 
 		symbol=4
 		sumwithwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+N#{symbol}+O#{symbol}"
 		sumwithoutwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+O#{symbol}"
-		row = ['入']+inlist+[0,0,sumwithwater,sumwithoutwater,inaddmoney,inbonusmoney]
+		row = ['入']+inlist+[0,0,sumwithwater,sumwithoutwater,inbonusmoney,inaddmoney]
 		sheet.write('A4', row)
 
 		symbol=5
@@ -733,7 +733,7 @@ def AllDailyTransactionCounting(connection,current_date)
 					outgetlist[key[-1]]+=outwinningcountlist[key]*winning_price[key].to_f()
 				}
 				outlist=[outpaylist['1'],outgetlist['1'],outpaylist['2'],outgetlist['2'],outpaylist['3'],outgetlist['3'],outpaylist['4'],outgetlist['4']]			
-				row = ['出']+outlist+[0,0,sumwithwater,sumwithoutwater,customlist[cid]['outaddmoney'],customlist[cid]['outbonusmoney']]
+				row = ['出']+outlist+[0,0,sumwithwater,sumwithoutwater,customlist[cid]['outbonusmoney'],customlist[cid]['outaddmoney']]
 			end
 			sheet.write('A'+(9+rowindex).to_s(), row)
 			rowindex+=1
@@ -775,7 +775,7 @@ def AllDailyTransactionCounting(connection,current_date)
 					ingetlist[key[-1]]+=inwinningcountlist[key]*winning_price[key].to_f()
 				}
 				inlist=[inpaylist['1'],ingetlist['1'],inpaylist['2'],ingetlist['2'],inpaylist['3'],ingetlist['3'],inpaylist['4'],ingetlist['4']]
-				row = ['入']+inlist+[0,0,sumwithwater,sumwithoutwater,customlist[cid]['inaddmoney'],customlist[cid]['inbonusmoney']]
+				row = ['入']+inlist+[0,0,sumwithwater,sumwithoutwater,customlist[cid]['inbonusmoney'],customlist[cid]['inaddmoney']]
 			end
 			sheet.write('A'+(9+rowindex).to_s(), row)
 			rowindex+=1
@@ -988,9 +988,18 @@ def AllWeekTransactionCounting(connection,current_date)
 			if(mostneardate!=nil)
 				if(outcurrentcountlist[key]!=nil)
 					data_product.each(){|pid,pname|
-						outpaylist[key]+=(outcurrentcountlist[key][pid]*current_price[mostneardate][pid].to_f()-outwinningcountlist[key][pid]*winning_price[mostneardate][pid].to_f())
-						inpaylist[key]+=(incurrentcountlist[key][pid]*current_price[mostneardate][pid].to_f()--inwinningcountlist[key][pid]*winning_price[mostneardate][pid].to_f())
+						if(outcurrentcountlist[key][pid]!=nil)
+							outpaylist[key]+=(outcurrentcountlist[key][pid]*current_price[mostneardate][pid].to_f()-outwinningcountlist[key][pid]*winning_price[mostneardate][pid].to_f())
+							inpaylist[key]+=(incurrentcountlist[key][pid]*current_price[mostneardate][pid].to_f()-inwinningcountlist[key][pid]*winning_price[mostneardate][pid].to_f())
+						end
 					}
+
+
+					if outpaylist[key]==0
+						#i don't know why should be, maybe ruby have bug.
+						outpaylist[key]=0
+						inpaylist[key]=0
+					end
 				else
 					outpaylist[key]=0
 					inpaylist[key]=0
@@ -1069,8 +1078,13 @@ def AllWeekTransactionCounting(connection,current_date)
 						if(outcurrentcountlist[key]!=nil)
 							data_product.each(){|pid,pname|
 								if(customlist[cid][key]!=nil)
-									outpaylist[key]+=(customlist[cid][key]['outcurrentcountlist'][pid]*current_price[mostneardate][pid].to_f()
-									outpaylist[key]-=customlist[cid][key]['outwinningcountlist'][pid]*winning_price[mostneardate][pid].to_f())
+									outpaylist[key]+=customlist[cid][key]['outcurrentcountlist'][pid]*current_price[mostneardate][pid].to_f()
+									outpaylist[key]-=customlist[cid][key]['outwinningcountlist'][pid]*winning_price[mostneardate][pid].to_f()
+								end
+
+								if outpaylist[key]==0
+									#i don't know why should be, maybe ruby have bug.
+									outpaylist[key]=0
 								end
 							}
 						else
@@ -1089,8 +1103,8 @@ def AllWeekTransactionCounting(connection,current_date)
 					if(customlist[cid][key]!=nil)
 						customlist[cid][key]['outaddmoney']/=5
 						customlist[cid][key]['outbonusmoney']/=5
-						sumaddmoney+=customlist[cid][key]['outaddmoney']
-						sumbonusmoney+=customlist[cid][key]['outbonusmoney']
+						sumaddmoney+=customlist[cid][key]['outaddmoney'].to_i()
+						sumbonusmoney+=customlist[cid][key]['outbonusmoney'].to_i()
 					end
 				}
 			
@@ -1149,6 +1163,11 @@ def AllWeekTransactionCounting(connection,current_date)
 									inpaylist[key]+=customlist[cid][key]['incurrentcountlist'][pid]*current_price[mostneardate][pid].to_f()
 									inpaylist[key]-=customlist[cid][key]['inwinningcountlist'][pid]*winning_price[mostneardate][pid].to_f()
 								end
+
+								if inpaylist[key]==0
+									#i don't know why should be, maybe ruby have bug.
+									inpaylist[key]=0
+								end
 							}
 						else
 							inpaylist[key]=0
@@ -1166,8 +1185,8 @@ def AllWeekTransactionCounting(connection,current_date)
 					if(customlist[cid][key]!=nil)
 						customlist[cid][key]['inaddmoney']/=5
 						customlist[cid][key]['inbonusmoney']/=5
-						sumaddmoney+=customlist[cid][key]['inaddmoney']
-						sumbonusmoney+=customlist[cid][key]['inbonusmoney']
+						sumaddmoney+=customlist[cid][key]['inaddmoney'].to_i()
+						sumbonusmoney+=customlist[cid][key]['inbonusmoney'].to_i()
 					end
 				}
 			
@@ -1405,11 +1424,14 @@ def AllMonthTransactionCounting(connection,current_date)
 			if(mostneardate!=nil)
 				if(outcurrentcountlist[key]!=nil)
 					data_product.each(){|pid,pname|
-						outpaylist[key]+=(outcurrentcountlist[key][pid]*current_price[mostneardate][pid].to_f()-outwinningcountlist[key][pid]*winning_price[mostneardate][pid].to_f())
-						inpaylist[key]+=(incurrentcountlist[key][pid]*current_price[mostneardate][pid].to_f()--inwinningcountlist[key][pid]*winning_price[mostneardate][pid].to_f())
+						if(outcurrentcountlist[key][pid]!=nil)
+							outpaylist[key]+=(outcurrentcountlist[key][pid]*current_price[mostneardate][pid].to_f()-outwinningcountlist[key][pid]*winning_price[mostneardate][pid].to_f())
+							inpaylist[key]+=(incurrentcountlist[key][pid]*current_price[mostneardate][pid].to_f()-inwinningcountlist[key][pid]*winning_price[mostneardate][pid].to_f())
+						end
 					}
 					
-					if(outpaylist[key]==nil)
+					if outpaylist[key]==0
+						#i don't know why should be, maybe ruby have bug.
 						outpaylist[key]=0
 						inpaylist[key]=0
 					end
@@ -1536,8 +1558,8 @@ def AllMonthTransactionCounting(connection,current_date)
 					if(customlist[cid][key]!=nil)
 						customlist[cid][key]['outaddmoney']/=5
 						customlist[cid][key]['outbonusmoney']/=5
-						sumaddmoney=customlist[cid][key]['outaddmoney']
-						sumbonusmoney=customlist[cid][key]['outbonusmoney']
+						sumaddmoney+=customlist[cid][key]['outaddmoney'].to_i()
+						sumbonusmoney+=customlist[cid][key]['outbonusmoney'].to_i()
 					end
 				}
 			
@@ -1638,8 +1660,8 @@ def AllMonthTransactionCounting(connection,current_date)
 					if(customlist[cid][key]!=nil)
 						customlist[cid][key]['inaddmoney']/=5
 						customlist[cid][key]['inbonusmoney']/=5
-						sumaddmoney=customlist[cid][key]['inaddmoney']
-						sumbonusmoney=customlist[cid][key]['inbonusmoney']
+						sumaddmoney+=customlist[cid][key]['inaddmoney'].to_i()
+						sumbonusmoney+=customlist[cid][key]['inbonusmoney'].to_i()
 					end
 				}
 			
@@ -1897,9 +1919,17 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 			if(mostneardate!=nil)
 				if(outcurrentcountlist[key]!=nil)
 					data_product.each(){|pid,pname|
-						outpaylist[key]+=(outcurrentcountlist[key][pid]*current_price[mostneardate][pid].to_f()-outwinningcountlist[key][pid]*winning_price[mostneardate][pid].to_f())
-						inpaylist[key]+=(incurrentcountlist[key][pid]*current_price[mostneardate][pid].to_f()--inwinningcountlist[key][pid]*winning_price[mostneardate][pid].to_f())
+						if(outcurrentcountlist[key][pid]!=nil)
+							outpaylist[key]+=(outcurrentcountlist[key][pid]*current_price[mostneardate][pid].to_f()-outwinningcountlist[key][pid]*winning_price[mostneardate][pid].to_f())
+							inpaylist[key]+=(incurrentcountlist[key][pid]*current_price[mostneardate][pid].to_f()-inwinningcountlist[key][pid]*winning_price[mostneardate][pid].to_f())
+						end
 					}
+
+					if outpaylist[key]==0
+						#i don't know why should be, maybe ruby have bug.
+						outpaylist[key]=0
+						inpaylist[key]=0
+					end
 				else
 					outpaylist[key]=0
 					inpaylist[key]=0
@@ -1914,14 +1944,14 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 		sumwitoutother="=SUM(B#{symbol}:#{maxsymbol}#{symbol})"
 		#PAYLIST是將HASH後面的數值轉為ARRAY，再COLLECT分散輸出成ARRAY
 		#ADDMONEY是做同上的動作後，再把輸出的ARRAY透過INJECT的方式加總為一個數字
-		row = ['出']+outpaylist.collect(){|key,value| value}+[sumwitoutother,outaddmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x},outbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]
+		row = ['出']+outpaylist.collect(){|key,value| value}+[sumwitoutother,outbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x},outaddmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]
 		sheet.write('A2', row)
 
 		symbol=3
 		sumwitoutother="=SUM(B#{symbol}:#{maxsymbol}#{symbol})"
 		#PAYLIST是將HASH後面的數值轉為ARRAY，再COLLECT分散輸出成ARRAY
 		#ADDMONEY是做同上的動作後，再把輸出的ARRAY透過INJECT的方式加總為一個數字
-		row = ['入']+inpaylist.collect(){|key,value| value}+[sumwitoutother,inaddmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x},inbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]
+		row = ['入']+inpaylist.collect(){|key,value| value}+[sumwitoutother,inbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x},inaddmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]
 		sheet.write('A3', row)
 
 		symbol=4
@@ -1930,7 +1960,7 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 		maxdate.times(){
 			row+=[0]
 		}
-		row+=[sumwitoutother,inaddmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x},inbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]
+		row+=[sumwitoutother,0,0]
 		sheet.write('A4', row)
 
 		row = ['誤差']
@@ -1990,7 +2020,7 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 							mostneardate=key1
 							break
 						end
-					}#tag
+					}
 
 
 					#列舉並加總該日所有的產品，如果沒有找到最接近日期的價格表，那就乾脆不加了
@@ -2002,6 +2032,11 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 									outpaylist[key]-=customlist[cid][key]['outwinningcountlist'][pid]*winning_price[mostneardate][pid].to_f()
 								end
 							}
+
+							if outpaylist[key]==0
+								#i don't know why should be, maybe ruby have bug.
+								outpaylist[key]=0
+							end
 						else
 							outpaylist[key]=0
 						end
@@ -2012,15 +2047,19 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 
 				
 				#因為同一個GROUP的會被同時加進來，除以目前有的產品種類數就是正確的退水跟漲價金額了
+				sumaddmoney=0
+				sumbonusmoney=0
 				outaddmoney.each(){|key,value|
 					if customlist[cid][key]!=nil
 						customlist[cid][key]['outaddmoney']/=5
 						customlist[cid][key]['outbonusmoney']/=5
+						sumaddmoney+=customlist[cid][key]['outaddmoney'].to_i()
+						sumbonusmoney+=customlist[cid][key]['outbonusmoney'].to_i()
 					end
 				}
 			
 
-				row += outpaylist.collect(){|key,value| value}+[sumwitoutother,outaddmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x},outbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]
+				row += outpaylist.collect(){|key,value| value}+[sumwitoutother,sumbonusmoney,sumaddmoney]
 			end
 			sheet.write('A'+(8+rowindex).to_s(), row)
 			rowindex+=1
@@ -2095,6 +2134,11 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 									inpaylist[key]-=customlist[cid][key]['inwinningcountlist'][pid]*winning_price[mostneardate][pid].to_f()
 								end
 							}
+
+							if inpaylist[key]==0
+								#i don't know why should be, maybe ruby have bug.
+								inpaylist[key]=0
+							end
 						else
 							inpaylist[key]=0
 						end
@@ -2105,15 +2149,19 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 
 				
 				#因為同一個GROUP的會被同時加進來，除以目前有的產品種類數就是正確的退水跟漲價金額了
+				sumaddmoney=0
+				sumbonusmoney=0
 				inaddmoney.each(){|key,value|
 					if(customlist[cid][key]!=nil)
 						customlist[cid][key]['inaddmoney']/=5
 						customlist[cid][key]['inbonusmoney']/=5
+						sumaddmoney+=customlist[cid][key]['inaddmoney'].to_i()
+						sumbonusmoney+=customlist[cid][key]['inbonusmoney'].to_i()
 					end
 				}
 			
 
-				row += inpaylist.collect(){|key,value| value}+[sumwitoutother,inaddmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x},inbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]
+				row += inpaylist.collect(){|key,value| value}+[sumwitoutother,sumbonusmoney,sumaddmoney]
 			end
 			sheet.write('A'+(8+rowindex).to_s(), row)
 			rowindex+=1
@@ -2305,13 +2353,13 @@ def AllDaily4KTransactionCounting(connection,current_date)
 		symbol=3
 		sumwithwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+H#{symbol}+I#{symbol}"
 		sumwithoutwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+I#{symbol}"
-		row = ['出']+outlist+[0,0,sumwithwater,sumwithoutwater,outaddmoney,outbonusmoney]
+		row = ['出']+outlist+[0,0,sumwithwater,sumwithoutwater,outbonusmoney,outaddmoney]
 		sheet.write('A3', row)
 
 		symbol=4
 		sumwithwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+H#{symbol}+I#{symbol}"
 		sumwithoutwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+I#{symbol}"
-		row = ['入']+inlist+[0,0,sumwithwater,sumwithoutwater,inaddmoney,inbonusmoney]
+		row = ['入']+inlist+[0,0,sumwithwater,sumwithoutwater,inbonusmoney,inaddmoney]
 		sheet.write('A4', row)
 
 		symbol=5
@@ -2357,7 +2405,7 @@ def AllDaily4KTransactionCounting(connection,current_date)
 					outgetlist[key[-1]]+=outwinningcountlist[key]*winning_price[key].to_f()
 				}
 				outlist=[outpaylist['4'],outgetlist['4']]			
-				row = ['出']+outlist+[0,0,sumwithwater,sumwithoutwater,customlist[cid]['outaddmoney'],customlist[cid]['outbonusmoney']]
+				row = ['出']+outlist+[0,0,sumwithwater,sumwithoutwater,customlist[cid]['outbonusmoney'],customlist[cid]['outaddmoney']]
 			end
 			sheet.write('A'+(9+rowindex).to_s(), row)
 			rowindex+=1
@@ -2399,7 +2447,7 @@ def AllDaily4KTransactionCounting(connection,current_date)
 					ingetlist[key[-1]]+=inwinningcountlist[key]*winning_price[key].to_f()
 				}
 				inlist=[inpaylist['4'],ingetlist['4']]
-				row = ['入']+inlist+[0,0,sumwithwater,sumwithoutwater,customlist[cid]['inaddmoney'],customlist[cid]['inbonusmoney']]
+				row = ['入']+inlist+[0,0,sumwithwater,sumwithoutwater,customlist[cid]['inbonusmoney'],customlist[cid]['inaddmoney']]
 			end
 			sheet.write('A'+(9+rowindex).to_s(), row)
 			rowindex+=1
@@ -2629,9 +2677,17 @@ def AllMonth4KTransactionCounting(connection,current_date)
 			if(mostneardate!=nil)
 				if(outcurrentcountlist[key]!=nil)
 					data_product.each(){|pid,pname|
-						outpaylist[key]+=(outcurrentcountlist[key][pid]*current_price[mostneardate][pid].to_f()-outwinningcountlist[key][pid]*winning_price[mostneardate][pid].to_f())
-						inpaylist[key]+=(incurrentcountlist[key][pid]*current_price[mostneardate][pid].to_f()--inwinningcountlist[key][pid]*winning_price[mostneardate][pid].to_f())
+						if(outcurrentcountlist[key][pid]!=nil)
+							outpaylist[key]+=(outcurrentcountlist[key][pid]*current_price[mostneardate][pid].to_f()-outwinningcountlist[key][pid]*winning_price[mostneardate][pid].to_f())
+							inpaylist[key]+=(incurrentcountlist[key][pid]*current_price[mostneardate][pid].to_f()-inwinningcountlist[key][pid]*winning_price[mostneardate][pid].to_f())
+						end
 					}
+
+					if outpaylist[key]==0
+						#i don't know why should be, maybe ruby have bug.
+						outpaylist[key]=0
+						inpaylist[key]=0
+					end
 				else
 					outpaylist[key]=0
 					inpaylist[key]=0
@@ -2646,14 +2702,14 @@ def AllMonth4KTransactionCounting(connection,current_date)
 		sumwitoutother="=SUM(B#{symbol}:#{maxsymbol}#{symbol})"
 		#PAYLIST是將HASH後面的數值轉為ARRAY，再COLLECT分散輸出成ARRAY
 		#ADDMONEY是做同上的動作後，再把輸出的ARRAY透過INJECT的方式加總為一個數字
-		row = ['出']+outpaylist.collect(){|key,value| value}+[sumwitoutother,outaddmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x},outbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]
+		row = ['出']+outpaylist.collect(){|key,value| value}+[sumwitoutother,outbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x},outaddmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]
 		sheet.write('A2', row)
 
 		symbol=3
 		sumwitoutother="=SUM(B#{symbol}:#{maxsymbol}#{symbol})"
 		#PAYLIST是將HASH後面的數值轉為ARRAY，再COLLECT分散輸出成ARRAY
 		#ADDMONEY是做同上的動作後，再把輸出的ARRAY透過INJECT的方式加總為一個數字
-		row = ['入']+inpaylist.collect(){|key,value| value}+[sumwitoutother,inaddmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x},inbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]
+		row = ['入']+inpaylist.collect(){|key,value| value}+[sumwitoutother,inbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x},inaddmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]
 		sheet.write('A3', row)
 
 		symbol=4
@@ -2662,7 +2718,7 @@ def AllMonth4KTransactionCounting(connection,current_date)
 		maxdate.times(){
 			row+=[0]
 		}
-		row+=[sumwitoutother,inaddmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x},inbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]
+		row+=[sumwitoutother,0,0]
 		sheet.write('A4', row)
 
 		row = ['誤差']
@@ -2734,6 +2790,11 @@ def AllMonth4KTransactionCounting(connection,current_date)
 									outpaylist[key]-=customlist[cid][key]['outwinningcountlist'][pid]*winning_price[mostneardate][pid].to_f()
 								end
 							}
+
+							if outpaylist[key]==0
+								#i don't know why should be, maybe ruby have bug.
+								outpaylist[key]=0
+							end
 						else
 							outpaylist[key]=0
 						end
@@ -2744,15 +2805,19 @@ def AllMonth4KTransactionCounting(connection,current_date)
 
 				
 				#因為同一個GROUP的會被同時加進來，除以目前有的產品種類數就是正確的退水跟漲價金額了
+				sumaddmoney=0
+				sumbonusmoney=0
 				outaddmoney.each(){|key,value|
 					if customlist[cid][key]!=nil
 						customlist[cid][key]['outaddmoney']/=5
 						customlist[cid][key]['outbonusmoney']/=5
+						sumaddmoney+=customlist[cid][key]['outaddmoney'].to_i()
+						sumbonusmoney+=customlist[cid][key]['outbonusmoney'].to_i()
 					end
 				}
 			
 
-				row += outpaylist.collect(){|key,value| value}+[sumwitoutother,outaddmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x},outbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]
+				row += outpaylist.collect(){|key,value| value}+[sumwitoutother,sumbonusmoney,sumaddmoney]
 			end
 			sheet.write('A'+(8+rowindex).to_s(), row)
 			rowindex+=1
@@ -2827,6 +2892,11 @@ def AllMonth4KTransactionCounting(connection,current_date)
 									inpaylist[key]-=customlist[cid][key]['inwinningcountlist'][pid]*winning_price[mostneardate][pid].to_f()
 								end
 							}
+
+							if inpaylist[key]==0
+								#i don't know why should be, maybe ruby have bug.
+								inpaylist[key]=0
+							end
 						else
 							inpaylist[key]=0
 						end
@@ -2837,15 +2907,19 @@ def AllMonth4KTransactionCounting(connection,current_date)
 
 				
 				#因為同一個GROUP的會被同時加進來，除以目前有的產品種類數就是正確的退水跟漲價金額了
+				sumaddmoney=0
+				sumbonusmoney=0
 				inaddmoney.each(){|key,value|
 					if customlist[cid][key]!=nil
 						customlist[cid][key]['inaddmoney']/=5
 						customlist[cid][key]['inbonusmoney']/=5
+						sumaddmoney+=customlist[cid][key]['inaddmoney'].to_i()
+						sumbonusmoney+=customlist[cid][key]['inbonusmoney'].to_i()
 					end
 				}
 			
 
-				row += inpaylist.collect(){|key,value| value}+[sumwitoutother,inaddmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x},inbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]
+				row += inpaylist.collect(){|key,value| value}+[sumwitoutother,sumbonusmoney,sumaddmoney]
 			end
 			sheet.write('A'+(8+rowindex).to_s(), row)
 			rowindex+=1
@@ -3069,7 +3143,7 @@ end
 
 
 
-#begin
+begin
 	#連線
 	@connection = WIN32OLE.new('ADODB.Connection')
 	@connection.Open('Provider=Microsoft.ACE.OLEDB.12.0;Data Source=main.mdb')
@@ -3192,6 +3266,6 @@ end
 	
 	#中斷連線
 	@connection.close
-#rescue => exception
-	#p exception.backtrace
-#end
+rescue => exception
+	p exception.backtrace
+end
