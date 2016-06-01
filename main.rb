@@ -151,11 +151,13 @@ def CustomDailyTransactionDetail(connection,current_pid,current_cid,current_date
 	row = ['應收']
 	sheet.write('A4',row)
 	row = [paylist.inject(0){|sum,x| sum + x }.round(4)]	#inject value to sum
-	sheet.merge_range('B4:F4',row,book.add_format)
+	format_merge = book.add_format
+	format_merge.set_format_properties(:set_merge=>true)
+	sheet.merge_range('B4:F4',row,format_merge)
 	row= ['漲價']
 	sheet.write('G4',row)
 	row=[data_order.at(0).at(6)]
-	sheet.merge_range('H4:I4',row,book.add_format)
+	sheet.merge_range('H4:I4',row,format_merge)
 	if(hash_custom["proportion"]==nil)
 		row=['佔成']+['0%']
 	else
@@ -172,7 +174,7 @@ def CustomDailyTransactionDetail(connection,current_pid,current_cid,current_date
 	row = [pname]
 	sheet.write('B5', row, format)
 	row = [hash_custom['cname']]
-	sheet.merge_range('C5:K5', row, book.add_format)
+	sheet.merge_range('C5:K5', row, format_merge)
 
 	#列舉產品名
 	row = ['單號']+pnamelist
@@ -2859,7 +2861,9 @@ def CustomDailyPriceDetail(connection,current_date)
 	format.set_format_properties(:bg_color => 'gray',:pattern  => 1)
 	sheet.write('A1',row, format)
 	row = [current_date]
-	sheet.merge_range('B1:P1',row, format)
+	format_merge = book.add_format
+	format_merge.set_format_properties(:bg_color=>'gray',:pattern=>1,:set_merge=>true)
+	sheet.merge_range('B1:P1',row, format_merge)
 
 	#列舉產品名
 	pnamelist=Array.new
@@ -2876,13 +2880,13 @@ def CustomDailyPriceDetail(connection,current_date)
 	sheet.write('A3', row, format)
 
 	row = ['539']
-	sheet.merge_range('B3:F3',row, format)
+	sheet.merge_range('B3:F3',row, format_merge)
 
 	row = ['港號']
-	sheet.merge_range('G3:K3',row, format)
+	sheet.merge_range('G3:K3',row, format_merge)
 
 	row = ['大樂透']
-	sheet.merge_range('L3:P3',row, format)
+	sheet.merge_range('L3:P3',row, format_merge)
 
 	
 	#成本價
@@ -2914,14 +2918,14 @@ def CustomDailyPriceDetail(connection,current_date)
 	sheet.write("A#{symbol}", row, format)
 
 	row = ['539']
-	sheet.merge_range("B#{symbol}:F#{symbol}",row, format)
+	sheet.merge_range("B#{symbol}:F#{symbol}",row, format_merge)
 
 	row = ['港號']
-	sheet.merge_range("G#{symbol}:K#{symbol}",row, format)
+	sheet.merge_range("G#{symbol}:K#{symbol}",row, format_merge)
 
 	symbol=4+rowindex
 	row = ['大樂透']
-	sheet.merge_range("L#{symbol}:P#{symbol}",row, format)
+	sheet.merge_range("L#{symbol}:P#{symbol}",row, format_merge)
 	rowindex+=1
 
 	
@@ -2968,40 +2972,55 @@ end
 
 
 
-@connection = WIN32OLE.new('ADODB.Connection')
-@connection.Open('Provider=Microsoft.ACE.OLEDB.12.0;Data Source=main.mdb')
 
+begin
+	@connection = WIN32OLE.new('ADODB.Connection')
+	@connection.Open('Provider=Microsoft.ACE.OLEDB.12.0;Data Source=main.mdb')
 
+	case ARGV[0]
+	when 'CustomDailyTransactionDetail'
+		#CustomDailyTransactionDetail(@connection,'100','1','2016/01/11')
+		CustomDailyTransactionDetail(@connection,ARGV[1],ARGV[2],ARGV[3])
+	when 'DailyTransactionCounting'
+		#DailyTransactionCounting(@connection,'100','2016/01/11')
+		DailyTransactionCounting(@connection,ARGV[1],ARGV[2])
+	when 'AllDailyTransactionCounting'
+		#AllDailyTransactionCounting(@connection,'2016/01/11')
+		AllDailyTransactionCounting(@connection,ARGV[1])
+	when 'AllWeekTransactionCounting'
+		#AllWeekTransactionCounting(@connection,'2016/01/11')
+		AllWeekTransactionCounting(@connection,ARGV[1])
+	when 'AllMonthTransactionCounting'
+		#AllMonthTransactionCounting(@connection,'2016/01/11')
+		AllMonthTransactionCounting(@connection,ARGV[1])
+	when 'MonthTransactionCounting'
+		#MonthTransactionCounting(@connection,'100','2016/01/11')
+		MonthTransactionCounting(@connection,ARGV[1],ARGV[2])
+	when 'AllDaily4KTransactionCounting'
+		#AllDaily4KTransactionCounting(@connection,'2016/01/11')
+		AllDaily4KTransactionCounting(@connection,ARGV[1])
+	when 'AllMonth4KTransactionCounting'
+		#AllMonth4KTransactionCounting(@connection,'2016/01/11')
+		AllMonth4KTransactionCounting(@connection,ARGV[1])
+	when 'CustomDailyPriceDetail'
+		#CustomDailyPriceDetail(@connection,'2016/01/11')
+		CustomDailyPriceDetail(@connection,ARGV[1])
+	when 'test'
+		p 'run test'
+		CustomDailyTransactionDetail(@connection,'100','1','2016/01/11')
+		DailyTransactionCounting(@connection,'100','2016/01/11')
+		AllDailyTransactionCounting(@connection,'2016/01/11')
+		AllWeekTransactionCounting(@connection,'2016/01/11')
+		AllMonthTransactionCounting(@connection,'2016/01/11')
+		MonthTransactionCounting(@connection,'100','2016/01/11')
+		AllDaily4KTransactionCounting(@connection,'2016/01/11')
+		AllMonth4KTransactionCounting(@connection,'2016/01/11')
+		CustomDailyPriceDetail(@connection,'2016/01/11')
+	else
+		p 'program no input'
+	end
 
-
-case ARGV[0]
-when 'CustomDailyTransactionDetail'
-	#CustomDailyTransactionDetail(@connection,'100','1','2016/01/11')
-	CustomDailyTransactionDetail(@connection,ARGV[1],ARGV[2],ARGV[3])
-when 'DailyTransactionCounting'
-	#DailyTransactionCounting(@connection,'100','2016/01/11')
-	DailyTransactionCounting(@connection,ARGV[1],ARGV[2])
-when 'AllDailyTransactionCounting'
-	#AllDailyTransactionCounting(@connection,'2016/01/11')
-	AllDailyTransactionCounting(@connection,ARGV[1])
-when 'AllWeekTransactionCounting'
-	#AllWeekTransactionCounting(@connection,'2016/01/11')
-	AllWeekTransactionCounting(@connection,ARGV[1])
-when 'AllMonthTransactionCounting'
-	#AllMonthTransactionCounting(@connection,'2016/01/11')
-	AllMonthTransactionCounting(@connection,ARGV[1])
-when 'MonthTransactionCounting'
-	#MonthTransactionCounting(@connection,'100','2016/01/11')
-	MonthTransactionCounting(@connection,ARGV[1],ARGV[2])
-when 'AllDaily4KTransactionCounting'
-	#AllDaily4KTransactionCounting(@connection,'2016/01/11')
-	AllDaily4KTransactionCounting(@connection,ARGV[1])
-when 'AllMonth4KTransactionCounting'
-	#AllMonth4KTransactionCounting(@connection,'2016/01/11')
-	AllMonth4KTransactionCounting(@connection,ARGV[1])
-when 'CustomDailyPriceDetail'
-	#CustomDailyPriceDetail(@connection,'2016/01/11')
-	CustomDailyPriceDetail(@connection,ARGV[1])
-else
-	p 'program error'
+	@connection.close
+rescue => exception
+	p exception.backtrace
 end
