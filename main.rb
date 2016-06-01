@@ -1408,6 +1408,11 @@ def AllMonthTransactionCounting(connection,current_date)
 						outpaylist[key]+=(outcurrentcountlist[key][pid]*current_price[mostneardate][pid].to_f()-outwinningcountlist[key][pid]*winning_price[mostneardate][pid].to_f())
 						inpaylist[key]+=(incurrentcountlist[key][pid]*current_price[mostneardate][pid].to_f()--inwinningcountlist[key][pid]*winning_price[mostneardate][pid].to_f())
 					}
+					
+					if(outpaylist[key]==nil)
+						outpaylist[key]=0
+						inpaylist[key]=0
+					end
 				else
 					outpaylist[key]=0
 					inpaylist[key]=0
@@ -1510,6 +1515,11 @@ def AllMonthTransactionCounting(connection,current_date)
 									outpaylist[key]-=customlist[cid][key]['outwinningcountlist'][pid]*winning_price[mostneardate][pid].to_f()
 								end
 							}
+							
+							if outpaylist[key]==0
+								#i don't know why should be, maybe ruby have bug.
+								outpaylist[key]=0
+							end
 						else
 							outpaylist[key]=0
 						end
@@ -1520,15 +1530,19 @@ def AllMonthTransactionCounting(connection,current_date)
 
 				
 				#因為同一個GROUP的會被同時加進來，除以目前有的產品種類數就是正確的退水跟漲價金額了
+				sumaddmoney=0
+				sumbonusmoney=0
 				outaddmoney.each(){|key,value|
 					if(customlist[cid][key]!=nil)
 						customlist[cid][key]['outaddmoney']/=5
 						customlist[cid][key]['outbonusmoney']/=5
+						sumaddmoney=customlist[cid][key]['outaddmoney']
+						sumbonusmoney=customlist[cid][key]['outbonusmoney']
 					end
 				}
 			
-
-				row += outpaylist.collect(){|key,value| value}+[sumwitoutother,outbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x},outaddmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]
+			
+				row += outpaylist.collect(){|key,value| value}+[sumwitoutother,sumbonusmoney,sumaddmoney]
 			end
 			sheet.write('A'+(8+rowindex).to_s(), row)
 			rowindex+=1
@@ -1603,6 +1617,11 @@ def AllMonthTransactionCounting(connection,current_date)
 									inpaylist[key]-=customlist[cid][key]['inwinningcountlist'][pid]*winning_price[mostneardate][pid].to_f()
 								end
 							}
+							
+							if inpaylist[key]==0
+								#i don't know why should be, maybe ruby have bug.
+								inpaylist[key]=0
+							end
 						else
 							inpaylist[key]=0
 						end
@@ -1613,15 +1632,19 @@ def AllMonthTransactionCounting(connection,current_date)
 
 				
 				#因為同一個GROUP的會被同時加進來，除以目前有的產品種類數就是正確的退水跟漲價金額了
+				sumbonusmoney=0
+				sumaddmoney=0
 				inaddmoney.each(){|key,value|
 					if(customlist[cid][key]!=nil)
 						customlist[cid][key]['inaddmoney']/=5
 						customlist[cid][key]['inbonusmoney']/=5
+						sumaddmoney=customlist[cid][key]['inaddmoney']
+						sumbonusmoney=customlist[cid][key]['inbonusmoney']
 					end
 				}
 			
 
-				row += inpaylist.collect(){|key,value| value}+[sumwitoutother,inbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x},inaddmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]
+				row += inpaylist.collect(){|key,value| value}+[sumwitoutother,sumbonusmoney,sumaddmoney]
 			end
 			sheet.write('A'+(8+rowindex).to_s(), row)
 			rowindex+=1
