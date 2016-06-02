@@ -858,10 +858,12 @@ def AllWeekTransactionCounting(connection,current_date)
 		winning_price=Hash.new()
 		data_price.each(){|swiftcode,cid,pid,currentdate,currentprice,winningprice,upset|
 			current_price[currentdate]=Hash.new() if current_price[currentdate]==nil
-			current_price[currentdate][pid]=currentprice
+			current_price[currentdate][pid]=Hash.new() if current_price[currentdate][pid]==nil
+			current_price[currentdate][pid][cid]=currentprice
 
 			winning_price[currentdate]=Hash.new() if winning_price[currentdate]==nil
-			winning_price[currentdate][pid]=winningprice
+			winning_price[currentdate][pid]=Hash.new() if winning_price[currentdate][pid]==nil
+			winning_price[currentdate][pid][cid]=winningprice
 		}
 		#倒序依日期排序
 		current_price.sort_by{|key,v| key}.reverse
@@ -969,7 +971,7 @@ def AllWeekTransactionCounting(connection,current_date)
 			inbonusmoney[key]/=5	
 		}
 
-
+=begin
 		#計算誤差
 		outpaylist=Hash.new(0)
 		inpaylist=Hash.new(0)
@@ -996,7 +998,7 @@ def AllWeekTransactionCounting(connection,current_date)
 
 
 					if outpaylist[key]==0
-						#i don't know why should be, maybe ruby have bug.
+						#因為HASH的初始值為0，所以要判斷是否為0才能確定是否為初始值，然後要再給他0，HASH才會把這個欄目加進來
 						outpaylist[key]=0
 						inpaylist[key]=0
 					end
@@ -1025,7 +1027,7 @@ def AllWeekTransactionCounting(connection,current_date)
 		#ADDMONEY是做同上的動作後，再把輸出的ARRAY透過INJECT的方式加總為一個數字
 		row = ['入']+inpaylist.collect(){|key,value| value}+[sumwitoutholdpay,sumwitholdpay,0,inbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]	
 		sheet.write('A3', row)
-
+=end
 		symbol=4
 		sumwitoutholdpay="=SUM(B#{symbol}:H#{symbol})"
 		sumwitholdpay="=SUM(B#{symbol}:H#{symbol})+K#{symbol}+L#{symbol}"	
@@ -1051,7 +1053,9 @@ def AllWeekTransactionCounting(connection,current_date)
 		row = ['總計','應收','前帳','水']
 		sheet.write('I7', row)
 
+		
 		rowindex=0
+		sumoutpaylist=Hash.new(0)
 		data_custom.each(){|cid,cname,ctype,address,opendate,bankid,proportion,bonustarget,phone1,phone2,phone3,phone4,phone5,phone6,note|
 			symbol=8+rowindex
 			sumwitoutholdpay="=SUM(B#{symbol}:H#{symbol})"
@@ -1078,13 +1082,15 @@ def AllWeekTransactionCounting(connection,current_date)
 						if(outcurrentcountlist[key]!=nil)
 							data_product.each(){|pid,pname|
 								if(customlist[cid][key]!=nil)
-									outpaylist[key]+=customlist[cid][key]['outcurrentcountlist'][pid]*current_price[mostneardate][pid].to_f()
-									outpaylist[key]-=customlist[cid][key]['outwinningcountlist'][pid]*winning_price[mostneardate][pid].to_f()
+									outpaylist[key]+=customlist[cid][key]['outcurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f()
+									outpaylist[key]-=customlist[cid][key]['outwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()									
 								end
 
 								if outpaylist[key]==0
-									#i don't know why should be, maybe ruby have bug.
+									#因為HASH的初始值為0，所以要判斷是否為0才能確定是否為初始值，然後要再給他0，HASH才會把這個欄目加進來
 									outpaylist[key]=0
+								else
+									sumoutpaylist[key]+=outpaylist[key]	#用於加總
 								end
 							}
 						else
@@ -1134,6 +1140,7 @@ def AllWeekTransactionCounting(connection,current_date)
 		sheet.write('I'+(8+rowindex).to_s(), row)
 		rowindex+=1
 
+		suminpaylist=Hash.new(0)
 		data_custom.each(){|cid,cname,ctype,address,opendate,bankid,proportion,bonustarget,phone1,phone2,phone3,phone4,phone5,phone6,note|
 			symbol=8+rowindex
 			sumwitoutholdpay="=SUM(B#{symbol}:H#{symbol})"
@@ -1160,13 +1167,15 @@ def AllWeekTransactionCounting(connection,current_date)
 						if(incurrentcountlist[key]!=nil)
 							data_product.each(){|pid,pname|
 								if(customlist[cid][key]!=nil)
-									inpaylist[key]+=customlist[cid][key]['incurrentcountlist'][pid]*current_price[mostneardate][pid].to_f()
-									inpaylist[key]-=customlist[cid][key]['inwinningcountlist'][pid]*winning_price[mostneardate][pid].to_f()
+									inpaylist[key]+=customlist[cid][key]['incurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f()
+									inpaylist[key]-=customlist[cid][key]['inwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()
 								end
 
 								if inpaylist[key]==0
-									#i don't know why should be, maybe ruby have bug.
+									#因為HASH的初始值為0，所以要判斷是否為0才能確定是否為初始值，然後要再給他0，HASH才會把這個欄目加進來
 									inpaylist[key]=0
+								else
+									suninpaylist[key]+=inpaylist[key]	#用於加總	
 								end
 							}
 						else
@@ -1196,6 +1205,37 @@ def AllWeekTransactionCounting(connection,current_date)
 			sheet.write('A'+(8+rowindex).to_s(), row)
 			rowindex+=1
 		}
+
+
+
+		#最後再來計算加總
+		(begin_date..current_date).each(){|key|
+			if(sumoutpaylist[key]==0)
+				sumoutpaylist[key]=0
+			end
+			if(suminpaylist[key]==0)
+				suminpaylist[key]=0
+			end
+		}
+
+
+
+		symbol=2
+		sumwitoutholdpay="=SUM(B#{symbol}:H#{symbol})"
+		sumwitholdpay="=SUM(B#{symbol}:H#{symbol})+K#{symbol}+L#{symbol}"	
+		#PAYLIST是將HASH後面的數值轉為ARRAY，再COLLECT分散輸出成ARRAY
+		#ADDMONEY是做同上的動作後，再把輸出的ARRAY透過INJECT的方式加總為一個數字
+		row = ['出']+sumoutpaylist.sort_by{|key,v| key}.collect(){|key,value| value}+[sumwitoutholdpay,sumwitholdpay,0,outbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]	
+		sheet.write('A2', row)
+
+		symbol=3
+		sumwitoutholdpay="=SUM(B#{symbol}:H#{symbol})"
+		sumwitholdpay="=SUM(B#{symbol}:H#{symbol})+K#{symbol}+L#{symbol}"	
+		#PAYLIST是將HASH後面的數值轉為ARRAY，再COLLECT分散輸出成ARRAY
+		#ADDMONEY是做同上的動作後，再把輸出的ARRAY透過INJECT的方式加總為一個數字
+		row = ['入']+suminpaylist.sort_by{|key,v| key}.collect(){|key,value| value}+[sumwitoutholdpay,sumwitholdpay,0,inbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]	
+		sheet.write('A3', row)
+
 
 
 		#close recordset
@@ -1431,7 +1471,7 @@ def AllMonthTransactionCounting(connection,current_date)
 					}
 					
 					if outpaylist[key]==0
-						#i don't know why should be, maybe ruby have bug.
+						#因為HASH的初始值為0，所以要判斷是否為0才能確定是否為初始值，然後要再給他0，HASH才會把這個欄目加進來
 						outpaylist[key]=0
 						inpaylist[key]=0
 					end
@@ -1539,7 +1579,7 @@ def AllMonthTransactionCounting(connection,current_date)
 							}
 							
 							if outpaylist[key]==0
-								#i don't know why should be, maybe ruby have bug.
+								#因為HASH的初始值為0，所以要判斷是否為0才能確定是否為初始值，然後要再給他0，HASH才會把這個欄目加進來
 								outpaylist[key]=0
 							end
 						else
@@ -1641,7 +1681,7 @@ def AllMonthTransactionCounting(connection,current_date)
 							}
 							
 							if inpaylist[key]==0
-								#i don't know why should be, maybe ruby have bug.
+								#因為HASH的初始值為0，所以要判斷是否為0才能確定是否為初始值，然後要再給他0，HASH才會把這個欄目加進來
 								inpaylist[key]=0
 							end
 						else
@@ -1926,7 +1966,7 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 					}
 
 					if outpaylist[key]==0
-						#i don't know why should be, maybe ruby have bug.
+						#因為HASH的初始值為0，所以要判斷是否為0才能確定是否為初始值，然後要再給他0，HASH才會把這個欄目加進來
 						outpaylist[key]=0
 						inpaylist[key]=0
 					end
@@ -2034,7 +2074,7 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 							}
 
 							if outpaylist[key]==0
-								#i don't know why should be, maybe ruby have bug.
+								#因為HASH的初始值為0，所以要判斷是否為0才能確定是否為初始值，然後要再給他0，HASH才會把這個欄目加進來
 								outpaylist[key]=0
 							end
 						else
@@ -2136,7 +2176,7 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 							}
 
 							if inpaylist[key]==0
-								#i don't know why should be, maybe ruby have bug.
+								#因為HASH的初始值為0，所以要判斷是否為0才能確定是否為初始值，然後要再給他0，HASH才會把這個欄目加進來
 								inpaylist[key]=0
 							end
 						else
@@ -2684,7 +2724,7 @@ def AllMonth4KTransactionCounting(connection,current_date)
 					}
 
 					if outpaylist[key]==0
-						#i don't know why should be, maybe ruby have bug.
+						#因為HASH的初始值為0，所以要判斷是否為0才能確定是否為初始值，然後要再給他0，HASH才會把這個欄目加進來
 						outpaylist[key]=0
 						inpaylist[key]=0
 					end
@@ -2792,7 +2832,7 @@ def AllMonth4KTransactionCounting(connection,current_date)
 							}
 
 							if outpaylist[key]==0
-								#i don't know why should be, maybe ruby have bug.
+								#因為HASH的初始值為0，所以要判斷是否為0才能確定是否為初始值，然後要再給他0，HASH才會把這個欄目加進來
 								outpaylist[key]=0
 							end
 						else
@@ -2894,7 +2934,7 @@ def AllMonth4KTransactionCounting(connection,current_date)
 							}
 
 							if inpaylist[key]==0
-								#i don't know why should be, maybe ruby have bug.
+								#因為HASH的初始值為0，所以要判斷是否為0才能確定是否為初始值，然後要再給他0，HASH才會把這個欄目加進來
 								inpaylist[key]=0
 							end
 						else
