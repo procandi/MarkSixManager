@@ -31,5 +31,5 @@ basEncryption = 0, 0, 0, 0, C
 basDecryption = 0, 0, 0, 0, C
 basMatrix = 0, 0, 0, 0, C
 basDecoding = 0, 0, 0, 0, C
-frmProveNew = 75, 75, 1218, 648, Z, 75, 75, 1218, 648, C
+frmProveNew = 75, 75, 1218, 648, , 75, 75, 1218, 648, C
 frmConfirmRuby = 150, 150, 1293, 723, , 125, 125, 1268, 698, C

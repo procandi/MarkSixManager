@@ -838,7 +838,7 @@ def AllWeekTransactionCounting(connection,current_date)
 	recordset_price.Open(sql, connection)
 
 
-
+	
 
 
 	if(!recordset_order.eof)
@@ -866,8 +866,9 @@ def AllWeekTransactionCounting(connection,current_date)
 			winning_price[currentdate][pid][cid]=winningprice
 		}
 		#倒序依日期排序
-		current_price.sort_by{|key,v| key}.reverse
-		winning_price.sort_by{|key,v| key}.reverse
+		#current_price.sort_by{|key| key[0]}.reverse
+		#winning_price.sort_by{|key| key[0]}.reverse
+		
 
 		#order
 		data_order = recordset_order.GetRows.transpose
@@ -1066,38 +1067,40 @@ def AllWeekTransactionCounting(connection,current_date)
 				row+=[0,0,0,0,0,0,0,sumwitoutholdpay,sumwitholdpay,0,0]
 			else
 				outpaylist=Hash.new(0)
-				(begin_date..current_date).each(){|key|
+				(Date.parse(begin_date)..Date.parse(current_date)).each(){|key|
 					#找出過出日期相對最接近且有輸入價格的
 					mostneardate=nil
-					current_price.each(){|key1,phash1|
-						if(Date.parse(key1)<=Date.parse(key))
+					current_price.each(){|key1,value1|
+						if(Date.parse(key1)<=key)
 							mostneardate=key1
 							break
 						end
 					}
+					currentdate=key.to_s().gsub('-','/')
 
 
 					#列舉並加總該日所有的產品，如果沒有找到最接近日期的價格表，那就乾脆不加了
 					if(mostneardate!=nil)
-						if(outcurrentcountlist[key]!=nil)
+						if(outcurrentcountlist[currentdate]!=nil)
 							data_product.each(){|pid,pname|
-								if(customlist[cid][key]!=nil)
-									outpaylist[key]+=customlist[cid][key]['outcurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f()
-									outpaylist[key]-=customlist[cid][key]['outwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()									
-								end
-
-								if outpaylist[key]==0
-									#因為HASH的初始值為0，所以要判斷是否為0才能確定是否為初始值，然後要再給他0，HASH才會把這個欄目加進來
-									outpaylist[key]=0
-								else
-									sumoutpaylist[key]+=outpaylist[key]	#用於加總
+								if(customlist[cid][currentdate]!=nil)
+									outpaylist[currentdate]+=customlist[cid][currentdate]['outcurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f()
+									outpaylist[currentdate]-=customlist[cid][currentdate]['outwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()									
 								end
 							}
+
+							
+							if outpaylist[currentdate]==0
+								#因為HASH的初始值為0，所以要判斷是否為0才能確定是否為初始值，然後要再給他0，HASH才會把這個欄目加進來
+								outpaylist[currentdate]=0
+							else
+								sumoutpaylist[currentdate]+=outpaylist[currentdate]	#用於加總
+							end							
 						else
-							outpaylist[key]=0
+							outpaylist[currentdate]=0
 						end
 					else
-						outpaylist[key]=0
+						outpaylist[currentdate]=0
 					end	
 				}
 
@@ -1151,38 +1154,39 @@ def AllWeekTransactionCounting(connection,current_date)
 				row+=[0,0,0,0,0,0,0,sumwitoutholdpay,sumwitholdpay,0,0]
 			else
 				inpaylist=Hash.new(0)
-				(begin_date..current_date).each(){|key|
+				(Date.parse(begin_date)..Date.parse(current_date)).each(){|key|
 					#找出過出日期相對最接近且有輸入價格的
 					mostneardate=nil
-					current_price.each(){|key1,phash1|
-						if(Date.parse(key1)<=Date.parse(key))
+					current_price.each(){|key1,value1|
+						if(Date.parse(key1)<=key)
 							mostneardate=key1
 							break
 						end
 					}
+					currentdate=key.to_s().gsub('-','/')
 
 
 					#列舉並加總該日所有的產品，如果沒有找到最接近日期的價格表，那就乾脆不加了
 					if(mostneardate!=nil)
-						if(incurrentcountlist[key]!=nil)
+						if(incurrentcountlist[currentdate]!=nil)
 							data_product.each(){|pid,pname|
-								if(customlist[cid][key]!=nil)
-									inpaylist[key]+=customlist[cid][key]['incurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f()
-									inpaylist[key]-=customlist[cid][key]['inwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()
-								end
-
-								if inpaylist[key]==0
-									#因為HASH的初始值為0，所以要判斷是否為0才能確定是否為初始值，然後要再給他0，HASH才會把這個欄目加進來
-									inpaylist[key]=0
-								else
-									suninpaylist[key]+=inpaylist[key]	#用於加總	
+								if(customlist[cid][currentdate]!=nil)
+									inpaylist[currentdate]+=customlist[cid][currentdate]['incurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f()
+									inpaylist[currentdate]-=customlist[cid][currentdate]['inwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()
 								end
 							}
+
+							if inpaylist[currentdate]==0
+								#因為HASH的初始值為0，所以要判斷是否為0才能確定是否為初始值，然後要再給他0，HASH才會把這個欄目加進來
+								inpaylist[currentdate]=0
+							else
+								suminpaylist[currentdate]+=inpaylist[currentdate]	#用於加總	
+							end
 						else
-							inpaylist[key]=0
+							inpaylist[currentdate]=0
 						end
 					else
-						inpaylist[key]=0
+						inpaylist[currentdate]=0
 					end	
 				}
 
@@ -1209,16 +1213,15 @@ def AllWeekTransactionCounting(connection,current_date)
 
 
 		#最後再來計算加總
-		(begin_date..current_date).each(){|key|
-			if(sumoutpaylist[key]==0)
-				sumoutpaylist[key]=0
+		(Date.parse(begin_date)..Date.parse(current_date)).each(){|key|
+			currentdate=key.to_s().gsub('-','/')
+			if(sumoutpaylist[currentdate]==0)
+				sumoutpaylist[currentdate]=0
 			end
-			if(suminpaylist[key]==0)
-				suminpaylist[key]=0
+			if(suminpaylist[currentdate]==0)
+				suminpaylist[currentdate]=0
 			end
 		}
-
-
 
 		symbol=2
 		sumwitoutholdpay="=SUM(B#{symbol}:H#{symbol})"
@@ -1316,14 +1319,17 @@ def AllMonthTransactionCounting(connection,current_date)
 		winning_price=Hash.new()
 		data_price.each(){|swiftcode,cid,pid,currentdate,currentprice,winningprice,upset|
 			current_price[currentdate]=Hash.new() if current_price[currentdate]==nil
-			current_price[currentdate][pid]=currentprice
+			current_price[currentdate][pid]=Hash.new() if current_price[currentdate][pid]==nil
+			current_price[currentdate][pid][cid]=currentprice
 
 			winning_price[currentdate]=Hash.new() if winning_price[currentdate]==nil
-			winning_price[currentdate][pid]=winningprice
+			winning_price[currentdate][pid]=Hash.new() if winning_price[currentdate][pid]==nil
+			winning_price[currentdate][pid][cid]=winningprice
 		}
 		#倒序依日期排序
-		current_price.sort_by{|key,v| key}.reverse
-		winning_price.sort_by{|key,v| key}.reverse
+		#current_price.sort_by{|key,v| key}.reverse
+		#winning_price.sort_by{|key,v| key}.reverse
+
 
 		#order
 		data_order = recordset_order.GetRows.transpose
@@ -1348,7 +1354,7 @@ def AllMonthTransactionCounting(connection,current_date)
 		row = [begin_date+'~'+end_date]
 		sheet.write('A1', row)
 		row = []
-		(begin_date..end_date).each_with_index(){|value,index|
+		(Date.parse(begin_date)..Date.parse(end_date)).each_with_index(){|value,index|
 			row+=['D'+(index+1).to_s()]
 			maxdate=index
 		}
@@ -1446,6 +1452,7 @@ def AllMonthTransactionCounting(connection,current_date)
 		}
 
 
+=begin
 		#計算誤差
 		outpaylist=Hash.new(0)
 		inpaylist=Hash.new(0)
@@ -1498,7 +1505,7 @@ def AllMonthTransactionCounting(connection,current_date)
 		#ADDMONEY是做同上的動作後，再把輸出的ARRAY透過INJECT的方式加總為一個數字
 		row = ['入']+inpaylist.collect(){|key,value| value}+[sumwitoutother,inbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x},inaddmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]
 		sheet.write('A3', row)
-
+=end
 		symbol=4
 		sumwitoutother="=SUM(B#{symbol}:#{maxsymbol}#{symbol})"
 		row = ['留']
@@ -1525,7 +1532,7 @@ def AllMonthTransactionCounting(connection,current_date)
 		row = ['出']
 		sheet.write('A7', row)
 		row = []
-		(begin_date..end_date).each_with_index(){|value,index|
+		(Date.parse(begin_date)..Date.parse(end_date)).each_with_index(){|value,index|
 			row+=['D'+(index+1).to_s()]
 		}
 		sheet.write('B7', row, format)
@@ -1544,6 +1551,7 @@ def AllMonthTransactionCounting(connection,current_date)
 
 
 		rowindex=0
+		sumoutpaylist=Hash.new(0)
 		data_custom.each(){|cid,cname,ctype,address,opendate,bankid,proportion,bonustarget,phone1,phone2,phone3,phone4,phone5,phone6,note|
 			symbol=8+rowindex
 			sumwitoutother="=SUM(B#{symbol}:#{maxsymbol}#{symbol})"
@@ -1557,36 +1565,39 @@ def AllMonthTransactionCounting(connection,current_date)
 				row+=[sumwitoutother,0,0]
 			else
 				outpaylist=Hash.new(0)
-				(begin_date..end_date).each(){|key|
+				(Date.parse(begin_date)..Date.parse(end_date)).each(){|key|
 					#找出過出日期相對最接近且有輸入價格的
 					mostneardate=nil
-					current_price.each(){|key1,phash1|
-						if(Date.parse(key1)<=Date.parse(key))
+					current_price.each(){|key1,value1|
+						if(Date.parse(key1)<=key)
 							mostneardate=key1
 							break
 						end
 					}
+					currentdate=key.to_s().gsub('-','/')
 
 
 					#列舉並加總該日所有的產品，如果沒有找到最接近日期的價格表，那就乾脆不加了
 					if(mostneardate!=nil)
-						if(outcurrentcountlist[key]!=nil)
+						if(outcurrentcountlist[currentdate]!=nil)
 							data_product.each(){|pid,pname|
-								if(customlist[cid][key]!=nil)
-									outpaylist[key]+=customlist[cid][key]['outcurrentcountlist'][pid]*current_price[mostneardate][pid].to_f()
-									outpaylist[key]-=customlist[cid][key]['outwinningcountlist'][pid]*winning_price[mostneardate][pid].to_f()
+								if(customlist[cid][currentdate]!=nil)
+									outpaylist[currentdate]+=customlist[cid][currentdate]['outcurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f()
+									outpaylist[currentdate]-=customlist[cid][currentdate]['outwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()
 								end
 							}
 							
-							if outpaylist[key]==0
+							if outpaylist[currentdate]==0
 								#因為HASH的初始值為0，所以要判斷是否為0才能確定是否為初始值，然後要再給他0，HASH才會把這個欄目加進來
-								outpaylist[key]=0
+								outpaylist[currentdate]=0
+							else
+								sumoutpaylist[currentdate]+=outpaylist[currentdate]	#用於加總
 							end
 						else
-							outpaylist[key]=0
+							outpaylist[currentdate]=0
 						end
 					else
-						outpaylist[key]=0
+						outpaylist[currentdate]=0
 					end	
 				}
 
@@ -1627,7 +1638,7 @@ def AllMonthTransactionCounting(connection,current_date)
 		row = ['入']
 		sheet.write('A'+(8+rowindex).to_s(), row)
 		row = []
-		(begin_date..end_date).each_with_index(){|value,index|
+		(Date.parse(begin_date)..Date.parse(end_date)).each_with_index(){|value,index|
 			row+=['D'+(index+1).to_s()]
 		}
 		sheet.write('B'+(8+rowindex).to_s(), row, format)
@@ -1646,6 +1657,7 @@ def AllMonthTransactionCounting(connection,current_date)
 		rowindex+=1
 
 
+		suminpaylist=Hash.new(0)
 		data_custom.each(){|cid,cname,ctype,address,opendate,bankid,proportion,bonustarget,phone1,phone2,phone3,phone4,phone5,phone6,note|
 			symbol=8+rowindex
 			sumwitoutother="=SUM(B#{symbol}:#{maxsymbol}#{symbol})"
@@ -1659,36 +1671,40 @@ def AllMonthTransactionCounting(connection,current_date)
 				row+=[sumwitoutother,0,0]
 			else
 				inpaylist=Hash.new(0)
-				(begin_date..end_date).each(){|key|
+				(Date.parse(begin_date)..Date.parse(end_date)).each(){|key|
 					#找出過出日期相對最接近且有輸入價格的
 					mostneardate=nil
 					current_price.each(){|key1,phash1|
-						if(Date.parse(key1)<=Date.parse(key))
+						if(Date.parse(key1)<=key)
 							mostneardate=key1
 							break
 						end
 					}
+					currentdate=key.to_s().gsub('-','/')
 
 
 					#列舉並加總該日所有的產品，如果沒有找到最接近日期的價格表，那就乾脆不加了
 					if(mostneardate!=nil)
-						if(incurrentcountlist[key]!=nil)
+						if(incurrentcountlist[currentdate]!=nil)
 							data_product.each(){|pid,pname|
-								if(customlist[cid][key]!=nil)
-									inpaylist[key]+=customlist[cid][key]['incurrentcountlist'][pid]*current_price[mostneardate][pid].to_f()
-									inpaylist[key]-=customlist[cid][key]['inwinningcountlist'][pid]*winning_price[mostneardate][pid].to_f()
+								if(customlist[cid][currentdate]!=nil)
+									inpaylist[currentdate]+=customlist[cid][currentdate]['incurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f()
+									inpaylist[currentdate]-=customlist[cid][currentdate]['inwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()
 								end
 							}
 							
-							if inpaylist[key]==0
+							
+							if inpaylist[currentdate]==0
 								#因為HASH的初始值為0，所以要判斷是否為0才能確定是否為初始值，然後要再給他0，HASH才會把這個欄目加進來
-								inpaylist[key]=0
+								inpaylist[currentdate]=0
+							else
+								suminpaylist[currentdate]+=inpaylist[currentdate]	#用於加總
 							end
 						else
-							inpaylist[key]=0
+							inpaylist[currentdate]=0
 						end
 					else
-						inpaylist[key]=0
+						inpaylist[currentdate]=0
 					end	
 				}
 
@@ -1711,6 +1727,35 @@ def AllMonthTransactionCounting(connection,current_date)
 			sheet.write('A'+(8+rowindex).to_s(), row)
 			rowindex+=1
 		}
+
+
+
+		
+		#最後再來計算加總
+		(Date.parse(begin_date)..Date.parse(end_date)).each(){|key|
+			currentdate=key.to_s().gsub('-','/')
+			if(sumoutpaylist[currentdate]==0)
+				sumoutpaylist[currentdate]=0
+			end
+			if(suminpaylist[currentdate]==0)
+				suminpaylist[currentdate]=0
+			end
+		}
+
+
+		symbol=2
+		sumwitoutother="=SUM(B#{symbol}:#{maxsymbol}#{symbol})"
+		#PAYLIST是將HASH後面的數值轉為ARRAY，再COLLECT分散輸出成ARRAY
+		#ADDMONEY是做同上的動作後，再把輸出的ARRAY透過INJECT的方式加總為一個數字
+		row = ['出']+sumoutpaylist.sort_by{|key,v| key}.collect(){|key,value| value}+[sumwitoutother,outbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x},outaddmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]
+		sheet.write('A2', row)
+
+		symbol=3
+		sumwitoutother="=SUM(B#{symbol}:#{maxsymbol}#{symbol})"
+		#PAYLIST是將HASH後面的數值轉為ARRAY，再COLLECT分散輸出成ARRAY
+		#ADDMONEY是做同上的動作後，再把輸出的ARRAY透過INJECT的方式加總為一個數字
+		row = ['入']+suminpaylist.sort_by{|key,v| key}.collect(){|key,value| value}+[sumwitoutother,inbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x},inaddmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]
+		sheet.write('A3', row)
 
 
 		#close recordset
@@ -1806,14 +1851,17 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 		winning_price=Hash.new()
 		data_price.each(){|swiftcode,cid,pid,currentdate,currentprice,winningprice,upset|
 			current_price[currentdate]=Hash.new() if current_price[currentdate]==nil
-			current_price[currentdate][pid]=currentprice
+			current_price[currentdate][pid]=Hash.new() if current_price[currentdate][pid]==nil
+			current_price[currentdate][pid][cid]=currentprice
 
 			winning_price[currentdate]=Hash.new() if winning_price[currentdate]==nil
-			winning_price[currentdate][pid]=winningprice
+			winning_price[currentdate][pid]=Hash.new() if winning_price[currentdate][pid]==nil
+			winning_price[currentdate][pid][cid]=winningprice
 		}
 		#倒序依日期排序
-		current_price.sort_by{|key,v| key}.reverse
-		winning_price.sort_by{|key,v| key}.reverse
+		#current_price.sort_by{|key,v| key}.reverse
+		#winning_price.sort_by{|key,v| key}.reverse
+
 
 		#order
 		data_order = recordset_order.GetRows.transpose
@@ -1838,7 +1886,7 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 		row = [begin_date+'~'+end_date]
 		sheet.write('A1', row)
 		row = []
-		(begin_date..end_date).each_with_index(){|value,index|
+		(Date.parse(begin_date)..Date.parse(end_date)).each_with_index(){|value,index|
 			row+=['D'+(index+1).to_s()]
 			maxdate=index
 		}
@@ -1940,7 +1988,7 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 			inbonusmoney[key]/=5	
 		}
 
-
+=begin
 		#計算誤差
 		outpaylist=Hash.new(0)
 		inpaylist=Hash.new(0)
@@ -1993,7 +2041,7 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 		#ADDMONEY是做同上的動作後，再把輸出的ARRAY透過INJECT的方式加總為一個數字
 		row = ['入']+inpaylist.collect(){|key,value| value}+[sumwitoutother,inbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x},inaddmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]
 		sheet.write('A3', row)
-
+=end
 		symbol=4
 		sumwitoutother="=SUM(B#{symbol}:#{maxsymbol}#{symbol})"
 		row = ['留']
@@ -2020,7 +2068,7 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 		row = ['出']
 		sheet.write('A7', row)
 		row = []
-		(begin_date..end_date).each_with_index(){|value,index|
+		(Date.parse(begin_date)..Date.parse(end_date)).each_with_index(){|value,index|
 			row+=['D'+(index+1).to_s()]
 		}
 		sheet.write('B7', row, format)
@@ -2039,6 +2087,7 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 
 
 		rowindex=0
+		sumoutpaylist=Hash.new(0)
 		data_custom.each(){|cid,cname,ctype,address,opendate,bankid,proportion,bonustarget,phone1,phone2,phone3,phone4,phone5,phone6,note|
 			symbol=8+rowindex
 			sumwitoutother="=SUM(B#{symbol}:#{maxsymbol}#{symbol})"
@@ -2052,36 +2101,39 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 				row+=[sumwitoutother,0,0]
 			else
 				outpaylist=Hash.new(0)
-				(begin_date..end_date).each(){|key|
+				(Date.parse(begin_date)..Date.parse(end_date)).each(){|key|
 					#找出過出日期相對最接近且有輸入價格的
 					mostneardate=nil
-					current_price.each(){|key1,phash1|
-						if(Date.parse(key1)<=Date.parse(key))
+					current_price.each(){|key1,value1|
+						if(Date.parse(key1)<=key)
 							mostneardate=key1
 							break
 						end
 					}
+					currentdate=key.to_s().gsub('-','/')
 
 
 					#列舉並加總該日所有的產品，如果沒有找到最接近日期的價格表，那就乾脆不加了
 					if(mostneardate!=nil)
-						if(outcurrentcountlist[key]!=nil)
+						if(outcurrentcountlist[currentdate]!=nil)
 							data_product.each(){|pid,pname|
-								if(customlist[cid][key]!=nil)
-									outpaylist[key]+=customlist[cid][key]['outcurrentcountlist'][pid]*current_price[mostneardate][pid].to_f()
-									outpaylist[key]-=customlist[cid][key]['outwinningcountlist'][pid]*winning_price[mostneardate][pid].to_f()
+								if(customlist[cid][currentdate]!=nil)
+									outpaylist[currentdate]+=customlist[cid][currentdate]['outcurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f()
+									outpaylist[currentdate]-=customlist[cid][currentdate]['outwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()
 								end
 							}
 
-							if outpaylist[key]==0
+							if outpaylist[currentdate]==0
 								#因為HASH的初始值為0，所以要判斷是否為0才能確定是否為初始值，然後要再給他0，HASH才會把這個欄目加進來
-								outpaylist[key]=0
+								outpaylist[currentdate]=0
+							else
+								sumoutpaylist[currentdate]+=outpaylist[currentdate]
 							end
 						else
-							outpaylist[key]=0
+							outpaylist[currentdate]=0
 						end
 					else
-						outpaylist[key]=0
+						outpaylist[currentdate]=0
 					end	
 				}
 
@@ -2122,7 +2174,7 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 		row = ['入']
 		sheet.write('A'+(8+rowindex).to_s(), row)
 		row = []
-		(begin_date..end_date).each_with_index(){|value,index|
+		(Date.parse(begin_date)..Date.parse(end_date)).each_with_index(){|value,index|
 			row+=['D'+(index+1).to_s()]
 		}
 		sheet.write('B'+(8+rowindex).to_s(), row, format)
@@ -2141,6 +2193,7 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 		rowindex+=1
 
 
+		suminpaylist=Hash.new(0)
 		data_custom.each(){|cid,cname,ctype,address,opendate,bankid,proportion,bonustarget,phone1,phone2,phone3,phone4,phone5,phone6,note|
 			symbol=8+rowindex
 			sumwitoutother="=SUM(B#{symbol}:#{maxsymbol}#{symbol})"
@@ -2154,36 +2207,39 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 				row+=[sumwitoutother,0,0]
 			else
 				inpaylist=Hash.new(0)
-				(begin_date..end_date).each(){|key|
+				(Date.parse(begin_date)..Date.parse(end_date)).each(){|key|
 					#找出過出日期相對最接近且有輸入價格的
 					mostneardate=nil
-					current_price.each(){|key1,phash1|
-						if(Date.parse(key1)<=Date.parse(key))
+					current_price.each(){|key1,value1|
+						if(Date.parse(key1)<=key)
 							mostneardate=key1
 							break
 						end
 					}
+					currentdate=key.to_s().gsub('-','/')
 
 
 					#列舉並加總該日所有的產品，如果沒有找到最接近日期的價格表，那就乾脆不加了
 					if(mostneardate!=nil)
-						if(incurrentcountlist[key]!=nil)
+						if(incurrentcountlist[currentdate]!=nil)
 							data_product.each(){|pid,pname|
-								if(customlist[cid][key]!=nil)
-									inpaylist[key]+=customlist[cid][key]['incurrentcountlist'][pid]*current_price[mostneardate][pid].to_f()
-									inpaylist[key]-=customlist[cid][key]['inwinningcountlist'][pid]*winning_price[mostneardate][pid].to_f()
+								if(customlist[cid][currentdate]!=nil)
+									inpaylist[currentdate]+=customlist[cid][currentdate]['incurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f()
+									inpaylist[currentdate]-=customlist[cid][currentdate]['inwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()
 								end
 							}
 
-							if inpaylist[key]==0
+							if inpaylist[currentdate]==0
 								#因為HASH的初始值為0，所以要判斷是否為0才能確定是否為初始值，然後要再給他0，HASH才會把這個欄目加進來
-								inpaylist[key]=0
+								inpaylist[currentdate]=0
+							else
+								suminpaylist[currentdate]+=inpaylist[currentdate]
 							end
 						else
-							inpaylist[key]=0
+							inpaylist[currentdate]=0
 						end
 					else
-						inpaylist[key]=0
+						inpaylist[currentdate]=0
 					end	
 				}
 
@@ -2206,6 +2262,35 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 			sheet.write('A'+(8+rowindex).to_s(), row)
 			rowindex+=1
 		}
+
+
+
+
+		#最後再來計算加總
+		(Date.parse(begin_date)..Date.parse(end_date)).each(){|key|
+			currentdate=key.to_s().gsub('-','/')
+			if(sumoutpaylist[currentdate]==0)
+				sumoutpaylist[currentdate]=0
+			end
+			if(suminpaylist[currentdate]==0)
+				suminpaylist[currentdate]=0
+			end
+		}
+
+		symbol=2
+		sumwitoutother="=SUM(B#{symbol}:#{maxsymbol}#{symbol})"
+		#PAYLIST是將HASH後面的數值轉為ARRAY，再COLLECT分散輸出成ARRAY
+		#ADDMONEY是做同上的動作後，再把輸出的ARRAY透過INJECT的方式加總為一個數字
+		row = ['出']+sumoutpaylist.sort_by{|key,v| key}.collect(){|key,value| value}+[sumwitoutother,outbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x},outaddmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]
+		sheet.write('A2', row)
+
+		symbol=3
+		sumwitoutother="=SUM(B#{symbol}:#{maxsymbol}#{symbol})"
+		#PAYLIST是將HASH後面的數值轉為ARRAY，再COLLECT分散輸出成ARRAY
+		#ADDMONEY是做同上的動作後，再把輸出的ARRAY透過INJECT的方式加總為一個數字
+		row = ['入']+suminpaylist.sort_by{|key,v| key}.collect(){|key,value| value}+[sumwitoutother,inbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x},inaddmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]
+		sheet.write('A3', row)
+
 
 
 		#close recordset
@@ -2569,14 +2654,18 @@ def AllMonth4KTransactionCounting(connection,current_date)
 		winning_price=Hash.new()
 		data_price.each(){|swiftcode,cid,pid,currentdate,currentprice,winningprice,upset|
 			current_price[currentdate]=Hash.new() if current_price[currentdate]==nil
-			current_price[currentdate][pid]=currentprice
+			current_price[currentdate][pid]=Hash.new() if current_price[currentdate][pid]==nil
+			current_price[currentdate][pid][cid]=currentprice
 
 			winning_price[currentdate]=Hash.new() if winning_price[currentdate]==nil
-			winning_price[currentdate][pid]=winningprice
+			winning_price[currentdate][pid]=Hash.new() if winning_price[currentdate][pid]==nil
+			winning_price[currentdate][pid][cid]=winningprice
+
 		}
 		#倒序依日期排序
-		current_price.sort_by{|key,v| key}.reverse
-		winning_price.sort_by{|key,v| key}.reverse
+		#current_price.sort_by{|key,v| key}.reverse
+		#winning_price.sort_by{|key,v| key}.reverse
+
 
 		#order
 		data_order = recordset_order.GetRows.transpose
@@ -2601,7 +2690,7 @@ def AllMonth4KTransactionCounting(connection,current_date)
 		row = [begin_date+'~'+end_date]
 		sheet.write('A1', row)
 		row = []
-		(begin_date..end_date).each_with_index(){|value,index|
+		(Date.parse(begin_date)..Date.parse(end_date)).each_with_index(){|value,index|
 			row+=['D'+(index+1).to_s()]
 			maxdate=index
 		}
@@ -2698,7 +2787,7 @@ def AllMonth4KTransactionCounting(connection,current_date)
 			inbonusmoney[key]/=5	
 		}
 
-
+=begin
 		#計算誤差
 		outpaylist=Hash.new(0)
 		inpaylist=Hash.new(0)
@@ -2751,7 +2840,7 @@ def AllMonth4KTransactionCounting(connection,current_date)
 		#ADDMONEY是做同上的動作後，再把輸出的ARRAY透過INJECT的方式加總為一個數字
 		row = ['入']+inpaylist.collect(){|key,value| value}+[sumwitoutother,inbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x},inaddmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]
 		sheet.write('A3', row)
-
+=end
 		symbol=4
 		sumwitoutother="=SUM(B#{symbol}:#{maxsymbol}#{symbol})"
 		row = ['留']
@@ -2778,7 +2867,7 @@ def AllMonth4KTransactionCounting(connection,current_date)
 		row = ['出']
 		sheet.write('A7', row)
 		row = []
-		(begin_date..end_date).each_with_index(){|value,index|
+		(Date.parse(begin_date)..Date.parse(end_date)).each_with_index(){|value,index|
 			row+=['D'+(index+1).to_s()]
 		}
 		sheet.write('B7', row, format)
@@ -2797,6 +2886,7 @@ def AllMonth4KTransactionCounting(connection,current_date)
 
 
 		rowindex=0
+		sumoutpaylist=Hash.new(0)
 		data_custom.each(){|cid,cname,ctype,address,opendate,bankid,proportion,bonustarget,phone1,phone2,phone3,phone4,phone5,phone6,note|
 			symbol=8+rowindex
 			sumwitoutother="=SUM(B#{symbol}:#{maxsymbol}#{symbol})"
@@ -2810,36 +2900,39 @@ def AllMonth4KTransactionCounting(connection,current_date)
 				row+=[sumwitoutother,0,0]
 			else
 				outpaylist=Hash.new(0)
-				(begin_date..end_date).each(){|key|
+				(Date.parse(begin_date)..Date.parse(end_date)).each(){|key|
 					#找出過出日期相對最接近且有輸入價格的
 					mostneardate=nil
-					current_price.each(){|key1,phash1|
-						if(Date.parse(key1)<=Date.parse(key))
+					current_price.each(){|key1,value1|
+						if(Date.parse(key1)<=key)
 							mostneardate=key1
 							break
 						end
 					}
+					currentdate=key.to_s().gsub('-','/')
 
 
 					#列舉並加總該日所有的產品，如果沒有找到最接近日期的價格表，那就乾脆不加了
 					if(mostneardate!=nil)
-						if(outcurrentcountlist[key]!=nil)
+						if(outcurrentcountlist[currentdate]!=nil)
 							data_product.each(){|pid,pname|
-								if customlist[cid][key]!=nil
-									outpaylist[key]+=customlist[cid][key]['outcurrentcountlist'][pid]*current_price[mostneardate][pid].to_f()
-									outpaylist[key]-=customlist[cid][key]['outwinningcountlist'][pid]*winning_price[mostneardate][pid].to_f()
+								if customlist[cid][currentdate]!=nil
+									outpaylist[currentdate]+=customlist[cid][currentdate]['outcurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f()
+									outpaylist[currentdate]-=customlist[cid][currentdate]['outwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()
 								end
 							}
 
-							if outpaylist[key]==0
+							if outpaylist[currentdate]==0
 								#因為HASH的初始值為0，所以要判斷是否為0才能確定是否為初始值，然後要再給他0，HASH才會把這個欄目加進來
-								outpaylist[key]=0
+								outpaylist[currentdate]=0
+							else
+								sumoutpaylist[currentdate]+=outpaylist[currentdate]
 							end
 						else
-							outpaylist[key]=0
+							outpaylist[currentdate]=0
 						end
 					else
-						outpaylist[key]=0
+						outpaylist[currentdate]=0
 					end	
 				}
 
@@ -2880,7 +2973,7 @@ def AllMonth4KTransactionCounting(connection,current_date)
 		row = ['入']
 		sheet.write('A'+(8+rowindex).to_s(), row)
 		row = []
-		(begin_date..end_date).each_with_index(){|value,index|
+		(Date.parse(begin_date)..Date.parse(end_date)).each_with_index(){|value,index|
 			row+=['D'+(index+1).to_s()]
 		}
 		sheet.write('B'+(8+rowindex).to_s(), row, format)
@@ -2899,6 +2992,7 @@ def AllMonth4KTransactionCounting(connection,current_date)
 		rowindex+=1
 
 
+		suminpaylist=Hash.new(0)
 		data_custom.each(){|cid,cname,ctype,address,opendate,bankid,proportion,bonustarget,phone1,phone2,phone3,phone4,phone5,phone6,note|
 			symbol=8+rowindex
 			sumwitoutother="=SUM(B#{symbol}:#{maxsymbol}#{symbol})"
@@ -2912,36 +3006,39 @@ def AllMonth4KTransactionCounting(connection,current_date)
 				row+=[sumwitoutother,0,0]
 			else
 				inpaylist=Hash.new(0)
-				(begin_date..end_date).each(){|key|
+				(Date.parse(begin_date)..Date.parse(end_date)).each(){|key|
 					#找出過出日期相對最接近且有輸入價格的
 					mostneardate=nil
-					current_price.each(){|key1,phash1|
-						if(Date.parse(key1)<=Date.parse(key))
+					current_price.each(){|key1,value1|
+						if(Date.parse(key1)<=key)
 							mostneardate=key1
 							break
 						end
 					}
+					currentdate=key.to_s().gsub('-','/')
 
 
 					#列舉並加總該日所有的產品，如果沒有找到最接近日期的價格表，那就乾脆不加了
 					if(mostneardate!=nil)
-						if(incurrentcountlist[key]!=nil)
+						if(incurrentcountlist[currentdate]!=nil)
 							data_product.each(){|pid,pname|
-								if customlist[cid][key]!=nil
-									inpaylist[key]+=customlist[cid][key]['incurrentcountlist'][pid]*current_price[mostneardate][pid].to_f() 
-									inpaylist[key]-=customlist[cid][key]['inwinningcountlist'][pid]*winning_price[mostneardate][pid].to_f()
+								if customlist[cid][currentdate]!=nil
+									inpaylist[currentdate]+=customlist[cid][currentdate]['incurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f() 
+									inpaylist[currentdate]-=customlist[cid][currentdate]['inwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()
 								end
 							}
 
-							if inpaylist[key]==0
+							if inpaylist[currentdate]==0
 								#因為HASH的初始值為0，所以要判斷是否為0才能確定是否為初始值，然後要再給他0，HASH才會把這個欄目加進來
-								inpaylist[key]=0
+								inpaylist[currentdate]=0
+							else
+								suminpaylist[currentdate]+=inpaylist[currentdate]
 							end
 						else
-							inpaylist[key]=0
+							inpaylist[currentdate]=0
 						end
 					else
-						inpaylist[key]=0
+						inpaylist[currentdate]=0
 					end	
 				}
 
@@ -2964,6 +3061,35 @@ def AllMonth4KTransactionCounting(connection,current_date)
 			sheet.write('A'+(8+rowindex).to_s(), row)
 			rowindex+=1
 		}
+
+
+
+
+		#最後再來計算加總
+		(Date.parse(begin_date)..Date.parse(end_date)).each(){|key|
+			currentdate=key.to_s().gsub('-','/')
+			if(sumoutpaylist[currentdate]==0)
+				sumoutpaylist[currentdate]=0
+			end
+			if(suminpaylist[currentdate]==0)
+				suminpaylist[currentdate]=0
+			end
+		}
+
+		symbol=2
+		sumwitoutother="=SUM(B#{symbol}:#{maxsymbol}#{symbol})"
+		#PAYLIST是將HASH後面的數值轉為ARRAY，再COLLECT分散輸出成ARRAY
+		#ADDMONEY是做同上的動作後，再把輸出的ARRAY透過INJECT的方式加總為一個數字
+		row = ['出']+sumoutpaylist.sort_by{|key,v| key}.collect(){|key,value| value}+[sumwitoutother,outbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x},outaddmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]
+		sheet.write('A2', row)
+
+		symbol=3
+		sumwitoutother="=SUM(B#{symbol}:#{maxsymbol}#{symbol})"
+		#PAYLIST是將HASH後面的數值轉為ARRAY，再COLLECT分散輸出成ARRAY
+		#ADDMONEY是做同上的動作後，再把輸出的ARRAY透過INJECT的方式加總為一個數字
+		row = ['入']+suminpaylist.sort_by{|key,v| key}.collect(){|key,value| value}+[sumwitoutother,inbonusmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x},inaddmoney.collect(){|key,value| value.to_i()}.inject(){|sum,x| sum+x}]
+		sheet.write('A3', row)
+
 
 
 		#close recordset
