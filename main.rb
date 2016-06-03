@@ -105,17 +105,20 @@ def CustomDailyTransactionDetail(connection,current_date,current_pid,current_cid
 			}
 		]
 
+
 		#order
 		data_order = recordset_order.GetRows.transpose
 
 
 		
+
 		#Write the file
 		FileUtils.mkdir_p("report/#{year}/#{month}/")
 		# Create a new Excel Workbook
 		book = WriteExcel.new("report/#{year}/#{month}/#{free_current_date}_#{hash_custom['cname']}_#{full_pname}_客戶每日交易明細.xls")
 		# Add worksheet(s)
 		sheet  = book.add_worksheet
+
 
 
 
@@ -137,11 +140,29 @@ def CustomDailyTransactionDetail(connection,current_date,current_pid,current_cid
 			currentcountlist[pid]+=currentcount.to_f()
 			winningcountlist[pid]+=winningcount.to_f()
 		}
-		countlist=Array.new
-		paylist=Array.new
+		sumcurrentcountlist=Hash.new(0)
+		sumwinningcountlist=Hash.new(0)
+		sumcurrentpaylist=Hash.new(0)
+		sumwinningpaylist=Hash.new(0)
 		currentcountlist.each(){|key,value|
-			countlist+=[currentcountlist[key]]+[winningcountlist[key]]
-			paylist+=[currentcountlist[key]*current_price[key].to_f()]+[winningcountlist[key]*winning_price[key].to_f()]
+			sumcurrentcountlist[key]+=currentcountlist[key]
+			sumwinningcountlist[key]+=winningcountlist[key]
+
+			sumcurrentpaylist[key]+=currentcountlist[key]*current_price[key].to_f()
+			sumwinningpaylist[key]+=winningcountlist[key]*winning_price[key].to_f()
+		}
+		countlist=Array.new()
+		paylist=Array.new()
+		data_product.each(){|pid,pname|
+			sumcurrentcountlist[pid]=0 if sumcurrentcountlist[pid]==0
+			sumwinningcountlist[pid]=0 if sumwinningcountlist[pid]==0
+			sumcurrentpaylist[pid]=0 if sumcurrentpaylist[pid]==0
+			sumwinningpaylist[pid]=0 if sumwinningpaylist[pid]==0
+
+			countlist+=[sumcurrentcountlist[pid]]
+			countlist+=[sumwinningcountlist[pid]]
+			paylist+=[sumcurrentpaylist[pid]]
+			paylist+=[sumwinningpaylist[pid]]
 		}
 		row = ['牌支']+countlist	
 		sheet.write('A2', row)
@@ -194,27 +215,50 @@ def CustomDailyTransactionDetail(connection,current_date,current_pid,current_cid
 			elsif oldgroup!=group
 				oldgroup=group
 
-				countlist=Array.new
+				sumcurrentpaylist=Hash.new(0)
+				sumwinningpaylist=Hash.new(0)
 				currentcountlist.each(){|key,value|
-					countlist+=[currentcountlist[key]]+[winningcountlist[key]]
+					sumcurrentpaylist[key]+=currentcountlist[key]*current_price[key].to_f()
+					sumwinningpaylist[key]+=winningcountlist[key]*winning_price[key].to_f()
 				}
-				row = ["%02d"%oldgroup]+countlist
+
+				paylist=Array.new
+				data_product.each(){|pid,pname|
+					sumcurrentpaylist[pid]=0 if sumcurrentpaylist[pid]==0
+					sumwinningpaylist[pid]=0 if sumwinningpaylist[pid]==0
+
+					paylist+=[sumcurrentpaylist[pid]]
+					paylist+=[sumwinningpaylist[pid]]
+				}
+				row = ["%02d"%oldgroup]+paylist
 				sheet.write('A'+(6+oldgroup).to_s(), row)
 				
 				currentcountlist=Hash.new(0)
 				winningcountlist=Hash.new(0)
 			end
 
+
 			currentcountlist[pid]+=currentcount.to_f()
 			winningcountlist[pid]+=winningcount.to_f()		
 		}
 		oldgroup=oldgroup.to_i()+1
 
-		countlist=Array.new
+		sumcurrentpaylist=Hash.new(0)
+		sumwinningpaylist=Hash.new(0)
 		currentcountlist.each(){|key,value|
-			countlist+=[currentcountlist[key]]+[winningcountlist[key]]
+			sumcurrentpaylist[key]+=currentcountlist[key]*current_price[key].to_f()
+			sumwinningpaylist[key]+=winningcountlist[key]*winning_price[key].to_f()
 		}
-		row = ["%02d"%oldgroup]+countlist	
+
+		paylist=Array.new
+		data_product.each(){|pid,pname|
+			sumcurrentpaylist[pid]=0 if sumcurrentpaylist[pid]==0
+			sumwinningpaylist[pid]=0 if sumwinningpaylist[pid]==0
+
+			paylist+=[sumcurrentpaylist[pid]]
+			paylist+=[sumwinningpaylist[pid]]
+		}
+		row = ["%02d"%oldgroup]+paylist
 		sheet.write('A'+(6+oldgroup).to_s(), row)
 
 
@@ -305,20 +349,21 @@ def DailyTransactionCounting(connection,current_date,current_pid)
 
 		#price
 		data_price = recordset_price.GetRows.transpose
-		newcurrentdate=data_price.first.at(3)	#get newest currentdate from data array
-		data_price.delete_if{|swiftcode,cid,pid,currentdate,currentprice,winningprice,upset|
-			currentdate!=newcurrentdate
+		current_price=Hash.new()
+		winning_price=Hash.new()
+		data_price.each(){|swiftcode,cid,pid,currentdate,currentprice,winningprice,upset|
+			current_price[currentdate]=Hash.new() if current_price[currentdate]==nil
+			current_price[currentdate][pid]=Hash.new() if current_price[currentdate][pid]==nil
+			current_price[currentdate][pid][cid]=currentprice
+
+			winning_price[currentdate]=Hash.new() if winning_price[currentdate]==nil
+			winning_price[currentdate][pid]=Hash.new() if winning_price[currentdate][pid]==nil
+			winning_price[currentdate][pid][cid]=winningprice
 		}
-		current_price=Hash[
-			data_price.collect(){|swiftcode,cid,pid,currentdate,currentprice,winningprice,upset|
-				[pid,currentprice]
-			}
-		]
-		winning_price=Hash[
-			data_price.collect(){|swiftcode,cid,pid,currentdate,currentprice,winningprice,upset|
-				[pid,winningprice]
-			}
-		]
+		#倒序依日期排序
+		#current_price.sort_by{|key| key[0]}.reverse
+		#winning_price.sort_by{|key| key[0]}.reverse
+
 
 		#order
 		data_order = recordset_order.GetRows.transpose
@@ -399,7 +444,7 @@ def DailyTransactionCounting(connection,current_date,current_pid)
 		outbonusmoney/=5
 		inaddmoney/=5
 		inbonusmoney/=5
-
+=begin
 		#計算誤差
 		outpaylist=Array.new
 		inpaylist=Array.new
@@ -419,7 +464,7 @@ def DailyTransactionCounting(connection,current_date,current_pid)
 		sumwithoutwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+L#{symbol}-M#{symbol}+Q#{symbol}"
 		row = ['入']+inpaylist+[0,0,sumwithwater,sumwithoutwater,inbonusmoney,inaddmoney]
 		sheet.write('A4', row)
-
+=end
 		symbol=5
 		sumwithwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+L#{symbol}-M#{symbol}+P#{symbol}+Q#{symbol}"
 		sumwithoutwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+L#{symbol}-M#{symbol}+Q#{symbol}"
@@ -441,7 +486,10 @@ def DailyTransactionCounting(connection,current_date,current_pid)
 		row = ['出']+pnamelist+['其它','其它中','應收(含水)','應收(扣水)','水','漲價']
 		sheet.write('A8', row, format)
 
+
 		rowindex=0
+		sumoutcurrentpaylist=Hash.new(0)
+		sumoutwinningpaylist=Hash.new(0)
 		data_custom.each(){|cid,cname,ctype,address,opendate,bankid,proportion,bonustarget,phone1,phone2,phone3,phone4,phone5,phone6,note|
 			symbol=9+rowindex
 			sumwithwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+L#{symbol}-M#{symbol}+P#{symbol}+Q#{symbol}"
@@ -455,9 +503,37 @@ def DailyTransactionCounting(connection,current_date,current_pid)
 				customlist[cid]['outaddmoney']/=5
 				customlist[cid]['outbonusmoney']/=5
 
-				outcurrentcountlist.each(){|key,value|
-					row+=[customlist[cid]['outcurrentcountlist'][key]*current_price[key].to_f()]+[customlist[cid]['outwinningcountlist'][key]*winning_price[key].to_f()]
+
+				#找出過出日期相對最接近且有輸入價格的
+				mostneardate=nil
+				current_price.each(){|key1,value1|
+					if(Date.parse(key1)<=Date.parse(current_date))
+						mostneardate=key1
+						break
+					end
 				}
+
+				sumcurrentpaylist=Hash.new(0)
+				sumwinningpaylist=Hash.new(0)
+				customlist[cid]['outcurrentcountlist'].each(){|key,value|
+					sumcurrentpaylist[key]+=customlist[cid]['outcurrentcountlist'][key]*current_price[mostneardate][key][cid].to_f()
+					sumwinningpaylist[key]+=customlist[cid]['outwinningcountlist'][key]*winning_price[mostneardate][key][cid].to_f()
+				}
+				paylist=Array.new()
+				data_product.each(){|pid,pname|
+					sumcurrentpaylist[pid]=0 if sumcurrentpaylist[pid]==0
+					sumwinningpaylist[pid]=0 if sumwinningpaylist[pid]==0
+
+					paylist+=[sumcurrentpaylist[pid]]
+					paylist+=[sumwinningpaylist[pid]]
+
+
+					sumoutcurrentpaylist[pid]+=sumcurrentpaylist[pid]
+					sumoutwinningpaylist[pid]+=sumwinningpaylist[pid]
+				}
+
+
+				row+=paylist
 				row+=[0,0,sumwithwater,sumwithoutwater,customlist[cid]['outbonusmoney'],customlist[cid]['outaddmoney']]
 			end
 			sheet.write('A'+(9+rowindex).to_s(), row)
@@ -479,6 +555,9 @@ def DailyTransactionCounting(connection,current_date,current_pid)
 		sheet.write('A'+(9+rowindex).to_s(), row, format)
 		rowindex+=1
 
+
+		sumincurrentpaylist=Hash.new(0)
+		suminwinningpaylist=Hash.new(0)
 		data_custom.each(){|cid,cname,ctype,address,opendate,bankid,proportion,bonustarget,phone1,phone2,phone3,phone4,phone5,phone6,note|
 			symbol=9+rowindex
 			sumwithwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+L#{symbol}-M#{symbol}+P#{symbol}+Q#{symbol}"
@@ -492,14 +571,72 @@ def DailyTransactionCounting(connection,current_date,current_pid)
 				customlist[cid]['inaddmoney']/=5
 				customlist[cid]['inbonusmoney']/=5
 
-				outcurrentcountlist.each(){|key,value|
-					row+=[customlist[cid]['incurrentcountlist'][key]*current_price[key].to_f()]+[customlist[cid]['inwinningcountlist'][key]*winning_price[key].to_f()]
+				
+				#找出過出日期相對最接近且有輸入價格的
+				mostneardate=nil
+				current_price.each(){|key1,value1|
+					if(Date.parse(key1)<=Date.parse(current_date))
+						mostneardate=key1
+						break
+					end
 				}
+
+				sumcurrentpaylist=Hash.new(0)
+				sumwinningpaylist=Hash.new(0)
+				customlist[cid]['outcurrentcountlist'].each(){|key,value|
+					sumcurrentpaylist[key]+=customlist[cid]['incurrentcountlist'][key]*current_price[mostneardate][key][cid].to_f()
+					sumwinningpaylist[key]+=customlist[cid]['inwinningcountlist'][key]*winning_price[mostneardate][key][cid].to_f()
+				}
+				countlist=Array.new()
+				paylist=Array.new()
+				data_product.each(){|pid,pname|
+					sumcurrentpaylist[pid]=0 if sumcurrentpaylist[pid]==0
+					sumwinningpaylist[pid]=0 if sumwinningpaylist[pid]==0
+
+					paylist+=[sumcurrentpaylist[pid]]
+					paylist+=[sumwinningpaylist[pid]]
+
+
+					sumincurrentpaylist[pid]+=sumcurrentpaylist[pid]
+					sumincurrentpaylist[pid]+=sumwinningpaylist[pid]
+				}
+
+
+				row+=paylist
 				row+=[0,0,sumwithwater,sumwithoutwater,customlist[cid]['inbonusmoney'],customlist[cid]['inaddmoney']]
 			end
 			sheet.write('A'+(9+rowindex).to_s(), row)
 			rowindex+=1
 		}
+
+
+
+		#最後再來計算加總
+		outpaylist=Array.new
+		inpaylist=Array.new
+		data_product.each(){|pid,pname|
+			sumoutcurrentpaylist[pid]=0 if sumoutcurrentpaylist[pid]==0
+			sumoutcurrentpaylist[pid]=0 if sumoutcurrentpaylist[pid]==0
+			sumincurrentpaylist[pid]=0 if sumincurrentpaylist[pid]==0
+			sumincurrentpaylist[pid]=0 if sumincurrentpaylist[pid]==0
+
+			outpaylist+=[sumoutcurrentpaylist[pid]]
+			outpaylist+=[sumoutwinningpaylist[pid]]
+			inpaylist+=[sumincurrentpaylist[pid]]
+			inpaylist+=[suminwinningpaylist[pid]]
+		}
+		symbol=3
+		sumwithwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+L#{symbol}-M#{symbol}+P#{symbol}+Q#{symbol}"
+		sumwithoutwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+L#{symbol}-M#{symbol}+Q#{symbol}"
+		row = ['出']+outpaylist+[0,0,sumwithwater,sumwithoutwater,outbonusmoney,outaddmoney]
+		sheet.write('A3', row)
+
+		symbol=4
+		sumwithwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+L#{symbol}-M#{symbol}+P#{symbol}+Q#{symbol}"
+		sumwithoutwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+L#{symbol}-M#{symbol}+Q#{symbol}"
+		row = ['入']+inpaylist+[0,0,sumwithwater,sumwithoutwater,inbonusmoney,inaddmoney]
+		sheet.write('A4', row)
+
 
 
 		#close recordset
@@ -570,20 +707,21 @@ def AllDailyTransactionCounting(connection,current_date)
 
 		#price
 		data_price = recordset_price.GetRows.transpose
-		newcurrentdate=data_price.first.at(3)	#get newest currentdate from data array
-		data_price.delete_if{|swiftcode,cid,pid,currentdate,currentprice,winningprice,upset|
-			currentdate!=newcurrentdate
+		current_price=Hash.new()
+		winning_price=Hash.new()
+		data_price.each(){|swiftcode,cid,pid,currentdate,currentprice,winningprice,upset|
+			current_price[currentdate]=Hash.new() if current_price[currentdate]==nil
+			current_price[currentdate][pid]=Hash.new() if current_price[currentdate][pid]==nil
+			current_price[currentdate][pid][cid]=currentprice
+
+			winning_price[currentdate]=Hash.new() if winning_price[currentdate]==nil
+			winning_price[currentdate][pid]=Hash.new() if winning_price[currentdate][pid]==nil
+			winning_price[currentdate][pid][cid]=winningprice
 		}
-		current_price=Hash[
-			data_price.collect(){|swiftcode,cid,pid,currentdate,currentprice,winningprice,upset|
-				[pid,currentprice]
-			}
-		]
-		winning_price=Hash[
-			data_price.collect(){|swiftcode,cid,pid,currentdate,currentprice,winningprice,upset|
-				[pid,winningprice]
-			}
-		]
+		#倒序依日期排序
+		#current_price.sort_by{|key| key[0]}.reverse
+		#winning_price.sort_by{|key| key[0]}.reverse
+
 
 		#order
 		data_order = recordset_order.GetRows.transpose
@@ -663,7 +801,7 @@ def AllDailyTransactionCounting(connection,current_date)
 		outbonusmoney/=4
 		inaddmoney/=4
 		inbonusmoney/=4
-
+=begin
 		#計算誤差
 		outpaylist=Hash.new(0)
 		inpaylist=Hash.new(0)
@@ -689,7 +827,7 @@ def AllDailyTransactionCounting(connection,current_date)
 		sumwithoutwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+O#{symbol}"
 		row = ['入']+inlist+[0,0,sumwithwater,sumwithoutwater,inbonusmoney,inaddmoney]
 		sheet.write('A4', row)
-
+=end
 		symbol=5
 		sumwithwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+N#{symbol}+O#{symbol}"
 		sumwithoutwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+O#{symbol}"
@@ -711,7 +849,10 @@ def AllDailyTransactionCounting(connection,current_date)
 		row = ['出']+pnamelist+['其它','其它中','應收(含水)','應收(扣水)','水','漲價']
 		sheet.write('A8', row, format)
 
+
 		rowindex=0
+		sumoutcurrentpaylist=Hash.new(0)
+		sumoutwinningpaylist=Hash.new(0)
 		data_custom.each(){|cid,cname,ctype,address,opendate,bankid,proportion,bonustarget,phone1,phone2,phone3,phone4,phone5,phone6,note|
 			symbol=9+rowindex
 			sumwithwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+N#{symbol}+O#{symbol}"
@@ -726,14 +867,38 @@ def AllDailyTransactionCounting(connection,current_date)
 				customlist[cid]['outbonusmoney']/=4
 
 
-				outpaylist=Hash.new(0)
-				outgetlist=Hash.new(0)
-				outcurrentcountlist.each(){|key,value|
-					outpaylist[key[-1]]+=outcurrentcountlist[key]*current_price[key].to_f()
-					outgetlist[key[-1]]+=outwinningcountlist[key]*winning_price[key].to_f()
+				#找出過出日期相對最接近且有輸入價格的
+				mostneardate=nil
+				current_price.each(){|key1,value1|
+					if(Date.parse(key1)<=Date.parse(current_date))
+						mostneardate=key1
+						break
+					end
 				}
-				outlist=[outpaylist['1'],outgetlist['1'],outpaylist['2'],outgetlist['2'],outpaylist['3'],outgetlist['3'],outpaylist['4'],outgetlist['4']]			
-				row = ['出']+outlist+[0,0,sumwithwater,sumwithoutwater,customlist[cid]['outbonusmoney'],customlist[cid]['outaddmoney']]
+
+				sumcurrentpaylist=Hash.new(0)
+				sumwinningpaylist=Hash.new(0)
+				customlist[cid]['outcurrentcountlist'].each(){|key,value|
+					sumcurrentpaylist[key[-1]]+=customlist[cid]['outcurrentcountlist'][key]*current_price[mostneardate][key][cid].to_f()
+					sumwinningpaylist[key[-1]]+=customlist[cid]['outwinningcountlist'][key]*winning_price[mostneardate][key][cid].to_f()
+				}
+				paylist=Array.new()
+				1.upto(4){|i|
+					pid=i.to_s()
+
+					sumcurrentpaylist[pid]=0 if sumcurrentpaylist[pid]==0
+					sumwinningpaylist[pid]=0 if sumwinningpaylist[pid]==0
+
+					paylist+=[sumcurrentpaylist[pid]]
+					paylist+=[sumwinningpaylist[pid]]
+
+					sumoutcurrentpaylist[pid]+=sumcurrentpaylist[pid]
+					sumoutwinningpaylist[pid]+=sumwinningpaylist[pid]
+				}
+
+				
+				row+=paylist
+				row+=[0,0,sumwithwater,sumwithoutwater,customlist[cid]['outbonusmoney'],customlist[cid]['outaddmoney']]		
 			end
 			sheet.write('A'+(9+rowindex).to_s(), row)
 			rowindex+=1
@@ -754,6 +919,9 @@ def AllDailyTransactionCounting(connection,current_date)
 		sheet.write('A'+(9+rowindex).to_s(), row, format)
 		rowindex+=1
 
+
+		sumincurrentpaylist=Hash.new(0)
+		suminwinningpaylist=Hash.new(0)
 		data_custom.each(){|cid,cname,ctype,address,opendate,bankid,proportion,bonustarget,phone1,phone2,phone3,phone4,phone5,phone6,note|
 			symbol=9+rowindex
 			sumwithwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+N#{symbol}+O#{symbol}"
@@ -768,18 +936,75 @@ def AllDailyTransactionCounting(connection,current_date)
 				customlist[cid]['inbonusmoney']/=4
 
 
-				inpaylist=Hash.new(0)
-				ingetlist=Hash.new(0)
-				incurrentcountlist.each(){|key,value|
-					inpaylist[key[-1]]+=incurrentcountlist[key]*current_price[key].to_f()
-					ingetlist[key[-1]]+=inwinningcountlist[key]*winning_price[key].to_f()
+				#找出過出日期相對最接近且有輸入價格的
+				mostneardate=nil
+				current_price.each(){|key1,value1|
+					if(Date.parse(key1)<=Date.parse(current_date))
+						mostneardate=key1
+						break
+					end
 				}
-				inlist=[inpaylist['1'],ingetlist['1'],inpaylist['2'],ingetlist['2'],inpaylist['3'],ingetlist['3'],inpaylist['4'],ingetlist['4']]
-				row = ['入']+inlist+[0,0,sumwithwater,sumwithoutwater,customlist[cid]['inbonusmoney'],customlist[cid]['inaddmoney']]
+
+				sumcurrentpaylist=Hash.new(0)
+				sumwinningpaylist=Hash.new(0)
+				customlist[cid]['incurrentcountlist'].each(){|key,value|
+					sumcurrentpaylist[key[-1]]+=customlist[cid]['incurrentcountlist'][key]*current_price[mostneardate][key][cid].to_f()
+					sumwinningpaylist[key[-1]]+=customlist[cid]['inwinningcountlist'][key]*winning_price[mostneardate][key][cid].to_f()
+				}
+				paylist=Array.new()
+				1.upto(4){|i|
+					pid=i.to_s()
+
+					sumcurrentpaylist[pid]=0 if sumcurrentpaylist[pid]==0
+					sumwinningpaylist[pid]=0 if sumwinningpaylist[pid]==0
+
+					paylist+=[sumcurrentpaylist[pid]]
+					paylist+=[sumwinningpaylist[pid]]
+
+					sumoutcurrentpaylist[pid]+=sumcurrentpaylist[pid]
+					sumoutwinningpaylist[pid]+=sumwinningpaylist[pid]
+				}
+
+				
+				row+=paylist
+				row+=[0,0,sumwithwater,sumwithoutwater,customlist[cid]['inbonusmoney'],customlist[cid]['inaddmoney']]		
 			end
 			sheet.write('A'+(9+rowindex).to_s(), row)
 			rowindex+=1
 		}
+
+
+
+		
+		#最後再來計算加總
+		outpaylist=Array.new
+		inpaylist=Array.new
+		1.upto(4).each(){|i|
+			pid=i.to_s()
+
+			sumoutcurrentpaylist[pid]=0 if sumoutcurrentpaylist[pid]==0
+			sumoutcurrentpaylist[pid]=0 if sumoutcurrentpaylist[pid]==0
+			sumincurrentpaylist[pid]=0 if sumincurrentpaylist[pid]==0
+			sumincurrentpaylist[pid]=0 if sumincurrentpaylist[pid]==0
+
+			outpaylist+=[sumoutcurrentpaylist[pid]]
+			outpaylist+=[sumoutwinningpaylist[pid]]
+			inpaylist+=[sumincurrentpaylist[pid]]
+			inpaylist+=[suminwinningpaylist[pid]]
+		}
+
+		symbol=3
+		sumwithwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+N#{symbol}+O#{symbol}"
+		sumwithoutwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+O#{symbol}"
+		row = ['出']+outpaylist+[0,0,sumwithwater,sumwithoutwater,outbonusmoney,outaddmoney]
+		sheet.write('A3', row)
+
+		symbol=4
+		sumwithwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+N#{symbol}+O#{symbol}"
+		sumwithoutwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+F#{symbol}-G#{symbol}+H#{symbol}-I#{symbol}+J#{symbol}-K#{symbol}+O#{symbol}"
+		row = ['入']+inpaylist+[0,0,sumwithwater,sumwithoutwater,inbonusmoney,inaddmoney]
+		sheet.write('A4', row)
+
 
 
 		#close recordset
@@ -2367,20 +2592,21 @@ def AllDaily4KTransactionCounting(connection,current_date)
 
 		#price
 		data_price = recordset_price.GetRows.transpose
-		newcurrentdate=data_price.first.at(3)	#get newest currentdate from data array
-		data_price.delete_if{|swiftcode,cid,pid,currentdate,currentprice,winningprice,upset|
-			currentdate!=newcurrentdate
+		current_price=Hash.new()
+		winning_price=Hash.new()
+		data_price.each(){|swiftcode,cid,pid,currentdate,currentprice,winningprice,upset|
+			current_price[currentdate]=Hash.new() if current_price[currentdate]==nil
+			current_price[currentdate][pid]=Hash.new() if current_price[currentdate][pid]==nil
+			current_price[currentdate][pid][cid]=currentprice
+
+			winning_price[currentdate]=Hash.new() if winning_price[currentdate]==nil
+			winning_price[currentdate][pid]=Hash.new() if winning_price[currentdate][pid]==nil
+			winning_price[currentdate][pid][cid]=winningprice
 		}
-		current_price=Hash[
-			data_price.collect(){|swiftcode,cid,pid,currentdate,currentprice,winningprice,upset|
-				[pid,currentprice]
-			}
-		]
-		winning_price=Hash[
-			data_price.collect(){|swiftcode,cid,pid,currentdate,currentprice,winningprice,upset|
-				[pid,winningprice]
-			}
-		]
+		#倒序依日期排序
+		#current_price.sort_by{|key| key[0]}.reverse
+		#winning_price.sort_by{|key| key[0]}.reverse
+
 
 		#order
 		data_order = recordset_order.GetRows.transpose
@@ -2460,7 +2686,7 @@ def AllDaily4KTransactionCounting(connection,current_date)
 		outbonusmoney/=4
 		inaddmoney/=4
 		inbonusmoney/=4
-
+=begin
 		#計算誤差
 		outpaylist=Hash.new(0)
 		inpaylist=Hash.new(0)
@@ -2486,7 +2712,7 @@ def AllDaily4KTransactionCounting(connection,current_date)
 		sumwithoutwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+I#{symbol}"
 		row = ['入']+inlist+[0,0,sumwithwater,sumwithoutwater,inbonusmoney,inaddmoney]
 		sheet.write('A4', row)
-
+=end
 		symbol=5
 		sumwithwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+H#{symbol}+I#{symbol}"
 		sumwithoutwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+I#{symbol}"
@@ -2508,7 +2734,10 @@ def AllDaily4KTransactionCounting(connection,current_date)
 		row = ['出']+pnamelist+['其它','其它中','應收(含水)','應收(扣水)','水','漲價']
 		sheet.write('A8', row, format)
 
+
 		rowindex=0
+		sumoutcurrentpaylist=Hash.new(0)
+		sumoutwinningpaylist=Hash.new(0)
 		data_custom.each(){|cid,cname,ctype,address,opendate,bankid,proportion,bonustarget,phone1,phone2,phone3,phone4,phone5,phone6,note|
 			symbol=9+rowindex
 			sumwithwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+H#{symbol}+I#{symbol}"
@@ -2523,14 +2752,37 @@ def AllDaily4KTransactionCounting(connection,current_date)
 				customlist[cid]['outbonusmoney']/=4
 
 
-				outpaylist=Hash.new(0)
-				outgetlist=Hash.new(0)
-				outcurrentcountlist.each(){|key,value|
-					outpaylist[key[-1]]+=outcurrentcountlist[key]*current_price[key].to_f()
-					outgetlist[key[-1]]+=outwinningcountlist[key]*winning_price[key].to_f()
+				#找出過出日期相對最接近且有輸入價格的
+				mostneardate=nil
+				current_price.each(){|key1,value1|
+					if(Date.parse(key1)<=Date.parse(current_date))
+						mostneardate=key1
+						break
+					end
 				}
-				outlist=[outpaylist['4'],outgetlist['4']]			
-				row = ['出']+outlist+[0,0,sumwithwater,sumwithoutwater,customlist[cid]['outbonusmoney'],customlist[cid]['outaddmoney']]
+
+				sumcurrentpaylist=Hash.new(0)
+				sumwinningpaylist=Hash.new(0)
+				customlist[cid]['outcurrentcountlist'].each(){|key,value|
+					sumcurrentpaylist[key[-1]]+=customlist[cid]['outcurrentcountlist'][key]*current_price[mostneardate][key][cid].to_f()
+					sumwinningpaylist[key[-1]]+=customlist[cid]['outwinningcountlist'][key]*winning_price[mostneardate][key][cid].to_f()
+				}
+				paylist=Array.new()
+				
+				pid='4'.to_s()
+
+				sumcurrentpaylist[pid]=0 if sumcurrentpaylist[pid]==0
+				sumwinningpaylist[pid]=0 if sumwinningpaylist[pid]==0
+
+				paylist+=[sumcurrentpaylist[pid]]
+				paylist+=[sumwinningpaylist[pid]]
+
+				sumoutcurrentpaylist[pid]+=sumcurrentpaylist[pid]
+				sumoutwinningpaylist[pid]+=sumwinningpaylist[pid]
+				
+
+				row+=paylist
+				row+=[0,0,sumwithwater,sumwithoutwater,customlist[cid]['outbonusmoney'],customlist[cid]['outaddmoney']]	
 			end
 			sheet.write('A'+(9+rowindex).to_s(), row)
 			rowindex+=1
@@ -2551,6 +2803,9 @@ def AllDaily4KTransactionCounting(connection,current_date)
 		sheet.write('A'+(9+rowindex).to_s(), row, format)
 		rowindex+=1
 
+		
+		sumincurrentpaylist=Hash.new(0)
+		suminwinningpaylist=Hash.new(0)
 		data_custom.each(){|cid,cname,ctype,address,opendate,bankid,proportion,bonustarget,phone1,phone2,phone3,phone4,phone5,phone6,note|
 			symbol=9+rowindex
 			sumwithwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+H#{symbol}+I#{symbol}"
@@ -2565,18 +2820,73 @@ def AllDaily4KTransactionCounting(connection,current_date)
 				customlist[cid]['inbonusmoney']/=4
 
 
-				inpaylist=Hash.new(0)
-				ingetlist=Hash.new(0)
-				incurrentcountlist.each(){|key,value|
-					inpaylist[key[-1]]+=incurrentcountlist[key]*current_price[key].to_f()
-					ingetlist[key[-1]]+=inwinningcountlist[key]*winning_price[key].to_f()
+				#找出過出日期相對最接近且有輸入價格的
+				mostneardate=nil
+				current_price.each(){|key1,value1|
+					if(Date.parse(key1)<=Date.parse(current_date))
+						mostneardate=key1
+						break
+					end
 				}
-				inlist=[inpaylist['4'],ingetlist['4']]
-				row = ['入']+inlist+[0,0,sumwithwater,sumwithoutwater,customlist[cid]['inbonusmoney'],customlist[cid]['inaddmoney']]
+
+				sumcurrentpaylist=Hash.new(0)
+				sumwinningpaylist=Hash.new(0)
+				customlist[cid]['incurrentcountlist'].each(){|key,value|
+					sumcurrentpaylist[key[-1]]+=customlist[cid]['incurrentcountlist'][key]*current_price[mostneardate][key][cid].to_f()
+					sumwinningpaylist[key[-1]]+=customlist[cid]['inwinningcountlist'][key]*winning_price[mostneardate][key][cid].to_f()
+				}
+				paylist=Array.new()
+				
+				pid='4'.to_s()
+
+				sumcurrentpaylist[pid]=0 if sumcurrentpaylist[pid]==0
+				sumwinningpaylist[pid]=0 if sumwinningpaylist[pid]==0
+
+				paylist+=[sumcurrentpaylist[pid]]
+				paylist+=[sumwinningpaylist[pid]]
+
+				sumincurrentpaylist[pid]+=sumcurrentpaylist[pid]
+				suminwinningpaylist[pid]+=sumwinningpaylist[pid]
+				
+
+				row+=paylist
+				row+=[0,0,sumwithwater,sumwithoutwater,customlist[cid]['inbonusmoney'],customlist[cid]['inaddmoney']]	
 			end
 			sheet.write('A'+(9+rowindex).to_s(), row)
 			rowindex+=1
 		}
+
+
+
+		#最後再來計算加總
+		outpaylist=Array.new
+		inpaylist=Array.new
+
+		pid='4'.to_s()
+
+		sumoutcurrentpaylist[pid]=0 if sumoutcurrentpaylist[pid]==0
+		sumoutcurrentpaylist[pid]=0 if sumoutcurrentpaylist[pid]==0
+		sumincurrentpaylist[pid]=0 if sumincurrentpaylist[pid]==0
+		sumincurrentpaylist[pid]=0 if sumincurrentpaylist[pid]==0
+
+		outpaylist+=[sumoutcurrentpaylist[pid]]
+		outpaylist+=[sumoutwinningpaylist[pid]]
+		inpaylist+=[sumincurrentpaylist[pid]]
+		inpaylist+=[suminwinningpaylist[pid]]
+
+
+		symbol=3
+		sumwithwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+H#{symbol}+I#{symbol}"
+		sumwithoutwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+I#{symbol}"
+		row = ['出']+outpaylist+[0,0,sumwithwater,sumwithoutwater,outbonusmoney,outaddmoney]
+		sheet.write('A3', row)
+
+		symbol=4
+		sumwithwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+H#{symbol}+I#{symbol}"
+		sumwithoutwater="=B#{symbol}-C#{symbol}+D#{symbol}-E#{symbol}+I#{symbol}"
+		row = ['入']+inpaylist+[0,0,sumwithwater,sumwithoutwater,inbonusmoney,inaddmoney]
+		sheet.write('A4', row)
+
 
 
 		#close recordset
@@ -3309,7 +3619,7 @@ end
 
 
 
-begin
+#begin
 	#連線
 	@connection = WIN32OLE.new('ADODB.Connection')
 	@connection.Open('Provider=Microsoft.ACE.OLEDB.12.0;Data Source=main.mdb')
@@ -3415,7 +3725,7 @@ begin
 		CustomDailyPriceDetail(@connection,ARGV[1])
 	when 'test'
 		p 'run test'
-		CustomDailyTransactionDetail(@connection,ARGV[1],'100','1')
+		CustomDailyTransactionDetail(@connection,ARGV[1],'100','12')
 		DailyTransactionCounting(@connection,ARGV[1],'100',)
 		AllDailyTransactionCounting(@connection,ARGV[1])
 		AllWeekTransactionCounting(@connection,ARGV[1])
@@ -3432,6 +3742,6 @@ begin
 	
 	#中斷連線
 	@connection.close
-rescue => exception
-	p exception.backtrace
-end
+#rescue => exception
+#	p exception.backtrace
+#end

@@ -215,7 +215,7 @@ Begin VB.Form frmOrder
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   89522179
+         Format          =   94633987
          CurrentDate     =   37058
       End
       Begin VB.Label lblEntry 
@@ -501,6 +501,7 @@ Private Type BindData
     AddMoney As Double
     BonusMoney As Double
     Note As String
+    Group As Integer
 End Type
 
 Dim selectFields As String
@@ -616,9 +617,9 @@ Private Sub cmdRefresh_Click()
     End If
 
     If condition = "" Then
-        SQL = "select " & selectFields & " from [order],product where [order].PID=product.PID and [order].CID='" & basVariable.SelectCID & "' order by CurrentDate desc, product.PName;"
+        SQL = "select " & selectFields & " from [order],product where [order].PID=product.PID and [order].CID='" & basVariable.SelectCID & "' order by CurrentDate desc, Group;" 'others condition => product.PName
     Else
-        SQL = "select " & selectFields & " from [order],product where [order].PID=product.PID and [order].CID='" & basVariable.SelectCID & "' and " & condition & " order by CurrentDate desc, product.PName;"
+        SQL = "select " & selectFields & " from [order],product where [order].PID=product.PID and [order].CID='" & basVariable.SelectCID & "' and " & condition & " order by CurrentDate desc, Group;" 'others condition => product.PName
     End If
     Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, basDataBase.Recordset)
     
@@ -643,7 +644,7 @@ Private Sub cmdRefresh_Click()
     rs.Fields.Append "Note", adVarChar, 150
     rs.Open
     
-         
+    
     'add data
     For i = 0 To 365
         recdata(i).CurrentCount_Car = 0
@@ -659,7 +660,7 @@ Private Sub cmdRefresh_Click()
     Next
     n = 0
     Do Until basDataBase.Recordset.EOF
-        If recdata(n).CurrentDate <> basDataBase.Recordset.Fields.Item("CurrentDate") Or rex.Replace(recdata(n).PName, "") <> rex.Replace(basDataBase.Recordset.Fields.Item("PName"), "") Then
+        If recdata(n).CurrentDate <> basDataBase.Recordset.Fields.Item("CurrentDate") Or recdata(n).Group <> basDataBase.Recordset.Fields.Item("Group") Then  'others condition => rex.Replace(recdata(n).PName, "") <> rex.Replace(basDataBase.Recordset.Fields.Item("PName"), "")
             n = n + 1
             If n = 365 Then Exit Do 'data line limit unless one year
             
@@ -670,6 +671,8 @@ Private Sub cmdRefresh_Click()
             recdata(n).AddMoney = Val(basDataBase.Recordset.Fields.Item("AddMoney"))
             recdata(n).BonusMoney = Val(basDataBase.Recordset.Fields.Item("BonusMoney"))
             recdata(n).Note = basDataBase.Recordset.Fields.Item("Note")
+            
+            recdata(n).Group = basDataBase.Recordset.Fields.Item("Group")
          End If
          
         Select Case basDataBase.Recordset.Fields.Item("PName")
@@ -762,7 +765,7 @@ Private Sub Form_Load()
 
 
     lblName(0).Caption = basVariable.SelectCName
-    selectFields = "SwiftCode,CID,[order].PID,PName,CurrentDate,CurrentCount,WinningCount,AddMoney,BonusMoney,Note"
+    selectFields = "SwiftCode,CID,[order].PID,PName,CurrentDate,CurrentCount,WinningCount,AddMoney,BonusMoney,Note,Group"
     
     
     dtpCurrentDate.Value = Format(DateTime.Now, "yyyy/MM/dd")

@@ -104,7 +104,7 @@ Begin VB.Form frmConfirmRuby
          Strikethrough   =   0   'False
       EndProperty
       CustomFormat    =   "yyyy/MM/dd"
-      Format          =   48300035
+      Format          =   40173571
       CurrentDate     =   37058
    End
    Begin VB.Label lblEntry 
@@ -261,7 +261,7 @@ Private Sub cmdConfirm_Click()
             'Label1(0).Caption = "客戶每日交易明細"
             CData = Split(cmbCName.Text, " ")
             PData = Split(cmbPName.Text, " ")
-            MsgBox CreateObject("Wscript.Shell").Exec("ruby.exe -Ku main.rb DailyTransactionCounting " & txtCurrentDate.Text & " " & PData(0) & " " & CData(0)).StdOut.ReadAll
+            MsgBox CreateObject("Wscript.Shell").Exec("ruby.exe -Ku main.rb CustomDailyTransactionDetail " & txtCurrentDate.Text & " " & PData(0) & " " & CData(0)).StdOut.ReadAll
             
         Case "DailyTransactionCounting"
             'Label1(0).Caption = "每日交易加總表"
