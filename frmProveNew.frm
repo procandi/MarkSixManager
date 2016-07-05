@@ -37,7 +37,7 @@ Begin VB.Form frmProveNew
          Width           =   2895
       End
       Begin VB.CommandButton cmdAllMonth4KTransactionCounting 
-         Caption         =   "全產品4K當月交易加總表"
+         Caption         =   "539_4K當月交易加總表"
          Height          =   975
          Left            =   3120
          TabIndex        =   20
@@ -45,7 +45,7 @@ Begin VB.Form frmProveNew
          Width           =   2895
       End
       Begin VB.CommandButton cmdAllDaily4KTransactionCounting 
-         Caption         =   "全產品4K每日交易加總表"
+         Caption         =   "539_4K每日交易加總表"
          Height          =   975
          Left            =   120
          TabIndex        =   19
@@ -348,7 +348,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Private Sub cmdAllDaily4KTransactionCounting_Click()
     basVariable.Action = "PrintReport"
-    basVariable.Parameter = "AllDaily4KTransactionCounting"
+    basVariable.Parameter = "WuSanJioDaily4KTransactionCounting" 'basVariable.Parameter = "AllDaily4KTransactionCounting"
     frmConfirmRuby.Show
 End Sub
 
@@ -360,7 +360,7 @@ End Sub
 
 Private Sub cmdAllMonth4KTransactionCounting_Click()
     basVariable.Action = "PrintReport"
-    basVariable.Parameter = "AllMonth4KTransactionCounting"
+    basVariable.Parameter = "WuSanJioMonth4KTransactionCounting" 'basVariable.Parameter = "AllMonth4KTransactionCounting"
     frmConfirmRuby.Show
 End Sub
 

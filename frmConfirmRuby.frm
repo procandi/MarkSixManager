@@ -104,7 +104,7 @@ Begin VB.Form frmConfirmRuby
          Strikethrough   =   0   'False
       EndProperty
       CustomFormat    =   "yyyy/MM/dd"
-      Format          =   40173571
+      Format          =   21102595
       CurrentDate     =   37058
    End
    Begin VB.Label lblEntry 
@@ -293,6 +293,14 @@ Private Sub cmdConfirm_Click()
             'Label1(0).Caption = "全產品4K當月交易加總表"
             MsgBox CreateObject("Wscript.Shell").Exec("ruby.exe -Ku main.rb AllMonth4KTransactionCounting " & txtCurrentDate.Text).StdOut.ReadAll
             
+        Case "WuSanJioDaily4KTransactionCounting"
+            'Label1(0).Caption = "539_4K每日交易加總表"
+            MsgBox CreateObject("Wscript.Shell").Exec("ruby.exe -Ku main.rb WuSanJioDaily4KTransactionCounting " & txtCurrentDate.Text).StdOut.ReadAll
+            
+        Case "WuSanJioMonth4KTransactionCounting"
+            'Label1(0).Caption = "539_4K當月交易加總表"
+            MsgBox CreateObject("Wscript.Shell").Exec("ruby.exe -Ku main.rb WuSanJioMonth4KTransactionCounting " & txtCurrentDate.Text).StdOut.ReadAll
+            
         Case "CustomDailyPriceDetail"
             'Label1(0).Caption = "客戶每日交易價格表"
             MsgBox CreateObject("Wscript.Shell").Exec("ruby.exe -Ku main.rb CustomDailyPriceDetail " & txtCurrentDate.Text).StdOut.ReadAll
@@ -354,6 +362,13 @@ Private Sub Form_Load()
         
     Case "AllMonth4KTransactionCounting"
         Label1(0).Caption = "全產品4K當月交易加總表"
+    
+    Case "WuSanJioDaily4KTransactionCounting"
+        Label1(0).Caption = "539_4K每日交易加總表"
+        
+    Case "WuSanJioMonth4KTransactionCounting"
+        Label1(0).Caption = "539_4K當月交易加總表"
+        
         
     Case "CustomDailyPriceDetail"
         Label1(0).Caption = "客戶每日交易價格表"
