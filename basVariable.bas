@@ -46,4 +46,5 @@ Public SelectPID As String
 Public SelectPName As String
 Public CurrentSwiftCode As Integer
 Public SelectDate As String
+Public SelectGroup As String
 '/**************************小華修改的(2015/10/05)***********************************/

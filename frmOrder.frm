@@ -215,7 +215,7 @@ Begin VB.Form frmOrder
             Strikethrough   =   0   'False
          EndProperty
          CustomFormat    =   "yyyy/MM/dd"
-         Format          =   94633987
+         Format          =   49283075
          CurrentDate     =   37058
       End
       Begin VB.Label lblEntry 
@@ -501,6 +501,8 @@ Private Type BindData
     AddMoney As Double
     BonusMoney As Double
     Note As String
+    CID As String
+    PID As String
     Group As Integer
 End Type
 
@@ -519,69 +521,7 @@ Private Sub cmdClear_Click()
 End Sub
 
 Private Sub cmdDelete_Click()
-    Dim condition As String, SQL As String
-    Dim PID(15) As String
-    Dim product_rec As New adoDB.Recordset
-    
-    SQL = "select * from product';"
-    Call basDataBase.OpenRecordset(SQL, basDataBase.Connection, product_rec)
-    Do Until product_rec.EOF
-        Select Case product_rec("PName")
-        Case "539_車"
-            PID(0) = product_rec("PID")
-        Case "539_2K"
-            PID(1) = product_rec("PID")
-        Case "539_3K"
-            PID(2) = product_rec("PID")
-        Case "539_4K"
-            PID(3) = product_rec("PID")
-        Case "539_3包"
-            PID(4) = product_rec("PID")
-        Case "港號_車"
-            PID(5) = product_rec("PID")
-        Case "港號_2K"
-            PID(6) = product_rec("PID")
-        Case "港號_3K"
-            PID(7) = product_rec("PID")
-        Case "港號_4K"
-            PID(8) = product_rec("PID")
-        Case "港號_特"
-            PID(9) = product_rec("PID")
-        Case "大樂透_車"
-            PID(10) = product_rec("PID")
-        Case "大樂透_2K"
-            PID(11) = product_rec("PID")
-        Case "大樂透_3K"
-            PID(12) = product_rec("PID")
-        Case "大樂透_4K"
-            PID(13) = product_rec("PID")
-        Case "大樂透_特"
-            PID(14) = product_rec("PID")
-        End Select
-        product_rec.MoveNext
-    Loop
-    product_rec.Close
-    
-    
-    Select Case basVariable.SelectPName
-    Case "539"
-        condition = "'" & PID(0) & "'"
-        For i = 1 To 4
-            condition = condition & ",'" & PID(i) & "'"
-        Next
-    Case "港號"
-        condition = "'" & PID(5) & "'"
-        For i = 6 To 9
-            condition = condition & ",'" & PID(i) & "'"
-        Next
-    Case "大樂透"
-        condition = "'" & PID(10) & "'"
-        For i = 11 To 14
-            condition = condition & ",'" & PID(i) & "'"
-        Next
-    End Select
-    
-    SQL = "delete from [order] where CurrentDate='" & basVariable.SelectDate & "' and PID in (" & condition & ")"
+    SQL = "delete from [order] where CurrentDate='" & basVariable.SelectDate & "' and CID='" & basVariable.SelectCID & "' and [Group]=" & basVariable.SelectGroup & ";"
     basDataBase.Connection.Execute SQL
     
 
@@ -642,6 +582,9 @@ Private Sub cmdRefresh_Click()
     rs.Fields.Append "AddMoney", adVarChar, 15
     rs.Fields.Append "BonusMoney", adVarChar, 15
     rs.Fields.Append "Note", adVarChar, 150
+    rs.Fields.Append "CID", adVarChar, 15
+    rs.Fields.Append "PID", adVarChar, 15
+    rs.Fields.Append "Group", adVarChar, 15
     rs.Open
     
     
@@ -672,6 +615,8 @@ Private Sub cmdRefresh_Click()
             recdata(n).BonusMoney = Val(basDataBase.Recordset.Fields.Item("BonusMoney"))
             recdata(n).Note = basDataBase.Recordset.Fields.Item("Note")
             
+            recdata(n).CID = basDataBase.Recordset.Fields.Item("CID")
+            recdata(n).PID = basDataBase.Recordset.Fields.Item("PID")
             recdata(n).Group = basDataBase.Recordset.Fields.Item("Group")
          End If
          
@@ -714,6 +659,9 @@ Private Sub cmdRefresh_Click()
         rs.Fields("AddMoney").Value = Format(recdata(i).AddMoney, "0.0000")
         rs.Fields("BonusMoney").Value = Format(recdata(i).BonusMoney, "0.0000")
         rs.Fields("Note").Value = recdata(i).Note
+        rs.Fields("CID").Value = recdata(i).CID
+        rs.Fields("PID").Value = recdata(i).PID
+        rs.Fields("Group").Value = recdata(i).Group
     Next
     
     
@@ -745,6 +693,9 @@ Private Sub DataGrid1_RowColChange(LastRow As Variant, ByVal LastCol As Integer)
             basVariable.CurrentSwiftCode = DataGrid1.Columns("交易流水號")
             basVariable.SelectPName = DataGrid1.Columns("產品名稱")
             basVariable.SelectDate = DataGrid1.Columns("交易日期")
+            basVariable.SelectCID = DataGrid1.Columns("客戶編號")
+            basVariable.SelectPID = DataGrid1.Columns("產品編號")
+            basVariable.SelectGroup = DataGrid1.Columns("集合")
         End If
         
         If DataGrid1.SelBookmarks.Count <> 0 Then Call DataGrid1.SelBookmarks.Remove(0)
@@ -780,8 +731,6 @@ End Sub
 Sub RefreshDataGridHeader()
     DataGrid1.Columns("SwiftCode").Caption = "交易流水號"
     DataGrid1.Columns("CurrentDate").Caption = "交易日期"
-    'DataGrid1.Columns("CID").Caption = "客戶編號"
-    'DataGrid1.Columns("PID").Caption = "產品編號"
     DataGrid1.Columns("PName").Caption = "產品名稱"
     DataGrid1.Columns("CurrentCount_Car").Caption = "車交易數量"
     DataGrid1.Columns("WinningCount_Car").Caption = "車中獎數量"
@@ -796,5 +745,8 @@ Sub RefreshDataGridHeader()
     DataGrid1.Columns("AddMoney").Caption = "漲價"
     DataGrid1.Columns("BonusMoney").Caption = "退水金額"
     DataGrid1.Columns("Note").Caption = "備註"
+    DataGrid1.Columns("CID").Caption = "客戶編號"
+    DataGrid1.Columns("PID").Caption = "產品編號"
+    DataGrid1.Columns("Group").Caption = "集合"
 End Sub
 

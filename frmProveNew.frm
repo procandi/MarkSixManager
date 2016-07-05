@@ -457,7 +457,7 @@ Private Sub Form_Load()
     'inp = EnCode
     
     'If EnCode = inp Then
-    If DateTime.DateDiff("d", DateTime.Now, "2016/07/01") > 0 Then
+    If DateTime.DateDiff("d", DateTime.Now, "2016/08/01") > 0 Then
         'write serial number file when no file exist and check currect
         If Not flag Then
             Open fpath & "key" For Output As #1
