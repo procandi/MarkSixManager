@@ -145,11 +145,11 @@ def CustomDailyTransactionDetail(connection,current_date,current_pid,current_cid
 		sumcurrentpaylist=Hash.new(0)
 		sumwinningpaylist=Hash.new(0)
 		currentcountlist.each(){|key,value|
-			sumcurrentcountlist[key]+=currentcountlist[key]
-			sumwinningcountlist[key]+=winningcountlist[key]
+			sumcurrentcountlist[key]+=(currentcountlist[key]).round(4)
+			sumwinningcountlist[key]+=(winningcountlist[key]).round(4)
 
-			sumcurrentpaylist[key]+=currentcountlist[key]*current_price[key].to_f()
-			sumwinningpaylist[key]+=winningcountlist[key]*winning_price[key].to_f()
+			sumcurrentpaylist[key]+=(currentcountlist[key]*current_price[key].to_f()).round(0)
+			sumwinningpaylist[key]+=(winningcountlist[key]*winning_price[key].to_f()).round(0)
 		}
 		countlist=Array.new()
 		paylist=Array.new()
@@ -218,8 +218,8 @@ def CustomDailyTransactionDetail(connection,current_date,current_pid,current_cid
 				sumcurrentpaylist=Hash.new(0)
 				sumwinningpaylist=Hash.new(0)
 				currentcountlist.each(){|key,value|
-					sumcurrentpaylist[key]+=currentcountlist[key]*current_price[key].to_f()
-					sumwinningpaylist[key]+=winningcountlist[key]*winning_price[key].to_f()
+					sumcurrentpaylist[key]+=(currentcountlist[key]*current_price[key].to_f()).round(0)
+					sumwinningpaylist[key]+=(winningcountlist[key]*winning_price[key].to_f()).round(0)
 				}
 
 				paylist=Array.new
@@ -246,8 +246,8 @@ def CustomDailyTransactionDetail(connection,current_date,current_pid,current_cid
 		sumcurrentpaylist=Hash.new(0)
 		sumwinningpaylist=Hash.new(0)
 		currentcountlist.each(){|key,value|
-			sumcurrentpaylist[key]+=currentcountlist[key]*current_price[key].to_f()
-			sumwinningpaylist[key]+=winningcountlist[key]*winning_price[key].to_f()
+			sumcurrentpaylist[key]+=(currentcountlist[key]*current_price[key].to_f()).round(0)
+			sumwinningpaylist[key]+=(winningcountlist[key]*winning_price[key].to_f()).round(0)
 		}
 
 		paylist=Array.new
@@ -408,12 +408,11 @@ def DailyTransactionCounting(connection,current_date,current_pid)
 		outbonusmoney=0
 		inaddmoney=0
 		inbonusmoney=0
+		oldgroup=-1
 		data_order.each(){|swiftcode,cid,pid,currentdate,currentcount,winningcount,addmoney,bonusmoney,note,group| 
 			if(currentcount.to_f()>=0)
 				outcurrentcountlist[pid]+=currentcount.to_f()
 				outwinningcountlist[pid]+=winningcount.to_f()
-				outaddmoney+=addmoney.to_f()
-				outbonusmoney+=bonusmoney.to_f()
 				
 				#若客戶的ID HASH尚未建立，則為每個客戶ID建置HASH，以供分別儲存他們的交易及中獎數量
 				if(customlist[cid]==nil)
@@ -421,13 +420,18 @@ def DailyTransactionCounting(connection,current_date,current_pid)
 				end
 				customlist[cid]['outcurrentcountlist'][pid]+=currentcount.to_f()
 				customlist[cid]['outwinningcountlist'][pid]+=winningcount.to_f()
-				customlist[cid]['outaddmoney']+=addmoney.to_f()
-				customlist[cid]['outbonusmoney']+=bonusmoney.to_f()
+
+
+				if group!=oldgroup
+					oldgroup=group
+					outaddmoney+=addmoney.to_f()
+					outbonusmoney+=bonusmoney.to_f()
+					customlist[cid]['outaddmoney']+=addmoney.to_f()
+					customlist[cid]['outbonusmoney']+=bonusmoney.to_f()
+				end
 			else
 				incurrentcountlist[pid]+=currentcount.to_f()
 				inwinningcountlist[pid]+=winningcount.to_f()
-				inaddmoney+=addmoney.to_f()
-				inbonusmoney+=bonusmoney.to_f()
 
 				#若客戶的ID HASH尚未建立，則為每個客戶ID建置HASH，以供分別儲存他們的交易及中獎數量
 				if(customlist[cid]==nil)
@@ -435,15 +439,20 @@ def DailyTransactionCounting(connection,current_date,current_pid)
 				end
 				customlist[cid]['incurrentcountlist'][pid]+=currentcount.to_f()
 				customlist[cid]['inwinningcountlist'][pid]+=winningcount.to_f()
-				customlist[cid]['inaddmoney']+=addmoney.to_f()
-				customlist[cid]['inbonusmoney']+=bonusmoney.to_f()
+				if group!=oldgroup
+					oldgroup=group					
+					inaddmoney+=addmoney.to_f()
+					inbonusmoney+=bonusmoney.to_f()
+					customlist[cid]['inaddmoney']+=addmoney.to_f()
+					customlist[cid]['inbonusmoney']+=bonusmoney.to_f()
+				end
 			end
 		}
 		#因為同一個GROUP的會被同時加進來，除以目前有的產品種類數就是正確的退水跟漲價金額了
-		outaddmoney/=5
-		outbonusmoney/=5
-		inaddmoney/=5
-		inbonusmoney/=5
+		#outaddmoney/=5
+		#outbonusmoney/=5
+		#inaddmoney/=5
+		#inbonusmoney/=5
 =begin
 		#計算誤差
 		outpaylist=Array.new
@@ -500,8 +509,8 @@ def DailyTransactionCounting(connection,current_date,current_pid)
 				row+=[0,0,0,0,0,0,0,0,0,0,0,0,sumwithwater,sumwithoutwater,0,0]
 			else
 				#因為同一個GROUP的會被同時加進來，除以目前有的產品種類數就是正確的退水跟漲價金額了
-				customlist[cid]['outaddmoney']/=5
-				customlist[cid]['outbonusmoney']/=5
+				#customlist[cid]['outaddmoney']/=5
+				#customlist[cid]['outbonusmoney']/=5
 
 
 				#找出過出日期相對最接近且有輸入價格的
@@ -516,8 +525,8 @@ def DailyTransactionCounting(connection,current_date,current_pid)
 				sumcurrentpaylist=Hash.new(0)
 				sumwinningpaylist=Hash.new(0)
 				customlist[cid]['outcurrentcountlist'].each(){|key,value|
-					sumcurrentpaylist[key]+=customlist[cid]['outcurrentcountlist'][key]*current_price[mostneardate][key][cid].to_f()
-					sumwinningpaylist[key]+=customlist[cid]['outwinningcountlist'][key]*winning_price[mostneardate][key][cid].to_f()
+					sumcurrentpaylist[key]+=(customlist[cid]['outcurrentcountlist'][key]*current_price[mostneardate][key][cid].to_f()).abs.round(0)
+					sumwinningpaylist[key]+=(customlist[cid]['outwinningcountlist'][key]*winning_price[mostneardate][key][cid].to_f()).abs.round(0)
 				}
 				paylist=Array.new()
 				data_product.each(){|pid,pname|
@@ -568,8 +577,8 @@ def DailyTransactionCounting(connection,current_date,current_pid)
 				row+=[0,0,0,0,0,0,0,0,0,0,0,0,sumwithwater,sumwithoutwater,0,0]
 			else
 				#因為同一個GROUP的會被同時加進來，除以目前有的產品種類數就是正確的退水跟漲價金額了
-				customlist[cid]['inaddmoney']/=5
-				customlist[cid]['inbonusmoney']/=5
+				#customlist[cid]['inaddmoney']/=5
+				#customlist[cid]['inbonusmoney']/=5
 
 				
 				#找出過出日期相對最接近且有輸入價格的
@@ -583,9 +592,9 @@ def DailyTransactionCounting(connection,current_date,current_pid)
 
 				sumcurrentpaylist=Hash.new(0)
 				sumwinningpaylist=Hash.new(0)
-				customlist[cid]['outcurrentcountlist'].each(){|key,value|
-					sumcurrentpaylist[key]+=customlist[cid]['incurrentcountlist'][key]*current_price[mostneardate][key][cid].to_f()
-					sumwinningpaylist[key]+=customlist[cid]['inwinningcountlist'][key]*winning_price[mostneardate][key][cid].to_f()
+				customlist[cid]['incurrentcountlist'].each(){|key,value|
+					sumcurrentpaylist[key]+=(customlist[cid]['incurrentcountlist'][key]*current_price[mostneardate][key][cid].to_f()).abs.round(0)
+					sumwinningpaylist[key]+=(customlist[cid]['inwinningcountlist'][key]*winning_price[mostneardate][key][cid].to_f()).abs.round(0)
 				}
 				countlist=Array.new()
 				paylist=Array.new()
@@ -598,7 +607,7 @@ def DailyTransactionCounting(connection,current_date,current_pid)
 
 
 					sumincurrentpaylist[pid]+=sumcurrentpaylist[pid]
-					sumincurrentpaylist[pid]+=sumwinningpaylist[pid]
+					suminwinningpaylist[pid]+=sumwinningpaylist[pid]
 				}
 
 
@@ -616,9 +625,9 @@ def DailyTransactionCounting(connection,current_date,current_pid)
 		inpaylist=Array.new
 		data_product.each(){|pid,pname|
 			sumoutcurrentpaylist[pid]=0 if sumoutcurrentpaylist[pid]==0
-			sumoutcurrentpaylist[pid]=0 if sumoutcurrentpaylist[pid]==0
+			sumoutwinningpaylist[pid]=0 if sumoutwinningpaylist[pid]==0
 			sumincurrentpaylist[pid]=0 if sumincurrentpaylist[pid]==0
-			sumincurrentpaylist[pid]=0 if sumincurrentpaylist[pid]==0
+			suminwinningpaylist[pid]=0 if suminwinningpaylist[pid]==0
 
 			outpaylist+=[sumoutcurrentpaylist[pid]]
 			outpaylist+=[sumoutwinningpaylist[pid]]
@@ -765,12 +774,11 @@ def AllDailyTransactionCounting(connection,current_date)
 		outbonusmoney=0
 		inaddmoney=0
 		inbonusmoney=0
+		oldgroup=-1
 		data_order.each(){|swiftcode,cid,pid,currentdate,currentcount,winningcount,addmoney,bonusmoney,note,group| 
 			if(currentcount.to_f()>=0)
 				outcurrentcountlist[pid]+=currentcount.to_f()
 				outwinningcountlist[pid]+=winningcount.to_f()
-				outaddmoney+=addmoney.to_f()
-				outbonusmoney+=bonusmoney.to_f()
 				
 				#若客戶的ID HASH尚未建立，則為每個客戶ID建置HASH，以供分別儲存他們的交易及中獎數量
 				if(customlist[cid]==nil)
@@ -778,13 +786,18 @@ def AllDailyTransactionCounting(connection,current_date)
 				end
 				customlist[cid]['outcurrentcountlist'][pid]+=currentcount.to_f()
 				customlist[cid]['outwinningcountlist'][pid]+=winningcount.to_f()
-				customlist[cid]['outaddmoney']+=addmoney.to_f()
-				customlist[cid]['outbonusmoney']+=bonusmoney.to_f()
+				
+
+				if group!=oldgroup
+					oldgroup=group
+					outaddmoney+=addmoney.to_f()
+					outbonusmoney+=bonusmoney.to_f()
+					customlist[cid]['outaddmoney']+=addmoney.to_f()
+					customlist[cid]['outbonusmoney']+=bonusmoney.to_f()
+				end
 			else
 				incurrentcountlist[pid]+=currentcount.to_f()
 				inwinningcountlist[pid]+=winningcount.to_f()
-				inaddmoney+=addmoney.to_f()
-				inbonusmoney+=bonusmoney.to_f()
 
 				#若客戶的ID HASH尚未建立，則為每個客戶ID建置HASH，以供分別儲存他們的交易及中獎數量
 				if(customlist[cid]==nil)
@@ -792,15 +805,21 @@ def AllDailyTransactionCounting(connection,current_date)
 				end
 				customlist[cid]['incurrentcountlist'][pid]+=currentcount.to_f()
 				customlist[cid]['inwinningcountlist'][pid]+=winningcount.to_f()
-				customlist[cid]['inaddmoney']+=addmoney.to_f()
-				customlist[cid]['inbonusmoney']+=bonusmoney.to_f()
+
+				if group!=oldgroup
+					oldgroup=group
+					inaddmoney+=addmoney.to_f()
+					inbonusmoney+=bonusmoney.to_f()
+					customlist[cid]['inaddmoney']+=addmoney.to_f()
+					customlist[cid]['inbonusmoney']+=bonusmoney.to_f()
+				end
 			end
 		}
 		#因為同一個GROUP的會被同時加進來，除以目前有的產品種類數就是正確的退水跟漲價金額了
-		outaddmoney/=4
-		outbonusmoney/=4
-		inaddmoney/=4
-		inbonusmoney/=4
+		#outaddmoney/=4
+		#outbonusmoney/=4
+		#inaddmoney/=4
+		#inbonusmoney/=4
 =begin
 		#計算誤差
 		outpaylist=Hash.new(0)
@@ -863,8 +882,8 @@ def AllDailyTransactionCounting(connection,current_date)
 				row+=[0,0,0,0,0,0,0,0,0,0,sumwithwater,sumwithoutwater,0,0]
 			else
 				#因為同一個GROUP的會被同時加進來，除以目前有的產品種類數就是正確的退水跟漲價金額了
-				customlist[cid]['outaddmoney']/=4
-				customlist[cid]['outbonusmoney']/=4
+				#customlist[cid]['outaddmoney']/=4
+				#customlist[cid]['outbonusmoney']/=4
 
 
 				#找出過出日期相對最接近且有輸入價格的
@@ -879,8 +898,8 @@ def AllDailyTransactionCounting(connection,current_date)
 				sumcurrentpaylist=Hash.new(0)
 				sumwinningpaylist=Hash.new(0)
 				customlist[cid]['outcurrentcountlist'].each(){|key,value|
-					sumcurrentpaylist[key[-1]]+=customlist[cid]['outcurrentcountlist'][key]*current_price[mostneardate][key][cid].to_f()
-					sumwinningpaylist[key[-1]]+=customlist[cid]['outwinningcountlist'][key]*winning_price[mostneardate][key][cid].to_f()
+					sumcurrentpaylist[key[-1]]+=(customlist[cid]['outcurrentcountlist'][key]*current_price[mostneardate][key][cid].to_f()).abs
+					sumwinningpaylist[key[-1]]+=(customlist[cid]['outwinningcountlist'][key]*winning_price[mostneardate][key][cid].to_f()).abs
 				}
 				paylist=Array.new()
 				1.upto(4){|i|
@@ -889,8 +908,8 @@ def AllDailyTransactionCounting(connection,current_date)
 					sumcurrentpaylist[pid]=0 if sumcurrentpaylist[pid]==0
 					sumwinningpaylist[pid]=0 if sumwinningpaylist[pid]==0
 
-					paylist+=[sumcurrentpaylist[pid]]
-					paylist+=[sumwinningpaylist[pid]]
+					paylist+=[sumcurrentpaylist[pid].round(0)]
+					paylist+=[sumwinningpaylist[pid].round(0)]
 
 					sumoutcurrentpaylist[pid]+=sumcurrentpaylist[pid]
 					sumoutwinningpaylist[pid]+=sumwinningpaylist[pid]
@@ -932,8 +951,8 @@ def AllDailyTransactionCounting(connection,current_date)
 				row+=[0,0,0,0,0,0,0,0,0,0,sumwithwater,sumwithoutwater,0,0]
 			else
 				#因為同一個GROUP的會被同時加進來，除以目前有的產品種類數就是正確的退水跟漲價金額了
-				customlist[cid]['inaddmoney']/=4
-				customlist[cid]['inbonusmoney']/=4
+				#customlist[cid]['inaddmoney']/=4
+				#customlist[cid]['inbonusmoney']/=4
 
 
 				#找出過出日期相對最接近且有輸入價格的
@@ -948,8 +967,8 @@ def AllDailyTransactionCounting(connection,current_date)
 				sumcurrentpaylist=Hash.new(0)
 				sumwinningpaylist=Hash.new(0)
 				customlist[cid]['incurrentcountlist'].each(){|key,value|
-					sumcurrentpaylist[key[-1]]+=customlist[cid]['incurrentcountlist'][key]*current_price[mostneardate][key][cid].to_f()
-					sumwinningpaylist[key[-1]]+=customlist[cid]['inwinningcountlist'][key]*winning_price[mostneardate][key][cid].to_f()
+					sumcurrentpaylist[key[-1]]+=(customlist[cid]['incurrentcountlist'][key]*current_price[mostneardate][key][cid].to_f()).abs
+					sumwinningpaylist[key[-1]]+=(customlist[cid]['inwinningcountlist'][key]*winning_price[mostneardate][key][cid].to_f()).abs
 				}
 				paylist=Array.new()
 				1.upto(4){|i|
@@ -958,11 +977,11 @@ def AllDailyTransactionCounting(connection,current_date)
 					sumcurrentpaylist[pid]=0 if sumcurrentpaylist[pid]==0
 					sumwinningpaylist[pid]=0 if sumwinningpaylist[pid]==0
 
-					paylist+=[sumcurrentpaylist[pid]]
-					paylist+=[sumwinningpaylist[pid]]
+					paylist+=[sumcurrentpaylist[pid].round(0)]
+					paylist+=[sumwinningpaylist[pid].round(0)]
 
-					sumoutcurrentpaylist[pid]+=sumcurrentpaylist[pid]
-					sumoutwinningpaylist[pid]+=sumwinningpaylist[pid]
+					sumincurrentpaylist[pid]+=sumcurrentpaylist[pid]
+					suminwinningpaylist[pid]+=sumwinningpaylist[pid]
 				}
 
 				
@@ -983,14 +1002,14 @@ def AllDailyTransactionCounting(connection,current_date)
 			pid=i.to_s()
 
 			sumoutcurrentpaylist[pid]=0 if sumoutcurrentpaylist[pid]==0
-			sumoutcurrentpaylist[pid]=0 if sumoutcurrentpaylist[pid]==0
+			sumoutwinningpaylist[pid]=0 if sumoutwinningpaylist[pid]==0
 			sumincurrentpaylist[pid]=0 if sumincurrentpaylist[pid]==0
-			sumincurrentpaylist[pid]=0 if sumincurrentpaylist[pid]==0
+			suminwinningpaylist[pid]=0 if suminwinningpaylist[pid]==0
 
-			outpaylist+=[sumoutcurrentpaylist[pid]]
-			outpaylist+=[sumoutwinningpaylist[pid]]
-			inpaylist+=[sumincurrentpaylist[pid]]
-			inpaylist+=[suminwinningpaylist[pid]]
+			outpaylist+=[sumoutcurrentpaylist[pid].round(0)]
+			outpaylist+=[sumoutwinningpaylist[pid].round(0)]
+			inpaylist+=[sumincurrentpaylist[pid].round(0)]
+			inpaylist+=[suminwinningpaylist[pid].round(0)]
 		}
 
 		symbol=3
@@ -1132,6 +1151,7 @@ def AllWeekTransactionCounting(connection,current_date)
 		outbonusmoney=Hash.new(0)
 		inaddmoney=Hash.new(0)
 		inbonusmoney=Hash.new(0)
+		oldgroup=-1
 		data_order.each(){|swiftcode,cid,pid,currentdate,currentcount,winningcount,addmoney,bonusmoney,note,group| 
 			if(currentcount.to_f()>=0)
 				#若計價清單要存的日期的HASH尚未建立，則為每個要存的日期建置HASH，以供別存到每一天，後續才能跟不同的價格表相乘
@@ -1152,14 +1172,18 @@ def AllWeekTransactionCounting(connection,current_date)
 
 				outcurrentcountlist[currentdate][pid]+=currentcount.to_f()
 				outwinningcountlist[currentdate][pid]+=winningcount.to_f()
-				outaddmoney[currentdate]+=addmoney.to_f()
-				outbonusmoney[currentdate]+=bonusmoney.to_f()
-				
 				
 				customlist[cid][currentdate]['outcurrentcountlist'][pid]+=currentcount.to_f()
 				customlist[cid][currentdate]['outwinningcountlist'][pid]+=winningcount.to_f()
-				customlist[cid][currentdate]['outaddmoney']+=addmoney.to_f()
-				customlist[cid][currentdate]['outbonusmoney']+=bonusmoney.to_f()
+
+
+				if group!=oldgroup
+					oldgroup=group
+					outaddmoney[currentdate]+=addmoney.to_f()
+					outbonusmoney[currentdate]+=bonusmoney.to_f()
+					customlist[cid][currentdate]['outaddmoney']+=addmoney.to_f()
+					customlist[cid][currentdate]['outbonusmoney']+=bonusmoney.to_f()
+				end
 			else
 				#若計價清單要存的日期的HASH尚未建立，則為每個要存的日期建置HASH，以供別存到每一天，後續才能跟不同的價格表相乘
 				if(outcurrentcountlist[currentdate]==nil)
@@ -1179,23 +1203,26 @@ def AllWeekTransactionCounting(connection,current_date)
 
 				incurrentcountlist[currentdate][pid]+=currentcount.to_f()
 				inwinningcountlist[currentdate][pid]+=winningcount.to_f()
-				inaddmoney[currentdate]+=addmoney.to_f()
-				inbonusmoney[currentdate]+=bonusmoney.to_f()
-
 
 				customlist[cid][currentdate]['incurrentcountlist'][pid]+=currentcount.to_f()
 				customlist[cid][currentdate]['inwinningcountlist'][pid]+=winningcount.to_f()
-				customlist[cid][currentdate]['inaddmoney']+=addmoney.to_f()
-				customlist[cid][currentdate]['inbonusmoney']+=bonusmoney.to_f()
+
+				if group!=oldgroup
+					oldgroup=group
+					inaddmoney[currentdate]+=addmoney.to_f()
+					inbonusmoney[currentdate]+=bonusmoney.to_f()
+					customlist[cid][currentdate]['inaddmoney']+=addmoney.to_f()
+					customlist[cid][currentdate]['inbonusmoney']+=bonusmoney.to_f()
+				end
 			end
 		}
 		#因為同一個GROUP的會被同時加進來，除以目前有的產品種類數就是正確的退水跟漲價金額了
-		outaddmoney.each(){|key,value|
-			outaddmoney[key]/=5
-			outbonusmoney[key]/=5
-			inaddmoney[key]/=5
-			inbonusmoney[key]/=5	
-		}
+		#outaddmoney.each(){|key,value|
+		#	outaddmoney[key]/=5
+		#	outbonusmoney[key]/=5
+		#	inaddmoney[key]/=5
+		#	inbonusmoney[key]/=5	
+		#}
 
 =begin
 		#計算誤差
@@ -1309,8 +1336,8 @@ def AllWeekTransactionCounting(connection,current_date)
 						if(outcurrentcountlist[currentdate]!=nil)
 							data_product.each(){|pid,pname|
 								if(customlist[cid][currentdate]!=nil)
-									outpaylist[currentdate]+=customlist[cid][currentdate]['outcurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f()
-									outpaylist[currentdate]-=customlist[cid][currentdate]['outwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()									
+									outpaylist[currentdate]+=(customlist[cid][currentdate]['outcurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f()).abs.round(0)
+									outpaylist[currentdate]-=(customlist[cid][currentdate]['outwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()).abs.round(0)									
 								end
 							}
 
@@ -1335,8 +1362,8 @@ def AllWeekTransactionCounting(connection,current_date)
 				sumbonusmoney=0
 				outaddmoney.each(){|key,value|
 					if(customlist[cid][key]!=nil)
-						customlist[cid][key]['outaddmoney']/=5
-						customlist[cid][key]['outbonusmoney']/=5
+						#customlist[cid][key]['outaddmoney']/=5
+						#customlist[cid][key]['outbonusmoney']/=5
 						sumaddmoney+=customlist[cid][key]['outaddmoney'].to_i()
 						sumbonusmoney+=customlist[cid][key]['outbonusmoney'].to_i()
 					end
@@ -1396,8 +1423,8 @@ def AllWeekTransactionCounting(connection,current_date)
 						if(incurrentcountlist[currentdate]!=nil)
 							data_product.each(){|pid,pname|
 								if(customlist[cid][currentdate]!=nil)
-									inpaylist[currentdate]+=customlist[cid][currentdate]['incurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f()
-									inpaylist[currentdate]-=customlist[cid][currentdate]['inwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()
+									inpaylist[currentdate]+=(customlist[cid][currentdate]['incurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f()).abs.round(0)
+									inpaylist[currentdate]-=(customlist[cid][currentdate]['inwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()).abs.round(0)
 								end
 							}
 
@@ -1421,8 +1448,8 @@ def AllWeekTransactionCounting(connection,current_date)
 				sumbonusmoney=0
 				inaddmoney.each(){|key,value|
 					if(customlist[cid][key]!=nil)
-						customlist[cid][key]['inaddmoney']/=5
-						customlist[cid][key]['inbonusmoney']/=5
+						#customlist[cid][key]['inaddmoney']/=5
+						#customlist[cid][key]['inbonusmoney']/=5
 						sumaddmoney+=customlist[cid][key]['inaddmoney'].to_i()
 						sumbonusmoney+=customlist[cid][key]['inbonusmoney'].to_i()
 					end
@@ -1611,6 +1638,7 @@ def AllMonthTransactionCounting(connection,current_date)
 		outbonusmoney=Hash.new(0)
 		inaddmoney=Hash.new(0)
 		inbonusmoney=Hash.new(0)
+		oldgroup=-1
 		data_order.each(){|swiftcode,cid,pid,currentdate,currentcount,winningcount,addmoney,bonusmoney,note,group| 
 			if(currentcount.to_f()>=0)
 				#若計價清單要存的日期的HASH尚未建立，則為每個要存的日期建置HASH，以供別存到每一天，後續才能跟不同的價格表相乘
@@ -1630,15 +1658,18 @@ def AllMonthTransactionCounting(connection,current_date)
 
 
 				outcurrentcountlist[currentdate][pid]+=currentcount.to_f()
-				outwinningcountlist[currentdate][pid]+=winningcount.to_f()
-				outaddmoney[currentdate]+=addmoney.to_f()
-				outbonusmoney[currentdate]+=bonusmoney.to_f()
-				
+				outwinningcountlist[currentdate][pid]+=winningcount.to_f()								
 				
 				customlist[cid][currentdate]['outcurrentcountlist'][pid]+=currentcount.to_f()
 				customlist[cid][currentdate]['outwinningcountlist'][pid]+=winningcount.to_f()
-				customlist[cid][currentdate]['outaddmoney']+=addmoney.to_f()
-				customlist[cid][currentdate]['outbonusmoney']+=bonusmoney.to_f()
+
+				if group!=oldgroup
+					oldgroup=group
+					outaddmoney[currentdate]+=addmoney.to_f()
+					outbonusmoney[currentdate]+=bonusmoney.to_f()
+					customlist[cid][currentdate]['outaddmoney']+=addmoney.to_f()
+					customlist[cid][currentdate]['outbonusmoney']+=bonusmoney.to_f()
+				end
 			else
 				#若計價清單要存的日期的HASH尚未建立，則為每個要存的日期建置HASH，以供別存到每一天，後續才能跟不同的價格表相乘
 				if(outcurrentcountlist[currentdate]==nil)
@@ -1658,23 +1689,26 @@ def AllMonthTransactionCounting(connection,current_date)
 
 				incurrentcountlist[currentdate][pid]+=currentcount.to_f()
 				inwinningcountlist[currentdate][pid]+=winningcount.to_f()
-				inaddmoney[currentdate]+=addmoney.to_f()
-				inbonusmoney[currentdate]+=bonusmoney.to_f()
-
 
 				customlist[cid][currentdate]['incurrentcountlist'][pid]+=currentcount.to_f()
 				customlist[cid][currentdate]['inwinningcountlist'][pid]+=winningcount.to_f()
-				customlist[cid][currentdate]['inaddmoney']+=addmoney.to_f()
-				customlist[cid][currentdate]['inbonusmoney']+=bonusmoney.to_f()
+
+				if group!=oldgroup
+					oldgroup=group					
+					inaddmoney[currentdate]+=addmoney.to_f()
+					inbonusmoney[currentdate]+=bonusmoney.to_f()
+					customlist[cid][currentdate]['inaddmoney']+=addmoney.to_f()
+					customlist[cid][currentdate]['inbonusmoney']+=bonusmoney.to_f()
+				end
 			end
 		}
 		#因為同一個GROUP的會被同時加進來，除以目前有的產品種類數就是正確的退水跟漲價金額了
-		outaddmoney.each(){|key,value|
-			outaddmoney[key]/=5
-			outbonusmoney[key]/=5
-			inaddmoney[key]/=5
-			inbonusmoney[key]/=5	
-		}
+		#outaddmoney.each(){|key,value|
+		#	outaddmoney[key]/=5
+		#	outbonusmoney[key]/=5
+		#	inaddmoney[key]/=5
+		#	inbonusmoney[key]/=5	
+		#}
 
 
 =begin
@@ -1807,8 +1841,8 @@ def AllMonthTransactionCounting(connection,current_date)
 						if(outcurrentcountlist[currentdate]!=nil)
 							data_product.each(){|pid,pname|
 								if(customlist[cid][currentdate]!=nil)
-									outpaylist[currentdate]+=customlist[cid][currentdate]['outcurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f()
-									outpaylist[currentdate]-=customlist[cid][currentdate]['outwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()
+									outpaylist[currentdate]+=(customlist[cid][currentdate]['outcurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f()).abs.round(0)
+									outpaylist[currentdate]-=(customlist[cid][currentdate]['outwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()).abs.round(0)
 								end
 							}
 							
@@ -1832,8 +1866,8 @@ def AllMonthTransactionCounting(connection,current_date)
 				sumbonusmoney=0
 				outaddmoney.each(){|key,value|
 					if(customlist[cid][key]!=nil)
-						customlist[cid][key]['outaddmoney']/=5
-						customlist[cid][key]['outbonusmoney']/=5
+						#customlist[cid][key]['outaddmoney']/=5
+						#customlist[cid][key]['outbonusmoney']/=5
 						sumaddmoney+=customlist[cid][key]['outaddmoney'].to_i()
 						sumbonusmoney+=customlist[cid][key]['outbonusmoney'].to_i()
 					end
@@ -1913,8 +1947,8 @@ def AllMonthTransactionCounting(connection,current_date)
 						if(incurrentcountlist[currentdate]!=nil)
 							data_product.each(){|pid,pname|
 								if(customlist[cid][currentdate]!=nil)
-									inpaylist[currentdate]+=customlist[cid][currentdate]['incurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f()
-									inpaylist[currentdate]-=customlist[cid][currentdate]['inwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()
+									inpaylist[currentdate]+=(customlist[cid][currentdate]['incurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f()).abs.round(0)
+									inpaylist[currentdate]-=(customlist[cid][currentdate]['inwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()).abs.round(0)
 								end
 							}
 							
@@ -1939,8 +1973,8 @@ def AllMonthTransactionCounting(connection,current_date)
 				sumaddmoney=0
 				inaddmoney.each(){|key,value|
 					if(customlist[cid][key]!=nil)
-						customlist[cid][key]['inaddmoney']/=5
-						customlist[cid][key]['inbonusmoney']/=5
+						#customlist[cid][key]['inaddmoney']/=5
+						#customlist[cid][key]['inbonusmoney']/=5
 						sumaddmoney+=customlist[cid][key]['inaddmoney'].to_i()
 						sumbonusmoney+=customlist[cid][key]['inbonusmoney'].to_i()
 					end
@@ -1964,6 +1998,19 @@ def AllMonthTransactionCounting(connection,current_date)
 			end
 			if(suminpaylist[currentdate]==0)
 				suminpaylist[currentdate]=0
+			end
+
+			if(outbonusmoney[currentdate]==0)
+				outbonusmoney[currentdate]=0
+			end
+			if(outaddmoney[currentdate]==0)
+				outaddmoney[currentdate]=0
+			end
+			if(inbonusmoney[currentdate]==0)
+				inbonusmoney[currentdate]=0
+			end
+			if(inaddmoney[currentdate]==0)
+				inaddmoney[currentdate]=0
 			end
 		}
 
@@ -2143,6 +2190,7 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 		outbonusmoney=Hash.new(0)
 		inaddmoney=Hash.new(0)
 		inbonusmoney=Hash.new(0)
+		oldgroup=-1
 		data_order.each(){|swiftcode,cid,pid,currentdate,currentcount,winningcount,addmoney,bonusmoney,note,group| 
 			currentcount=0 if currentcount==nil
 			winningcount=0 if winningcount==nil
@@ -2168,14 +2216,17 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 
 				outcurrentcountlist[currentdate][pid]+=currentcount.to_f()
 				outwinningcountlist[currentdate][pid]+=winningcount.to_f()
-				outaddmoney[currentdate]+=addmoney.to_f()
-				outbonusmoney[currentdate]+=bonusmoney.to_f()
-				
 				
 				customlist[cid][currentdate]['outcurrentcountlist'][pid]+=currentcount.to_f()
 				customlist[cid][currentdate]['outwinningcountlist'][pid]+=winningcount.to_f()
-				customlist[cid][currentdate]['outaddmoney']+=addmoney.to_f()
-				customlist[cid][currentdate]['outbonusmoney']+=bonusmoney.to_f()
+
+				if group!=oldgroup
+					oldgroup=group
+					outaddmoney[currentdate]+=addmoney.to_f()
+					outbonusmoney[currentdate]+=bonusmoney.to_f()
+					customlist[cid][currentdate]['outaddmoney']+=addmoney.to_f()
+					customlist[cid][currentdate]['outbonusmoney']+=bonusmoney.to_f()
+				end
 			else
 				#若計價清單要存的日期的HASH尚未建立，則為每個要存的日期建置HASH，以供別存到每一天，後續才能跟不同的價格表相乘
 				if(outcurrentcountlist[currentdate]==nil)
@@ -2195,23 +2246,26 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 
 				incurrentcountlist[currentdate][pid]+=currentcount.to_f()
 				inwinningcountlist[currentdate][pid]+=winningcount.to_f()
-				inaddmoney[currentdate]+=addmoney.to_f()
-				inbonusmoney[currentdate]+=bonusmoney.to_f()
-
-
+				
 				customlist[cid][currentdate]['incurrentcountlist'][pid]+=currentcount.to_f()
 				customlist[cid][currentdate]['inwinningcountlist'][pid]+=winningcount.to_f()
-				customlist[cid][currentdate]['inaddmoney']+=addmoney.to_f()
-				customlist[cid][currentdate]['inbonusmoney']+=bonusmoney.to_f()
+
+				if group!=oldgroup
+					oldgroup=group
+					inaddmoney[currentdate]+=addmoney.to_f()
+					inbonusmoney[currentdate]+=bonusmoney.to_f()
+					customlist[cid][currentdate]['inaddmoney']+=addmoney.to_f()
+					customlist[cid][currentdate]['inbonusmoney']+=bonusmoney.to_f()
+				end
 			end
 		}
 		#因為同一個GROUP的會被同時加進來，除以目前有的產品種類數就是正確的退水跟漲價金額了
-		outaddmoney.each(){|key,value|
-			outaddmoney[key]/=5
-			outbonusmoney[key]/=5
-			inaddmoney[key]/=5
-			inbonusmoney[key]/=5	
-		}
+		#outaddmoney.each(){|key,value|
+		#	outaddmoney[key]/=5
+		#	outbonusmoney[key]/=5
+		#	inaddmoney[key]/=5
+		#	inbonusmoney[key]/=5	
+		#}
 
 =begin
 		#計算誤差
@@ -2343,8 +2397,8 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 						if(outcurrentcountlist[currentdate]!=nil)
 							data_product.each(){|pid,pname|
 								if(customlist[cid][currentdate]!=nil)
-									outpaylist[currentdate]+=customlist[cid][currentdate]['outcurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f()
-									outpaylist[currentdate]-=customlist[cid][currentdate]['outwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()
+									outpaylist[currentdate]+=(customlist[cid][currentdate]['outcurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f()).abs.round(0)
+									outpaylist[currentdate]-=(customlist[cid][currentdate]['outwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()).abs.round(0)
 								end
 							}
 
@@ -2368,8 +2422,8 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 				sumbonusmoney=0
 				outaddmoney.each(){|key,value|
 					if customlist[cid][key]!=nil
-						customlist[cid][key]['outaddmoney']/=5
-						customlist[cid][key]['outbonusmoney']/=5
+						#customlist[cid][key]['outaddmoney']/=5
+						#customlist[cid][key]['outbonusmoney']/=5
 						sumaddmoney+=customlist[cid][key]['outaddmoney'].to_i()
 						sumbonusmoney+=customlist[cid][key]['outbonusmoney'].to_i()
 					end
@@ -2449,8 +2503,8 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 						if(incurrentcountlist[currentdate]!=nil)
 							data_product.each(){|pid,pname|
 								if(customlist[cid][currentdate]!=nil)
-									inpaylist[currentdate]+=customlist[cid][currentdate]['incurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f()
-									inpaylist[currentdate]-=customlist[cid][currentdate]['inwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()
+									inpaylist[currentdate]+=(customlist[cid][currentdate]['incurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f()).abs.round(0)
+									inpaylist[currentdate]-=(customlist[cid][currentdate]['inwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()).abs.round(0)
 								end
 							}
 
@@ -2474,8 +2528,8 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 				sumbonusmoney=0
 				inaddmoney.each(){|key,value|
 					if(customlist[cid][key]!=nil)
-						customlist[cid][key]['inaddmoney']/=5
-						customlist[cid][key]['inbonusmoney']/=5
+						#customlist[cid][key]['inaddmoney']/=5
+						#customlist[cid][key]['inbonusmoney']/=5
 						sumaddmoney+=customlist[cid][key]['inaddmoney'].to_i()
 						sumbonusmoney+=customlist[cid][key]['inbonusmoney'].to_i()
 					end
@@ -2499,6 +2553,19 @@ def MonthTransactionCounting(connection,current_date,current_pid)
 			end
 			if(suminpaylist[currentdate]==0)
 				suminpaylist[currentdate]=0
+			end
+
+			if(outbonusmoney[currentdate]==0)
+				outbonusmoney[currentdate]=0
+			end
+			if(outaddmoney[currentdate]==0)
+				outaddmoney[currentdate]=0
+			end
+			if(inbonusmoney[currentdate]==0)
+				inbonusmoney[currentdate]=0
+			end
+			if(inaddmoney[currentdate]==0)
+				inaddmoney[currentdate]=0
 			end
 		}
 
@@ -2650,12 +2717,11 @@ def AllDaily4KTransactionCounting(connection,current_date)
 		outbonusmoney=0
 		inaddmoney=0
 		inbonusmoney=0
+		oldgroup=-1
 		data_order.each(){|swiftcode,cid,pid,currentdate,currentcount,winningcount,addmoney,bonusmoney,note,group| 
 			if(currentcount.to_f()>=0)
 				outcurrentcountlist[pid]+=currentcount.to_f()
 				outwinningcountlist[pid]+=winningcount.to_f()
-				outaddmoney+=addmoney.to_f()
-				outbonusmoney+=bonusmoney.to_f()
 				
 				#若客戶的ID HASH尚未建立，則為每個客戶ID建置HASH，以供分別儲存他們的交易及中獎數量
 				if(customlist[cid]==nil)
@@ -2663,13 +2729,17 @@ def AllDaily4KTransactionCounting(connection,current_date)
 				end
 				customlist[cid]['outcurrentcountlist'][pid]+=currentcount.to_f()
 				customlist[cid]['outwinningcountlist'][pid]+=winningcount.to_f()
-				customlist[cid]['outaddmoney']+=addmoney.to_f()
-				customlist[cid]['outbonusmoney']+=bonusmoney.to_f()
+
+				if group!=oldgroup
+					group=oldgroup
+					outaddmoney+=addmoney.to_f()
+					outbonusmoney+=bonusmoney.to_f()
+					customlist[cid]['outaddmoney']+=addmoney.to_f()
+					customlist[cid]['outbonusmoney']+=bonusmoney.to_f()
+				end
 			else
 				incurrentcountlist[pid]+=currentcount.to_f()
 				inwinningcountlist[pid]+=winningcount.to_f()
-				inaddmoney+=addmoney.to_f()
-				inbonusmoney+=bonusmoney.to_f()
 
 				#若客戶的ID HASH尚未建立，則為每個客戶ID建置HASH，以供分別儲存他們的交易及中獎數量
 				if(customlist[cid]==nil)
@@ -2677,15 +2747,21 @@ def AllDaily4KTransactionCounting(connection,current_date)
 				end
 				customlist[cid]['incurrentcountlist'][pid]+=currentcount.to_f()
 				customlist[cid]['inwinningcountlist'][pid]+=winningcount.to_f()
-				customlist[cid]['inaddmoney']+=addmoney.to_f()
-				customlist[cid]['inbonusmoney']+=bonusmoney.to_f()
+
+				if group!=oldgroup
+					group=oldgroup
+					inaddmoney+=addmoney.to_f()
+					inbonusmoney+=bonusmoney.to_f()
+					customlist[cid]['inaddmoney']+=addmoney.to_f()
+					customlist[cid]['inbonusmoney']+=bonusmoney.to_f()
+				end
 			end
 		}
 		#因為同一個GROUP的會被同時加進來，除以目前有的產品種類數就是正確的退水跟漲價金額了
-		outaddmoney/=4
-		outbonusmoney/=4
-		inaddmoney/=4
-		inbonusmoney/=4
+		#outaddmoney/=4
+		#outbonusmoney/=4
+		#inaddmoney/=4
+		#inbonusmoney/=4
 =begin
 		#計算誤差
 		outpaylist=Hash.new(0)
@@ -2748,8 +2824,8 @@ def AllDaily4KTransactionCounting(connection,current_date)
 				row+=[0,0,0,0,sumwithwater,sumwithoutwater,0,0]
 			else
 				#因為同一個GROUP的會被同時加進來，除以目前有的產品種類數就是正確的退水跟漲價金額了
-				customlist[cid]['outaddmoney']/=4
-				customlist[cid]['outbonusmoney']/=4
+				#customlist[cid]['outaddmoney']/=4
+				#customlist[cid]['outbonusmoney']/=4
 
 
 				#找出過出日期相對最接近且有輸入價格的
@@ -2764,8 +2840,8 @@ def AllDaily4KTransactionCounting(connection,current_date)
 				sumcurrentpaylist=Hash.new(0)
 				sumwinningpaylist=Hash.new(0)
 				customlist[cid]['outcurrentcountlist'].each(){|key,value|
-					sumcurrentpaylist[key[-1]]+=customlist[cid]['outcurrentcountlist'][key]*current_price[mostneardate][key][cid].to_f()
-					sumwinningpaylist[key[-1]]+=customlist[cid]['outwinningcountlist'][key]*winning_price[mostneardate][key][cid].to_f()
+					sumcurrentpaylist[key[-1]]+=(customlist[cid]['outcurrentcountlist'][key]*current_price[mostneardate][key][cid].to_f()).abs.round(0)
+					sumwinningpaylist[key[-1]]+=(customlist[cid]['outwinningcountlist'][key]*winning_price[mostneardate][key][cid].to_f()).abs.round(0)
 				}
 				paylist=Array.new()
 				
@@ -2816,8 +2892,8 @@ def AllDaily4KTransactionCounting(connection,current_date)
 				row+=[0,0,0,0,sumwithwater,sumwithoutwater,0,0]
 			else
 				#因為同一個GROUP的會被同時加進來，除以目前有的產品種類數就是正確的退水跟漲價金額了
-				customlist[cid]['inaddmoney']/=4
-				customlist[cid]['inbonusmoney']/=4
+				#customlist[cid]['inaddmoney']/=4
+				#customlist[cid]['inbonusmoney']/=4
 
 
 				#找出過出日期相對最接近且有輸入價格的
@@ -2832,8 +2908,8 @@ def AllDaily4KTransactionCounting(connection,current_date)
 				sumcurrentpaylist=Hash.new(0)
 				sumwinningpaylist=Hash.new(0)
 				customlist[cid]['incurrentcountlist'].each(){|key,value|
-					sumcurrentpaylist[key[-1]]+=customlist[cid]['incurrentcountlist'][key]*current_price[mostneardate][key][cid].to_f()
-					sumwinningpaylist[key[-1]]+=customlist[cid]['inwinningcountlist'][key]*winning_price[mostneardate][key][cid].to_f()
+					sumcurrentpaylist[key[-1]]+=(customlist[cid]['incurrentcountlist'][key]*current_price[mostneardate][key][cid].to_f()).abs.round(0)
+					sumwinningpaylist[key[-1]]+=(customlist[cid]['inwinningcountlist'][key]*winning_price[mostneardate][key][cid].to_f()).abs.round(0)
 				}
 				paylist=Array.new()
 				
@@ -2865,9 +2941,9 @@ def AllDaily4KTransactionCounting(connection,current_date)
 		pid='4'.to_s()
 
 		sumoutcurrentpaylist[pid]=0 if sumoutcurrentpaylist[pid]==0
-		sumoutcurrentpaylist[pid]=0 if sumoutcurrentpaylist[pid]==0
+		sumoutwinningpaylist[pid]=0 if sumoutwinningpaylist[pid]==0
 		sumincurrentpaylist[pid]=0 if sumincurrentpaylist[pid]==0
-		sumincurrentpaylist[pid]=0 if sumincurrentpaylist[pid]==0
+		suminwinningpaylist[pid]=0 if suminwinningpaylist[pid]==0
 
 		outpaylist+=[sumoutcurrentpaylist[pid]]
 		outpaylist+=[sumoutwinningpaylist[pid]]
@@ -3032,6 +3108,7 @@ def AllMonth4KTransactionCounting(connection,current_date)
 		outbonusmoney=Hash.new(0)
 		inaddmoney=Hash.new(0)
 		inbonusmoney=Hash.new(0)
+		oldgroup=-1
 		data_order.each(){|swiftcode,cid,pid,currentdate,currentcount,winningcount,addmoney,bonusmoney,note,group| 
 			if(currentcount.to_f()>=0)
 				#若計價清單要存的日期的HASH尚未建立，則為每個要存的日期建置HASH，以供別存到每一天，後續才能跟不同的價格表相乘
@@ -3051,15 +3128,18 @@ def AllMonth4KTransactionCounting(connection,current_date)
 
 
 				outcurrentcountlist[currentdate][pid]+=currentcount.to_f()
-				outwinningcountlist[currentdate][pid]+=winningcount.to_f()
-				outaddmoney[currentdate]+=addmoney.to_f()
-				outbonusmoney[currentdate]+=bonusmoney.to_f()
-				
+				outwinningcountlist[currentdate][pid]+=winningcount.to_f()				
 				
 				customlist[cid][currentdate]['outcurrentcountlist'][pid]+=currentcount.to_f()
 				customlist[cid][currentdate]['outwinningcountlist'][pid]+=winningcount.to_f()
-				customlist[cid][currentdate]['outaddmoney']+=addmoney.to_f()
-				customlist[cid][currentdate]['outbonusmoney']+=bonusmoney.to_f()
+
+				if group!=oldgroup
+					oldgroup=group
+					outaddmoney[currentdate]+=addmoney.to_f()
+					outbonusmoney[currentdate]+=bonusmoney.to_f()
+					customlist[cid][currentdate]['outaddmoney']+=addmoney.to_f()
+					customlist[cid][currentdate]['outbonusmoney']+=bonusmoney.to_f()
+				end
 			else
 				#若計價清單要存的日期的HASH尚未建立，則為每個要存的日期建置HASH，以供別存到每一天，後續才能跟不同的價格表相乘
 				if(outcurrentcountlist[currentdate]==nil)
@@ -3079,23 +3159,26 @@ def AllMonth4KTransactionCounting(connection,current_date)
 
 				incurrentcountlist[currentdate][pid]+=currentcount.to_f()
 				inwinningcountlist[currentdate][pid]+=winningcount.to_f()
-				inaddmoney[currentdate]+=addmoney.to_f()
-				inbonusmoney[currentdate]+=bonusmoney.to_f()
-
 
 				customlist[cid][currentdate]['incurrentcountlist'][pid]+=currentcount.to_f()
 				customlist[cid][currentdate]['inwinningcountlist'][pid]+=winningcount.to_f()
-				customlist[cid][currentdate]['inaddmoney']+=addmoney.to_f()
-				customlist[cid][currentdate]['inbonusmoney']+=bonusmoney.to_f()
+
+				if group!=oldgroup
+					oldgroup=group
+					inaddmoney[currentdate]+=addmoney.to_f()
+					inbonusmoney[currentdate]+=bonusmoney.to_f()
+					customlist[cid][currentdate]['inaddmoney']+=addmoney.to_f()
+					customlist[cid][currentdate]['inbonusmoney']+=bonusmoney.to_f()
+				end
 			end
 		}
 		#因為同一個GROUP的會被同時加進來，除以目前有的產品種類數就是正確的退水跟漲價金額了
-		outaddmoney.each(){|key,value|
-			outaddmoney[key]/=5
-			outbonusmoney[key]/=5
-			inaddmoney[key]/=5
-			inbonusmoney[key]/=5	
-		}
+		#outaddmoney.each(){|key,value|
+		#	outaddmoney[key]/=5
+		#	outbonusmoney[key]/=5
+		#	inaddmoney[key]/=5
+		#	inbonusmoney[key]/=5	
+		#}
 
 =begin
 		#計算誤差
@@ -3227,8 +3310,8 @@ def AllMonth4KTransactionCounting(connection,current_date)
 						if(outcurrentcountlist[currentdate]!=nil)
 							data_product.each(){|pid,pname|
 								if customlist[cid][currentdate]!=nil
-									outpaylist[currentdate]+=customlist[cid][currentdate]['outcurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f()
-									outpaylist[currentdate]-=customlist[cid][currentdate]['outwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()
+									outpaylist[currentdate]+=(customlist[cid][currentdate]['outcurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f()).abs.round(0)
+									outpaylist[currentdate]-=(customlist[cid][currentdate]['outwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()).abs.round(0)
 								end
 							}
 
@@ -3252,8 +3335,8 @@ def AllMonth4KTransactionCounting(connection,current_date)
 				sumbonusmoney=0
 				outaddmoney.each(){|key,value|
 					if customlist[cid][key]!=nil
-						customlist[cid][key]['outaddmoney']/=5
-						customlist[cid][key]['outbonusmoney']/=5
+						#customlist[cid][key]['outaddmoney']/=5
+						#customlist[cid][key]['outbonusmoney']/=5
 						sumaddmoney+=customlist[cid][key]['outaddmoney'].to_i()
 						sumbonusmoney+=customlist[cid][key]['outbonusmoney'].to_i()
 					end
@@ -3333,8 +3416,8 @@ def AllMonth4KTransactionCounting(connection,current_date)
 						if(incurrentcountlist[currentdate]!=nil)
 							data_product.each(){|pid,pname|
 								if customlist[cid][currentdate]!=nil
-									inpaylist[currentdate]+=customlist[cid][currentdate]['incurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f() 
-									inpaylist[currentdate]-=customlist[cid][currentdate]['inwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()
+									inpaylist[currentdate]+=(customlist[cid][currentdate]['incurrentcountlist'][pid]*current_price[mostneardate][pid][cid].to_f()).abs.round(0)
+									inpaylist[currentdate]-=(customlist[cid][currentdate]['inwinningcountlist'][pid]*winning_price[mostneardate][pid][cid].to_f()).abs.round(0)
 								end
 							}
 
@@ -3358,8 +3441,8 @@ def AllMonth4KTransactionCounting(connection,current_date)
 				sumbonusmoney=0
 				inaddmoney.each(){|key,value|
 					if customlist[cid][key]!=nil
-						customlist[cid][key]['inaddmoney']/=5
-						customlist[cid][key]['inbonusmoney']/=5
+						#customlist[cid][key]['inaddmoney']/=5
+						#customlist[cid][key]['inbonusmoney']/=5
 						sumaddmoney+=customlist[cid][key]['inaddmoney'].to_i()
 						sumbonusmoney+=customlist[cid][key]['inbonusmoney'].to_i()
 					end
@@ -3383,6 +3466,20 @@ def AllMonth4KTransactionCounting(connection,current_date)
 			end
 			if(suminpaylist[currentdate]==0)
 				suminpaylist[currentdate]=0
+			end
+
+
+			if(outbonusmoney[currentdate]==0)
+				outbonusmoney[currentdate]=0
+			end
+			if(outaddmoney[currentdate]==0)
+				outaddmoney[currentdate]=0
+			end
+			if(inbonusmoney[currentdate]==0)
+				inbonusmoney[currentdate]=0
+			end
+			if(inaddmoney[currentdate]==0)
+				inaddmoney[currentdate]=0
 			end
 		}
 
